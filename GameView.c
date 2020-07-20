@@ -42,7 +42,7 @@ struct gameView {
 	Player whoseTurn;
 	int *trap_list;
 	int *young_list;
-	//Map map;
+	Map map;
 };
 
 ////////////////////////////////////////////////////////////////////////
