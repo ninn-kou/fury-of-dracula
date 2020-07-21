@@ -97,18 +97,13 @@ int GvGetHealth(GameView gv, Player player)
 	int temp = 0;
 	int blood = 0;
 	while (temp < NUM_PLAYERS) {
-		if(gv->player[temp] == player){
+		if(gv->player[temp]->ID == player){
 			blood = gv->player[temp]->HP;
 		}
 	}
 	
 	return (blood);
-	/*
-	if (player >= NUM_PLAYERS || player < 0) {
-		return -1;
-	} else {
-		return gv->player[player]->HP;
-	}*/
+	
 }
 
 
@@ -117,7 +112,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 	int temp = 0;
 	
 	while (temp < NUM_PLAYERS) {
-		if(gv->player[temp] == player){
+		if(gv->player[temp]->ID == player){
 			return (gv->player[temp]->currlocation);
 		}
 	}
