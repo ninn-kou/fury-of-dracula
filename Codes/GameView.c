@@ -116,6 +116,7 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 			return (gv->player[temp]->currlocation);
 		}
 	}
+	//test git 
 	return NOWHERE;
 }
 
