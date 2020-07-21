@@ -47,7 +47,7 @@ struct gameView {
 	int *young_vamp_list;
 
 	Map map;
-} GameView;
+};
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
