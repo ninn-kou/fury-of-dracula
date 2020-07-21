@@ -40,7 +40,7 @@ struct gameView {
 	int score;
 	Round turn_Number;
 
-	Player Player_Number;
+	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
 
 	int *trap_list;
@@ -75,26 +75,26 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	
+	return (gv->turn_Number);
 }
 
 Player GvGetPlayer(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	
+	return (gv->Curr_Player_Number);
 }
 
 int GvGetScore(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	
+	return (gv->score);
 }
 
 int GvGetHealth(GameView gv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	
+	return gv->player;
 }
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
