@@ -21,29 +21,33 @@
 // add your own #includes here
 
 // TODO: ADD YOUR OWN STRUCTS HERE
-
-struct playerData {
+#define MAXMUM_TRAP 3
+#define NOT_FIND -100
+typedef struct playerData {
 	Player ID;
-	int hp;
+	int HP;
 	PlaceId currlocation;
 	PlaceId playerTrail[TRAIL_SIZE];    
-};
+} PlayerData;
 
-struct young{
+typedef struct young_vampire{
 	int born_round_number;
 	PlaceId born_location;
-	struct young *next;
-};
+} Young_vampire;
 
 struct gameView {
-	struct playerData player[NUM_PLAYERS];
+	
 	int score;
-	Round turnNumber;
-	Player whoseTurn;
+	Round turn_Number;
+
+	Player Player_Number;
+	PlayerData *player[NUM_PLAYERS];
+
 	int *trap_list;
-	int *young_list;
+	int *young_vamp_list;
+
 	Map map;
-};
+} GameView;
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
