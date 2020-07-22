@@ -31,9 +31,11 @@ typedef struct playerData {
 } PlayerData;
 
 typedef struct young_vampire{
+	// return 1 for true, 0 for died.
+	int survive;
 	int born_round_number;
 	PlaceId born_location;
-} Young_vampire;
+} *Young_vampire;
 
 struct gameView {
 	
@@ -43,8 +45,11 @@ struct gameView {
 	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
 
+	int num_traps;
 	int *trap_list;
-	int *young_vamp_list;
+
+	// point out the info of vampire
+	Young_vampire vampire;
 
 	Map map;
 };
@@ -75,25 +80,25 @@ void GvFree(GameView gv)
 
 Round GvGetRound(GameView gv)
 {
-	
+	// gets the current round number
 	return (gv->turn_Number);
 }
 
 Player GvGetPlayer(GameView gv)
 {
-	
+	// Gets the current player;
 	return (gv->Curr_Player_Number);
 }
 
 int GvGetScore(GameView gv)
 {
-	
+	//Gets the current game score;
 	return (gv->score);
 }
 
 int GvGetHealth(GameView gv, Player player)
 {
-	
+	// find the correct player, then  return the info
 	int temp = 0;
 	int blood = 0;
 	while (temp < NUM_PLAYERS) {
@@ -110,7 +115,8 @@ int GvGetHealth(GameView gv, Player player)
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
 	int temp = 0;
-	
+	// find the player form the playerlist,
+	// then return the location,
 	while (temp < NUM_PLAYERS) {
 		if(gv->player[temp]->ID == player){
 			return (gv->player[temp]->currlocation);
@@ -122,15 +128,23 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player)
 
 PlaceId GvGetVampireLocation(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	// if the young vampire died, return nowhere;
+	if (!gv->vampire->survive) {
+		return NOWHERE;	
+	}
+	
+	// else just return the info
+	return (gv->vampire->born_location);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numTraps = 0;
-	return NULL;
+	*numTraps = gv->num_traps;
+	if (*numTraps == 0) {
+		return NULL;
+	}
+	// return the list of traps
+	return (gv->trap_list);
 }
 
 ////////////////////////////////////////////////////////////////////////
