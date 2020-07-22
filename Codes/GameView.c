@@ -68,6 +68,10 @@ GameView GvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+    // CREATE THE WHOLE STRUCT OF TRAPLIST;
+    
+
+
      /*
 	new->score = GAME_START_SCORE; 		// game start at score 366
 	new->turn_Number = 0;          		// game start at turn 0
@@ -95,6 +99,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->num_traps = 0;
 	new->trap_list = NULL;
 	new->map = MapNew();*/
+
+
+
 	return new;
 }
 
