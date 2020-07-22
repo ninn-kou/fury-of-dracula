@@ -110,7 +110,7 @@ int GvGetHealth(GameView gv, Player player)
 	return (blood);
 	
 }
-
+//ssh test
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player)
 {
