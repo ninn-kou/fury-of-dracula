@@ -45,8 +45,10 @@ struct gameView {
 	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
 
-	int num_traps;
-	int *trap_list;
+	int num_traps;  // return the sum of traps
+	int **trap_list;
+    
+    // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
 
 	// point out the info of vampire
 	Young_vampire vampire;
@@ -59,38 +61,40 @@ struct gameView {
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
+   
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+     /*
 	new->score = GAME_START_SCORE; 		// game start at score 366
 	new->turn_Number = 0;          		// game start at turn 0
 	new->PLayer_Number = NULL;
-	new->players[0]->ID = "G";			// the first player is Lord Godalming
-	new->players[0]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->players[0]->currlocation = NULL;
-	new->players[0]->playerTrail = NULL;
-	new->players[1]->ID = "S";			// the first player is Dr. Seward
-	new->players[1]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->players[1]->currlocation = NULL;
-	new->players[1]->playerTrail = NULL;
-	new->players[2]->ID = "H";			// the first player is Van Helsing
-	new->players[2]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->players[2]->currlocation = NULL;
-	new->players[2]->playerTrail = NULL;
-	new->players[3]->ID = "M";			// the first player is Mina Harker
-	new->players[3]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->players[3]->currlocation = NULL;
-	new->players[3]->playerTrail = NULL;
-	new->players[4]->ID = "D";			// the first player is Mina Harker
-	new->players[4]->HP = GAME_START_BLOOD_POINTS;
-	new->players[4]->currlocation = NULL;
-	new->players[4]->playerTrail = NULL;
+	new->player[0]->ID = "G";			// the first player is Lord Godalming
+	new->player[0]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	new->player[0]->currlocation = NULL;
+	new->player[0]->playerTrail = NULL;
+	new->player[1]->ID = "S";			// the first player is Dr. Seward
+	new->player[1]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	new->player[1]->currlocation = NULL;
+	new->player[1]->playerTrail = NULL;
+	new->player[2]->ID = "H";			// the first player is Van Helsing
+	new->player[2]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	new->player[2]->currlocation = NULL;
+	new->player[2]->playerTrail = NULL;
+	new->player[3]->ID = "M";			// the first player is Mina Harker
+	new->player[3]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	new->player[3]->currlocation = NULL;
+	new->player[3]->playerTrail = NULL;
+	new->player[4]->ID = "D";			// the first player is Mina Harker
+	new->player[4]->HP = GAME_START_BLOOD_POINTS;
+	new->player[4]->currlocation = NULL;
+	new->player[4]->playerTrail = NULL;
 	new->num_traps = 0;
 	new->trap_list = NULL;
-	new->map = MapNew();
+	new->map = MapNew();*/
 	return new;
 }
 
@@ -164,12 +168,21 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-	*numTraps = gv->num_traps;
-	if (*numTraps == 0) {
-		return NULL;
-	}
-	// return the list of traps
-	return (gv->trap_list);
+
+	int sum = 0;
+    int *trap = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
+    for(PlaceId i = MIN_REAL_PLACE; i < MAX_REAL_PLACE; i++){
+        for(int j = 0; j< MAXMUM_TRAP; j++) {
+            if(gv->trap_list[i][j] == 1) {
+                trap[sum] = i;
+                sum++;
+            }
+        }
+    }
+    *numTraps = sum;
+
+    return trap;
+    
 }
 
 ////////////////////////////////////////////////////////////////////////
