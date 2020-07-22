@@ -31,10 +31,10 @@ typedef struct playerData {
 } PlayerData;
 
 typedef struct young_vampire{
-	// return 1 for true, 0 for died.
-	int survive;
-	int born_round_number;
-	PlaceId born_location;
+	
+	int survive;    // return 1 for true, 0 for died.
+	int born_round_number; // record which turn the vampire born.
+	PlaceId born_location;  // // record which city the vampire born.
 } *Young_vampire;
 
 struct gameView {
@@ -46,12 +46,13 @@ struct gameView {
 	PlayerData *player[NUM_PLAYERS];
 
 	int num_traps;  // return the sum of traps
-	int **trap_list;
+	
+    int **trap_list; // the 2d version of traplist
+                    // traplist[max_real_cities+1][max_traps]
+                    // malloc(sizeof(placeid) * (MAX_REAL_PLACE+1) * max_traps)
     
-    // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
-
-	// point out the info of vampire
-	Young_vampire vampire;
+	
+	Young_vampire vampire;  // point out the info of vampire
 
 	Map map;
 };
@@ -184,6 +185,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 
 	int sum = 0;
+    // find all the traps in each city
+    // then make these cities into one array.
+    // and record the sum of all traps.
     int *trap = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
     for(PlaceId i = MIN_REAL_PLACE; i < MAX_REAL_PLACE; i++){
         for(int j = 0; j< MAXMUM_TRAP; j++) {
