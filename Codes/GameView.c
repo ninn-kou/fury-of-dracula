@@ -88,7 +88,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->players[4]->HP = GAME_START_BLOOD_POINTS;
 	new->players[4]->currlocation = NULL;
 	new->players[4]->playerTrail = NULL;
-	
+	new->num_traps = 0;
+	new->trap_list = NULL;
 	new->map = MapNew();
 	return new;
 }
