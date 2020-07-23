@@ -115,8 +115,8 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-	new->player = malloc(5 * sizeof(PlayerData *));
-	new->traplist = malloc(sizeof(PlaceId)*6);
+	// new->player = malloc(5 * sizeof(PlayerData *));
+	// new->traplist = malloc(sizeof(PlaceId)*6);
 	
 
 	
@@ -145,7 +145,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
-	Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
+	// Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < 6; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
@@ -153,7 +153,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	// initialize for the seward
 	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
 	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Seward->playerTrail = malloc(sizeof(PlaceId)*6);
+	// Seward->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Seward->playerTrail[i] = NOWHERE;
 	}
@@ -161,7 +161,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
 	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
+	// Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Helsing->playerTrail[i] = NOWHERE;
 	}
@@ -169,7 +169,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
 	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Mina->playerTrail = malloc(sizeof(PlaceId)*6);
+	// Mina->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Mina->playerTrail[i] = NOWHERE;
 	}
@@ -177,7 +177,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
 	Dracula->HP = GAME_START_BLOOD_POINTS;
-	Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
+	// Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Dracula->playerTrail[i] = NOWHERE;
 	}
