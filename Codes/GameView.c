@@ -20,6 +20,7 @@
 #include "Places.h"
 // add your own #includes here
 void hunter_condition(char c,GameView gv);
+void cycling(PlaceId array[TRAIL_SIZE]); 
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
@@ -57,11 +58,9 @@ void hunter_condition(char c,GameView gv) {
 
 	switch(c){
 	case 'T':
-		gv->player[gv->turn_Number].HP - = LIFE_LOSS_TRAP_ENCOUNTER;
+		gv->player[gv->turn_Number]->HP - = LIFE_LOSS_TRAP_ENCOUNTER;
 	
-		while (trap_list[place_id][j] != 1) {
-			j++;
-		}
+	
 		for (int i = 0; i < 6; i++) {
 			if(gv->traplist[i] == 
 			gv->player[gv->Curr_Player_Number]->currlocation) {
@@ -71,16 +70,25 @@ void hunter_condition(char c,GameView gv) {
 		
 		break;
 	case 'V':
-		vampire->survive = 0;
+		gv->vampire->survive = 0;
 
 		break;
+
 	case 'D':
+	
 		gv->player[gv->Curr_Player_Number]->HP - = LIFE_LOSS_DRACULA_ENCOUNTER;
 		gv->player[4]->HP - = LIFE_LOSS_HUNTER_ENCOUNTER;
 		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
 		break;
+	
 	case '.':
 		break;
+	}
+}
+void cycling(PlaceId array[TRAIL_SIZE]) {
+	PlaceId temp = array[0];
+	for (int i = 0; i < 5; i ++) {
+		array[i] = array[i+1];
 	}
 }
 
@@ -184,15 +192,23 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int pastPlaysID = 0;
 	char place[2];
 	int k = 0;
+	Round round_number = 0;
 	while (pastPlays_counter < length) {
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40					
 		
+		// set for the counter addition,
+		if(pastPlaysID == 0) {
+			new->turn_Number = round_number;
+			round_number++;
+		}
+
 		// now is looking at Godalming
 		if (pastPlaysID > 0 && pastPlaysID < 3) {
 			place[k] = pastplays[pastPlays_counter]
 			K++;
 		}
+		
 		if (k == 2) {
 			Godalming->currlocation = placeAbbrevToId(place);
 		}
