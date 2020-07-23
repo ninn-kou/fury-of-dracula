@@ -177,7 +177,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			K++;
 		}
 		if (k == 2) {
-			Godalming->currlocation = strcpy(place);
+			Godalming->currlocation = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 2 && pastPlaysID < 7) {
 			hunter_condition(pastPlays[pastPlays_counter], Godalming, Dracula, new->vampire, new->trap_list);
@@ -189,7 +189,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			K++;
 		}
 		if (k == 2) {
-			Seward->currlocation = strcpy(place);
+			Seward->currlocation = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 10 && pastPlaysID < 15) {
 			hunter_condition(pastPlays[pastPlays_counter], Seward, Dracula, new->vampire, new->trap_list);
@@ -201,7 +201,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			K++;
 		}
 		if (k == 2) {
-			Helsing->currlocation = strcpy(place);
+			Helsing->currlocation = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 18 && pastPlaysID < 23) {
 			hunter_condition(pastPlays[pastPlays_counter], Helsing, Dracula, new->vampire, new->trap_list);
@@ -213,7 +213,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			K++;
 		}
 		if (k == 2) {
-			Mina->currlocation = strcpy(place);
+			Mina->currlocation = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 26 && pastPlaysID < 31) {
 			hunter_condition(pastPlays[pastPlays_counter], Mina, Dracula, new->vampire, new->trap_list);
@@ -225,7 +225,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			K++;
 		}
 		if (k == 2) {
-			Dracula->currlocation = strcpy(place);
+			Dracula->currlocation = placeAbbrevToId(place);
 			k = 0;
 		}
 		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
