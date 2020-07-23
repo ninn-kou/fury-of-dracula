@@ -31,8 +31,8 @@ typedef struct playerData {
 } PlayerData;
 
 typedef struct young_vampire{
-	// return 1 for true, 0 for died.
-	int survive;
+	
+	int survive;  // return 1 for true, 0 for died.
 	int born_round_number;
 	PlaceId born_location;
 } *Young_vampire;
@@ -46,9 +46,9 @@ struct gameView {
 	PlayerData *player[NUM_PLAYERS];
 
 	int num_traps;  // return the sum of traps
-	int **trap_list;
+	int *trap_list;  // malloc sizeof(placeid)*6
     
-    // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
+    
 
 	// point out the info of vampire
 	Young_vampire vampire;
@@ -69,7 +69,14 @@ GameView GvNew(char *pastPlays, Message messages[])
 		exit(EXIT_FAILURE);
 	}
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
-    
+    // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
+    new->trap_list = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
+    for(PlaceId city = MIN_REAL_PLACE; city < (MAX_REAL_PLACE + 1); city++) {
+        for(int i = 0; i < MAXMUM_TRAP; i++) {
+            // makesure the trap for all the city is zero;
+            new->trap_list[city][i] = 0;
+        }
+    }; 
 
 
      /*
