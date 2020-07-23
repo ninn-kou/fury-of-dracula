@@ -19,6 +19,7 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
+#include <string.h>
 void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]); 
 // TODO: ADD YOUR OWN STRUCTS HERE
@@ -58,7 +59,7 @@ void hunter_condition(char c,GameView gv) {
 
 	switch(c){
 	case 'T':
-		gv->player[gv->turn_Number]->HP - = LIFE_LOSS_TRAP_ENCOUNTER;
+		gv->player[gv->turn_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
 	
 	
 		for (int i = 0; i < 6; i++) {
@@ -76,8 +77,8 @@ void hunter_condition(char c,GameView gv) {
 
 	case 'D':
 	
-		gv->player[gv->Curr_Player_Number]->HP - = LIFE_LOSS_DRACULA_ENCOUNTER;
-		gv->player[4]->HP - = LIFE_LOSS_HUNTER_ENCOUNTER;
+		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
+		gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
 		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
 		break;
 	
@@ -86,7 +87,6 @@ void hunter_condition(char c,GameView gv) {
 	}
 }
 void cycling(PlaceId array[TRAIL_SIZE]) {
-	PlaceId temp = array[0];
 	for (int i = 0; i < 5; i ++) {
 		array[i] = array[i+1];
 	}
@@ -114,33 +114,33 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-	new->player = malloc(sizeof(PlayerData *)*5);
+	new->player = malloc(5 * sizeof(PlayerData *));
 	new->traplist = malloc(sizeof(PlaceId)*6);
 	
 
 	
-	PlayerData Godalming = new->players[0];
+	PlayerData *Godalming = new->player[0];
 
-	PlayerData Seward = new->players[1];
+	PlayerData *Seward = new->player[1];
 
-	PlayerData Helsing = new->players[2];
+	PlayerData *Helsing = new->player[2];
 
-	PlayerData Mina = new->players[3];
+	PlayerData *Mina = new->player[3];
 
-	PlayerData Dracula = new->players[4];
-
-
+	PlayerData *Dracula = new->player[4];
 
 
 
-	int pastPlays_length = strlen(pastPlays)
-	int round = pastPlays_length/40
+
+
+	int pastPlays_length = strlen(pastPlays);
+	int round = pastPlays_length/40;
 	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
 	new->turn_Number = round;
 	
 
 	// initialize for the godalming
-	new->Curr_PLayer_Number = PLAYER_LORD_GODALMING;
+	new->Curr_Player_Number = PLAYER_LORD_GODALMING;
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
@@ -168,7 +168,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
 	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
-	mina->playerTrail = malloc(sizeof(PlaceId)*6);
+	Mina->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Mina->playerTrail[i] = NOWHERE;
 	}
@@ -193,9 +193,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 	char place[2];
 	int k = 0;
 	Round round_number = 0;
-	while (pastPlays_counter < length) {
+	while (pastPlays_counter < pastPlays_length) {
 		// find whose turn
-		pastPlaysID = pastPlays_counter % 40					
+		pastPlaysID = pastPlays_counter % 40;					
 		
 		// set for the counter addition,
 		if(pastPlaysID == 0) {
@@ -205,8 +205,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 		// now is looking at Godalming
 		if (pastPlaysID > 0 && pastPlaysID < 3) {
-			place[k] = pastplays[pastPlays_counter]
-			K++;
+			place[k] = pastPlays[pastPlays_counter];
+			k++;
 		}
 		
 		if (k == 2) {
@@ -220,8 +220,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		// now is looking at Seward
 		if (pastPlaysID > 8 && pastPlaysID < 11) {
-			place[k] = pastplays[pastPlays_counter]
-			K++;
+			place[k] = pastPlays[pastPlays_counter];
+			k++;
 		}
 		if (k == 2) {
 			Seward->currlocation = placeAbbrevToId(place);
@@ -234,8 +234,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		// now is looking at Helsing
 		if (pastPlaysID > 16 && pastPlaysID < 19) {
-			place[k] = pastplays[pastPlays_counter]
-			K++;
+			place[k] = pastPlays[pastPlays_counter];
+			k++;
 		}
 		if (k == 2) {
 			Helsing->currlocation = placeAbbrevToId(place);
@@ -248,8 +248,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		// now is looking at Mina
 		if (pastPlaysID > 24 && pastPlaysID < 27) {
-			place[k] = pastplays[pastPlays_counter]
-			K++;
+			place[k] = pastPlays[pastPlays_counter];
+			k++;
 		}
 		if (k == 2) {
 			Mina->currlocation = placeAbbrevToId(place);
@@ -262,11 +262,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		// now is looking at Dracula
 		if (pastPlaysID == 0){
-			cycling(new->trap_list);
+			cycling(new->traplist);
 		}
 		if (pastPlaysID > 32 && pastPlaysID < 35) {
-			place[k] = pastplays[pastPlays_counter]
-			K++;
+			place[k] = pastPlays[pastPlays_counter];
+			k++;
 		}
 		if (k == 2) {
 			Dracula->currlocation = placeAbbrevToId(place);
