@@ -19,7 +19,7 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
-
+void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]);
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 3
 #define NOT_FIND -100
@@ -32,9 +32,9 @@ typedef struct playerData {
 
 typedef struct young_vampire{
 	
-	int survive;  // return 1 for true, 0 for died.
-	int born_round_number;
-	PlaceId born_location;
+	int survive;    // return 1 for true, 0 for died.
+	int born_round_number; // record which turn the vampire born.
+	PlaceId born_location;  // // record which city the vampire born.
 } *Young_vampire;
 
 struct gameView {
@@ -46,22 +46,48 @@ struct gameView {
 	PlayerData *player[NUM_PLAYERS];
 
 	int num_traps;  // return the sum of traps
-	int *trap_list;  // malloc sizeof(placeid)*6
+	
+    int **trap_list; // the 2d version of traplist
+                    // traplist[max_real_cities+1][max_traps]
+                    // malloc(sizeof(placeid) * (MAX_REAL_PLACE+1) * max_traps)
     
-    
-
-	// point out the info of vampire
-	Young_vampire vampire;
+	
+	Young_vampire vampire;  // point out the info of vampire
 
 	Map map;
 };
+void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]) {
+	int j = 0;
+	switch(c){
+	case T:
+		hunter->HP = player->HP - LIFE_LOSS_TRAP_ENCOUNTER;
+		while (trap_list[place_id][j] != 1) {
+			j++;
+		}
+		trap_list[place_id][j] = 0;
+		break;
+	case V:
+		vampire->survive = 0;
+		while (trap_list[place_id][j] != 2) {
+			j++;
+		}
+		trap_list[place_id][j] = 0;
+		break;
+	case D:
+		hunter->HP = player->HP - LIFE_LOSS_DRACULA_ENCOUNTER;
+		dracula->HP = dracula->HP - LIFE_LOSS_HUNTER_ENCOUNTER;
+		dracula->currlocation = strcpy(place);
+		break;
+	case .:
+		break;
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
 GameView GvNew(char *pastPlays, Message messages[])
 {
-   
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
@@ -77,38 +103,126 @@ GameView GvNew(char *pastPlays, Message messages[])
             new->trap_list[city][i] = 0;
         }
     }; 
+	
+	PlayerData Godalming = new->players[0]->ID
+	PlayerData Seward = new->players[1]->ID
+	PlayerData Helsing = new->players[2]->ID
+	PlayerData Mina = new->players[3]->ID
+	PlayerData Dracula = new->players[4]->ID
 
 
-     /*
-	new->score = GAME_START_SCORE; 		// game start at score 366
-	new->turn_Number = 0;          		// game start at turn 0
-	new->PLayer_Number = NULL;
-	new->player[0]->ID = "G";			// the first player is Lord Godalming
-	new->player[0]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->player[0]->currlocation = NULL;
-	new->player[0]->playerTrail = NULL;
-	new->player[1]->ID = "S";			// the first player is Dr. Seward
-	new->player[1]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->player[1]->currlocation = NULL;
-	new->player[1]->playerTrail = NULL;
-	new->player[2]->ID = "H";			// the first player is Van Helsing
-	new->player[2]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->player[2]->currlocation = NULL;
-	new->player[2]->playerTrail = NULL;
-	new->player[3]->ID = "M";			// the first player is Mina Harker
-	new->player[3]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->player[3]->currlocation = NULL;
-	new->player[3]->playerTrail = NULL;
-	new->player[4]->ID = "D";			// the first player is Mina Harker
-	new->player[4]->HP = GAME_START_BLOOD_POINTS;
-	new->player[4]->currlocation = NULL;
-	new->player[4]->playerTrail = NULL;
+
+
+
+	int pastPlays_length = strlen(pastPlays)
+	int round = pastPlays_length/40
+	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
+	new->turn_Number = round;        										// in pastplays, 40 characters are one round
+	new->Curr_PLayer_Number = PLAYER_LORD_GODALMING;
+	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
+	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
+	Godalming->currlocation = NOWHERE;
+	for(int i = 0; i < TRAIL_SIZE; i++) {
+		Godalming->playerTrail[i] = NOWHERE;
+	}
+		Godalming->currlocation = NOWHERE;
+	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
+	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
+	for(int i = 0; i < TRAIL_SIZE; i++) {
+		Seward->playerTrail[i] = NOWHERE;
+	}
+		Seward->currlocation = NOWHERE;
+	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
+	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
+	for(int i = 0; i < TRAIL_SIZE; i++) {
+		Helsing->playerTrail[i] = NOWHERE;
+	}
+		Helsing->currlocation = NOWHERE;
+	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
+	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
+	for(int i = 0; i < TRAIL_SIZE; i++) {
+		Mina->playerTrail[i] = NOWHERE;
+	}
+		Mina->currlocation = NOWHERE;
+	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
+	Dracula->HP = GAME_START_BLOOD_POINTS;
+	for(int i = 0; i < TRAIL_SIZE; i++) {
+		Dracula->playerTrail[i] = NOWHERE;
+	}
+		Dracula->currlocation = NOWHERE;
 	new->num_traps = 0;
 	new->trap_list = NULL;
-	new->map = MapNew();*/
+	new->map = MapNew();
 
-
-
+	int pastPlays_counter = 0;
+	int pastPlaysID = 0;
+	char place[2];
+	int k = 0;
+	while (pastPlays_counter < length) {
+		pastPlaysID = pastPlays_counter % 40					// find whose turn
+		// now is looking at Godalming
+		if (pastPlaysID > 0 && pastPlaysID < 3) {
+			place[k] = pastplays[pastPlays_counter]
+			K++;
+		}
+		if (k == 2) {
+			Godalming->currlocation = strcpy(place);
+		}
+		if (pastPlaysID > 2 && pastPlaysID < 7) {
+			hunter_condition(pastPlays[pastPlays_counter], Godalming, Dracula, new->vampire, new->trap_list);
+			k = 0;
+		}
+		// now is looking at Seward
+		if (pastPlaysID > 8 && pastPlaysID < 11) {
+			place[k] = pastplays[pastPlays_counter]
+			K++;
+		}
+		if (k == 2) {
+			Seward->currlocation = strcpy(place);
+		}
+		if (pastPlaysID > 10 && pastPlaysID < 15) {
+			hunter_condition(pastPlays[pastPlays_counter], Seward, Dracula, new->vampire, new->trap_list);
+			k = 0;
+		}
+		// now is looking at Helsing
+		if (pastPlaysID > 16 && pastPlaysID < 19) {
+			place[k] = pastplays[pastPlays_counter]
+			K++;
+		}
+		if (k == 2) {
+			Helsing->currlocation = strcpy(place);
+		}
+		if (pastPlaysID > 18 && pastPlaysID < 23) {
+			hunter_condition(pastPlays[pastPlays_counter], Helsing, Dracula, new->vampire, new->trap_list);
+			k = 0;
+		}
+		// now is looking at Mina
+		if (pastPlaysID > 24 && pastPlaysID < 27) {
+			place[k] = pastplays[pastPlays_counter]
+			K++;
+		}
+		if (k == 2) {
+			Mina->currlocation = strcpy(place);
+		}
+		if (pastPlaysID > 26 && pastPlaysID < 31) {
+			hunter_condition(pastPlays[pastPlays_counter], Mina, Dracula, new->vampire, new->trap_list);
+			k = 0;
+		}
+		// now is looking at Dracula
+		if (pastPlaysID > 32 && pastPlaysID < 35) {
+			place[k] = pastplays[pastPlays_counter]
+			K++;
+		}
+		if (k == 2) {
+			Dracula->currlocation = strcpy(place);
+			k = 0;
+		}
+		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == "T"){
+			
+			}
+		}
+		pastPlays_counter++;
+	}
 	return new;
 }
 
@@ -184,6 +298,9 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
 
 	int sum = 0;
+    // find all the traps in each city
+    // then make these cities into one array.
+    // and record the sum of all traps.
     int *trap = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
     for(PlaceId i = MIN_REAL_PLACE; i < MAX_REAL_PLACE; i++){
         for(int j = 0; j< MAXMUM_TRAP; j++) {
