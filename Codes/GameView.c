@@ -59,7 +59,6 @@ struct gameView {
 
 void hunter_condition(char c,GameView gv) {
 
-	int j = 0;
 	switch(c){
 	case 'T':
 		gv->player[gv->turn_Number].HP - = LIFE_LOSS_TRAP_ENCOUNTER;
@@ -67,20 +66,22 @@ void hunter_condition(char c,GameView gv) {
 		while (trap_list[place_id][j] != 1) {
 			j++;
 		}
-		for (int i = gv->traplist[i] = )
-		trap_list[place_id][j] = 0;
+		for (int i = 0; i < 6; i++) {
+			if(gv->traplist[i] == 
+			gv->player[gv->Curr_Player_Number]->currlocation) {
+				gv->traplist[i] = UNKNOWN;
+			}
+		}
+		
 		break;
 	case 'V':
 		vampire->survive = 0;
-		while (trap_list[place_id][j] != 2) {
-			j++;
-		}
-		trap_list[place_id][j] = 0;
+
 		break;
 	case 'D':
-		hunter->HP = player->HP - LIFE_LOSS_DRACULA_ENCOUNTER;
-		dracula->HP = dracula->HP - LIFE_LOSS_HUNTER_ENCOUNTER;
-		dracula->currlocation = strcpy(place);
+		gv->player[gv->Curr_Player_Number]->HP - = LIFE_LOSS_DRACULA_ENCOUNTER;
+		gv->player[4]->HP - = LIFE_LOSS_HUNTER_ENCOUNTER;
+		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
 		break;
 	case '.':
 		break;
@@ -125,11 +126,13 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int pastPlays_length = strlen(pastPlays)
 	int round = pastPlays_length/40
 	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
-	new->turn_Number = round;        										// in pastplays, 40 characters are one round
+	new->turn_Number = round;
+	
 	new->Curr_PLayer_Number = PLAYER_LORD_GODALMING;
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
+	
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
@@ -180,7 +183,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			Godalming->currlocation = strcpy(place);
 		}
 		if (pastPlaysID > 2 && pastPlaysID < 7) {
-			hunter_condition(pastPlays[pastPlays_counter], Godalming, Dracula, new->vampire, new->trap_list);
+			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
 		}
 		// now is looking at Seward
@@ -192,7 +195,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			Seward->currlocation = strcpy(place);
 		}
 		if (pastPlaysID > 10 && pastPlaysID < 15) {
-			hunter_condition(pastPlays[pastPlays_counter], Seward, Dracula, new->vampire, new->trap_list);
+			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
 		}
 		// now is looking at Helsing
@@ -204,7 +207,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			Helsing->currlocation = strcpy(place);
 		}
 		if (pastPlaysID > 18 && pastPlaysID < 23) {
-			hunter_condition(pastPlays[pastPlays_counter], Helsing, Dracula, new->vampire, new->trap_list);
+			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
 		}
 		// now is looking at Mina
@@ -216,7 +219,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			Mina->currlocation = strcpy(place);
 		}
 		if (pastPlaysID > 26 && pastPlaysID < 31) {
-			hunter_condition(pastPlays[pastPlays_counter], Mina, Dracula, new->vampire, new->trap_list);
+			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
 		}
 		// now is looking at Dracula
