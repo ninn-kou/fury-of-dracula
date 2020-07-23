@@ -362,6 +362,20 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
 
+void bubble_sort(int a[],int n){
+    for(int i = 0; i < n - 1; i++){
+        bool isSorted = true;
+        for(int j = 0; j < n - 1 - i; j++){
+            if(a[j] > a[j + 1]){
+                isSorted = false;
+                int temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1]=temp;
+            }  
+        }
+        if(isSorted) break;
+    }
+}
 int Firstround(ConnList whole, int *array, int i) {
        
     while (whole != NULL && whole->type == RAIL) {        
@@ -373,14 +387,14 @@ int Firstround(ConnList whole, int *array, int i) {
 }
 int removeDuplicates(int* nums, int numsSize)
 {
-    if(numsSize==0) {
+    if(numsSize == 0) {
         return 0;
     }
     int *a1,*a2;
     a1 = nums; 
     a2 = a1 + 1;
     int j = 1;
-    for(int i = 1 ;i < numsSize; i++)
+    for(int i = 1; i < numsSize; i++)
     {
         if(*a1 != *a2) {
             a1 = a1+1;
@@ -410,7 +424,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	        curr = curr->next;
 	}
 	if (player == PLAYER_DRACULA) {
-	    numReturnedLocs = malloc((dracula + 1) * sizeof(int));
+	    numReturnedLocs = malloc((dracula) * sizeof(int));
 	    while (curr != NULL && curr->type != RAIL) {
 	        if (curr->p == ST_JOSEPH_AND_ST_MARY) {
 	        } else {
@@ -420,8 +434,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
 	        curr = curr->next;
 	    }
 	} else {
-	    numReturnedLocs = malloc((hunter + 1)* sizeof(int));
-	    while (curr != NULL && curr->type == ROAD) {
+	    numReturnedLocs = malloc((hunter)* sizeof(int));
+	    while (curr != NULL && curr->type != RAIL) {
 	        numReturnedLocs[count] = curr->p;
 	        count++;
 	        curr = curr->next;
@@ -505,13 +519,14 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 counter2--;
             }
         }
-        
-        int num_array = removeDuplicates(array, roadCounter - 1);
+        bubble_sort (array, roadCounter);
+        int num_array = removeDuplicates(array, roadCounter);
         numReturnedLocs = realloc(numReturnedLocs, (num_array + 1 + count) * sizeof(int));
-        while (num_array > 0) {
-            numReturnedLocs[count] = array[num_array];
+        int num_counter = num_array - 1;
+        while (num_counter > 0) {
+            numReturnedLocs[count] = array[num_counter];
             count++;
-            num_array--;
+            num_counter--;
         } 
     }
     return numReturnedLocs;
@@ -644,37 +659,29 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
             }
             
         }
-        int num_array = removeDuplicates(array, roadCounter - 1);
-        numReturnedLocs = realloc(numReturnedLocs, (count + num_array + 1) * sizeof(int));
-        while (num_array > 0) {
-            numReturnedLocs[count] = array[num_array];
+        bubble_sort (array, roadCounter);
+        int num_array = removeDuplicates(array, roadCounter);
+        numReturnedLocs = realloc(numReturnedLocs, (num_array + 1 + count) * sizeof(int));
+        int num_counter = num_array - 1;
+        while (num_counter > 0) {
+            numReturnedLocs[count] = array[num_counter];
             count++;
-            num_array--;
+            num_counter--;
         }
     }        
-	if (boat) {
-	    
-	    ConnList curr_b_2 = MapGetConnections(gv->map, from);
+	if (boat) {	    
+	    ConnList curr_boat = MapGetConnections(gv->map, from);
 	    int num_b = 0;
-	    while (curr_b_2 != NULL && curr_b_2->type == BOAT) {
+	    while (curr_boat != NULL && curr_boat->type == BOAT) {
 	        num_b++;
-	        curr_b_2 = curr_b_2->next;
+	        curr_boat = curr_boat->next;
 	    }
-	    if (player == PLAYER_DRACULA) {
-	        numReturnedLocs = realloc(numReturnedLocs, (count + num_b + 1) * sizeof(int));
-	        while (curr_b_2 != NULL && curr_b_2->type == BOAT) {
-	            numReturnedLocs[count] = curr_b_2->p;
-	            count++;
-	            curr_b_2 = curr_b_2->next;
-	        }
-	    } else {
-	        numReturnedLocs = realloc(numReturnedLocs, (count + num_b + 1) * sizeof(int));
-	        while (curr_b_2 != NULL && curr_b_2->type == BOAT) {
-	            numReturnedLocs[count] = curr_b_2->p;
-	            count++;
-	            curr_b_2 = curr_b_2->next;
-	        }	
-	}
+        numReturnedLocs = realloc(numReturnedLocs, (count + num_b + 1) * sizeof(int));
+        while (curr_boat != NULL && curr_boat->type == BOAT) {
+            numReturnedLocs[count] = curr_boat->p;
+            count++;
+            curr_boat = curr_boat->next;
+        }
 	}
 	
 	return numReturnedLocs;
