@@ -19,7 +19,7 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
-//void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]);
+void hunter_condition(char c,GameView gv);
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
@@ -56,34 +56,37 @@ struct gameView {
 
 	Map map;
 };
-/*
-void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]) {
+
+void hunter_condition(char c,GameView gv) {
+
 	int j = 0;
 	switch(c){
-	case T:
-		hunter->HP = player->HP - LIFE_LOSS_TRAP_ENCOUNTER;
+	case 'T':
+		gv->player[gv->turn_Number].HP - = LIFE_LOSS_TRAP_ENCOUNTER;
+	
 		while (trap_list[place_id][j] != 1) {
 			j++;
 		}
+		for (int i = gv->traplist[i] = )
 		trap_list[place_id][j] = 0;
 		break;
-	case V:
+	case 'V':
 		vampire->survive = 0;
 		while (trap_list[place_id][j] != 2) {
 			j++;
 		}
 		trap_list[place_id][j] = 0;
 		break;
-	case D:
+	case 'D':
 		hunter->HP = player->HP - LIFE_LOSS_DRACULA_ENCOUNTER;
 		dracula->HP = dracula->HP - LIFE_LOSS_HUNTER_ENCOUNTER;
 		dracula->currlocation = strcpy(place);
 		break;
-	case .:
+	case '.':
 		break;
 	}
 }
-*/
+
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -108,7 +111,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	*/
 
 
-	/*
+	
 	PlayerData Godalming = new->players[0]->ID
 	PlayerData Seward = new->players[1]->ID
 	PlayerData Helsing = new->players[2]->ID
@@ -155,8 +158,11 @@ GameView GvNew(char *pastPlays, Message messages[])
 		Dracula->playerTrail[i] = NOWHERE;
 	}
 		Dracula->currlocation = NOWHERE;
+	// first set up the traplist
 	new->num_traps = 0;
-	new->trap_list = NULL;
+	for(int i = 0; i < 6; i++) {
+		new->traplist[i] = NOWHERE;
+	}
 	new->map = MapNew();
 
 	int pastPlays_counter = 0;
@@ -227,7 +233,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			}
 		}
 		pastPlays_counter++;
-		*/
+		
 	
 	return new;
 }
