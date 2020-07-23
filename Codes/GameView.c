@@ -19,9 +19,9 @@
 #include "Map.h"
 #include "Places.h"
 // add your own #includes here
-void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]);
+//void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]);
 // TODO: ADD YOUR OWN STRUCTS HERE
-#define MAXMUM_TRAP 3
+#define MAXMUM_TRAP 6
 #define NOT_FIND -100
 typedef struct playerData {
 	Player ID;
@@ -47,15 +47,16 @@ struct gameView {
 
 	int num_traps;  // return the sum of traps
 	
-    int **trap_list; // the 2d version of traplist
-                    // traplist[max_real_cities+1][max_traps]
-                    // malloc(sizeof(placeid) * (MAX_REAL_PLACE+1) * max_traps)
+    PlaceId traplist[TRAIL_SIZE]; // the 1d version of traplist
+                    			  // traplist[6]
+    
     
 	
 	Young_vampire vampire;  // point out the info of vampire
 
 	Map map;
 };
+/*
 void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampire vampire, int list[NUM_REAL_PLACES][MAXIMUM_TRAP]) {
 	int j = 0;
 	switch(c){
@@ -82,7 +83,7 @@ void hunter_condition(char c, PlayerData hunter, PlayerData dracula, Young_vampi
 		break;
 	}
 }
-
+*/
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -96,6 +97,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	}
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
     // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
+	/*
     new->trap_list = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
     for(PlaceId city = MIN_REAL_PLACE; city < (MAX_REAL_PLACE + 1); city++) {
         for(int i = 0; i < MAXMUM_TRAP; i++) {
@@ -103,7 +105,10 @@ GameView GvNew(char *pastPlays, Message messages[])
             new->trap_list[city][i] = 0;
         }
     }; 
-	
+	*/
+
+
+	/*
 	PlayerData Godalming = new->players[0]->ID
 	PlayerData Seward = new->players[1]->ID
 	PlayerData Helsing = new->players[2]->ID
@@ -222,7 +227,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 			}
 		}
 		pastPlays_counter++;
-	}
+		*/
+	
 	return new;
 }
 
@@ -296,21 +302,19 @@ PlaceId GvGetVampireLocation(GameView gv)
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
 {
-
-	int sum = 0;
-    // find all the traps in each city
-    // then make these cities into one array.
-    // and record the sum of all traps.
-    int *trap = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
-    for(PlaceId i = MIN_REAL_PLACE; i < MAX_REAL_PLACE; i++){
-        for(int j = 0; j< MAXMUM_TRAP; j++) {
-            if(gv->trap_list[i][j] == 1) {
-                trap[sum] = i;
-                sum++;
-            }
-        }
-    }
-    *numTraps = sum;
+	int *trap = malloc(sizeof(PlaceId)*MAXMUM_TRAP);
+	for(int i = 0; i < 6; i++) {
+		trap[i] = '\0';
+	}
+	
+	int j = 0;
+	for(int i = 0; i < 6; i++) {
+		if(gv->traplist[i] != NOWHERE){
+			trap[j] = gv->traplist[i];
+			j++;
+		}
+	}
+    *numTraps = j;
 
     return trap;
     
