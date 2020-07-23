@@ -195,6 +195,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		if (k == 2) {
 			Godalming->currlocation = placeAbbrevToId(place);
+			cycling(Godalming->playerTrail);
+			Godalming->playerTrail[5] = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 2 && pastPlaysID < 7) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
@@ -207,6 +209,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		if (k == 2) {
 			Seward->currlocation = placeAbbrevToId(place);
+			cycling(Seward->playerTrail);
+			Seward->playerTrail[5] = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 10 && pastPlaysID < 15) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
@@ -219,6 +223,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		if (k == 2) {
 			Helsing->currlocation = placeAbbrevToId(place);
+			cycling(Helsing->playerTrail);
+			Helsing->playerTrail[5] = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 18 && pastPlaysID < 23) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
@@ -231,18 +237,25 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		if (k == 2) {
 			Mina->currlocation = placeAbbrevToId(place);
+			cycling(Mina->playerTrail);
+			Mina->playerTrail[5] = placeAbbrevToId(place);
 		}
 		if (pastPlaysID > 26 && pastPlaysID < 31) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
 		}
 		// now is looking at Dracula
+		if (pastPlaysID == 0){
+			cycling(new->trap_list);
+		}
 		if (pastPlaysID > 32 && pastPlaysID < 35) {
 			place[k] = pastplays[pastPlays_counter]
 			K++;
 		}
 		if (k == 2) {
 			Dracula->currlocation = placeAbbrevToId(place);
+			cycling(Dracula->playerTrail);
+			Dracula->playerTrail[5] = placeAbbrevToId(place);
 			k = 0;
 		}
 		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
