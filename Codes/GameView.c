@@ -231,13 +231,26 @@ GameView GvNew(char *pastPlays, Message messages[])
 			Dracula->currlocation = strcpy(place);
 			k = 0;
 		}
-		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == "T"){
-			
-			}
+		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
+
+		
+		}
+		if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
+			new->vampire->survive = 1;
+			new->vampire->born_round_number = round;
+			new->vampire->born_location = Dracula->currlocation;
+		}
+		if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
+
+		}
+		if (pastPlaysID == 38 && pastPlays[pastPlays_counter] == 'V') {
+			new->vampire->survive = 0;
+			new->vampire->born_round_number= 0;
+			new->vampire->born_location = NOWHERE;
+			new->score -= SCORE_LOSS_VAMPIRE_MATURES;
 		}
 		pastPlays_counter++;
-		
-	
+	}
 	return new;
 }
 
