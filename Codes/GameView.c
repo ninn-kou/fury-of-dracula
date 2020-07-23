@@ -45,13 +45,9 @@ struct gameView {
 	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
 
-	int num_traps;  // return the sum of traps
-	
     PlaceId traplist[TRAIL_SIZE]; // the 1d version of traplist
                     			  // traplist[6]
-    
-    
-	
+ 
 	Young_vampire vampire;  // point out the info of vampire
 
 	Map map;
@@ -110,14 +106,20 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-
+	new->player = malloc(sizeof(PlayerData *)*5);
+	new->traplist = malloc(sizeof(PlaceId)*6);
+	
 
 	
-	PlayerData Godalming = new->players[0]->ID
-	PlayerData Seward = new->players[1]->ID
-	PlayerData Helsing = new->players[2]->ID
-	PlayerData Mina = new->players[3]->ID
-	PlayerData Dracula = new->players[4]->ID
+	PlayerData Godalming = new->players[0];
+
+	PlayerData Seward = new->players[1];
+
+	PlayerData Helsing = new->players[2];
+
+	PlayerData Mina = new->players[3];
+
+	PlayerData Dracula = new->players[4];
 
 
 
@@ -128,41 +130,51 @@ GameView GvNew(char *pastPlays, Message messages[])
 	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
 	new->turn_Number = round;
 	
+
+	// initialize for the godalming
 	new->Curr_PLayer_Number = PLAYER_LORD_GODALMING;
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
-	
-	for(int i = 0; i < TRAIL_SIZE; i++) {
+	Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
+	for(int i = 0; i < 6; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
-		Godalming->currlocation = NOWHERE;
+	
+	// initialize for the seward
 	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
 	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
+	Seward->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Seward->playerTrail[i] = NOWHERE;
 	}
-		Seward->currlocation = NOWHERE;
+	Seward->currlocation = NOWHERE;
+
 	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
 	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
+	Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Helsing->playerTrail[i] = NOWHERE;
 	}
-		Helsing->currlocation = NOWHERE;
+	Helsing->currlocation = NOWHERE;
+	
 	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
 	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
+	mina->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Mina->playerTrail[i] = NOWHERE;
 	}
-		Mina->currlocation = NOWHERE;
+	Mina->currlocation = NOWHERE;
+	
 	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
 	Dracula->HP = GAME_START_BLOOD_POINTS;
+	Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Dracula->playerTrail[i] = NOWHERE;
 	}
-		Dracula->currlocation = NOWHERE;
-	// first set up the traplist
-	new->num_traps = 0;
+	Dracula->currlocation = NOWHERE;
+	
+	
 	for(int i = 0; i < 6; i++) {
 		new->traplist[i] = NOWHERE;
 	}
@@ -173,7 +185,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 	char place[2];
 	int k = 0;
 	while (pastPlays_counter < length) {
-		pastPlaysID = pastPlays_counter % 40					// find whose turn
+		// find whose turn
+		pastPlaysID = pastPlays_counter % 40					
+		
 		// now is looking at Godalming
 		if (pastPlaysID > 0 && pastPlaysID < 3) {
 			place[k] = pastplays[pastPlays_counter]
