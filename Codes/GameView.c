@@ -18,6 +18,7 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+
 // add your own #includes here
 void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]); 
@@ -76,8 +77,8 @@ void hunter_condition(char c,GameView gv) {
 
 	case 'D':
 	
-		gv->player[gv->Curr_Player_Number]->HP - = LIFE_LOSS_DRACULA_ENCOUNTER;
-		gv->player[4]->HP - = LIFE_LOSS_HUNTER_ENCOUNTER;
+		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
+		gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
 		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
 		break;
 	
@@ -86,7 +87,7 @@ void hunter_condition(char c,GameView gv) {
 	}
 }
 void cycling(PlaceId array[TRAIL_SIZE]) {
-	PlaceId temp = array[0];
+	
 	for (int i = 0; i < 5; i ++) {
 		array[i] = array[i+1];
 	}
@@ -114,27 +115,27 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-	new->player = malloc(sizeof(PlayerData *)*5);
-	new->traplist = malloc(sizeof(PlaceId)*6);
+	new->player = malloc(sizeof(struct playerData)*5);
+	new->traplist = malloc(sizeof(enum placeId)*6);
 	
 
 	
-	PlayerData Godalming = new->players[0];
+	PlayerData *Godalming = new->players[0];
 
-	PlayerData Seward = new->players[1];
+	PlayerData *Seward = new->players[1];
 
-	PlayerData Helsing = new->players[2];
+	PlayerData *Helsing = new->players[2];
 
-	PlayerData Mina = new->players[3];
+	PlayerData *Mina = new->players[3];
 
-	PlayerData Dracula = new->players[4];
-
-
+	PlayerData *Dracula = new->players[4];
 
 
 
-	int pastPlays_length = strlen(pastPlays)
-	int round = pastPlays_length/40
+
+
+	int pastPlays_length = strlen(pastPlays);
+	int round = pastPlays_length/40;
 	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
 	new->turn_Number = round;
 	
@@ -191,16 +192,16 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
 	char place[2];
-	int k = 0;
-	Round round_number = 0;
-	while (pastPlays_counter < length) {
+	
+	new->turn_Number = -1;
+	while (pastPlays_counter < pastPlays_length) {
+		int k = 0;
 		// find whose turn
-		pastPlaysID = pastPlays_counter % 40					
+		pastPlaysID = pastPlays_counter % 40;					
 		
 		// set for the counter addition,
 		if(pastPlaysID == 0) {
-			new->turn_Number = round_number;
-			round_number++;
+			new->turn_Number ++;
 		}
 
 		// now is looking at Godalming
