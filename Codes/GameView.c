@@ -234,11 +234,13 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
 	
-	char place[2];
+	char *place;
+	place = malloc(sizeof(char*)*2);
+	
 	int k = 0;
 	Round round_number = 0;
 	while (pastPlays_counter <= pastPlays_length) {
-
+		
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40;
 		int whose_turn = (pastPlaysID + 1) / 8;
@@ -250,123 +252,140 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		}
 
 		// now is looking at Godalming
-		
-		if (pastPlaysID > 0 && pastPlaysID < 3) {
-			place[k] = pastPlays[pastPlays_counter];
-			k++;
-			if (k == 2) {
-				Godalming->currlocation = placeAbbrevToId(place);	
-							
-				cycling(Godalming->playerTrail);
-				Godalming->playerTrail[5] = placeAbbrevToId(place);
+		if(pastPlaysID > 0 && pastPlaysID < 7) {
+			if (pastPlaysID > 0 && pastPlaysID < 3) {
+				place[k] = pastPlays[pastPlays_counter];
+				k++;
+				if (k == 2) {
+					Godalming->currlocation = placeAbbrevToId(place);	
+					
+					//printf(" check 11%s11\n", place);			
+					cycling(Godalming->playerTrail);
+					Godalming->playerTrail[5] = Godalming->currlocation;
+					place[0] = '\0';
+					place[1] = '\0';
 
+				}
 			}
-		}
 
-		
-		if (pastPlaysID > 2 && pastPlaysID < 7) {
-			hunter_condition(pastPlays[pastPlays_counter], new);
-			k = 0;
-		}
+			
+			if (pastPlaysID > 2 && pastPlaysID < 7) {
+				hunter_condition(pastPlays[pastPlays_counter], new);
+				k = 0;
+				
+			}
+		} else if(pastPlaysID > 8 && pastPlaysID < 15) {
 		// now is looking at Seward
-		if (pastPlaysID > 8 && pastPlaysID < 11) {
-			place[k] = pastPlays[pastPlays_counter];
-			k++;
-			if (k == 2) {
-				Seward->currlocation = placeAbbrevToId(place);
-				printf(" check %s\n", place);
-				printf(" check %d\n", placeAbbrevToId(place));
-				printf("%s\n", placeIdToName(Seward->currlocation));
-				printf("check %s\n", placeIdToName(new->player[1]->currlocation));
-				cycling(Seward->playerTrail);
-				Seward->playerTrail[5] = placeAbbrevToId(place);
+			if (pastPlaysID > 8 && pastPlaysID < 11) {
+				place[k] = pastPlays[pastPlays_counter];
+				k++;
+				if (k == 2) {
+					char placenew[2];
+					strcpy(placenew, place);
+					Seward->currlocation = placeAbbrevToId(placenew);
+					//printf(" check 11%s11\n", placenew);
+					//printf(" check 11%d11\n", placeAbbrevToId(place));
+					//printf("%s\n", placeIdToName(Seward->currlocation));
+					//printf("check %s\n", placeIdToName(new->player[1]->currlocation));
+					cycling(Seward->playerTrail);
+					Seward->playerTrail[5] = Seward->currlocation;
+				}
 			}
-		}
-		//Seward->currlocation = placeAbbrevToId(place);
-		//printf(" looooop %s\n", placeIdToName(Seward->currlocation));
-		if (pastPlaysID > 10 && pastPlaysID < 15) {
-			hunter_condition(pastPlays[pastPlays_counter], new);
-			k = 0;
-		}
+			//Seward->currlocation = placeAbbrevToId(place);
+			//printf(" looooop %s\n", placeIdToName(Seward->currlocation));
+			if (pastPlaysID > 10 && pastPlaysID < 15) {
+				hunter_condition(pastPlays[pastPlays_counter], new);
+				k = 0;
+			}
+		} else if(pastPlaysID > 16 && pastPlaysID < 23) {
 		// now is looking at Helsing
-		if (pastPlaysID > 16 && pastPlaysID < 19) {
-			place[k] = pastPlays[pastPlays_counter];
-			k++;
-			if (k == 2 ) {
-				Helsing->currlocation = placeAbbrevToId(place);
-				cycling(Helsing->playerTrail);
-				Helsing->playerTrail[5] = placeAbbrevToId(place);
+			if (pastPlaysID > 16 && pastPlaysID < 19) {
+				place[k] = pastPlays[pastPlays_counter];
+				k++;
+				if (k == 2 ) {
+					Helsing->currlocation = placeAbbrevToId(place);
+					cycling(Helsing->playerTrail);
+					Helsing->playerTrail[5] = placeAbbrevToId(place);
+				}
 			}
-		}
 
-		if (pastPlaysID > 18 && pastPlaysID < 23) {
-			hunter_condition(pastPlays[pastPlays_counter], new);
-			k = 0;
-		}
-		// now is looking at Mina
-		if (pastPlaysID > 24 && pastPlaysID < 27) {
-			place[k] = pastPlays[pastPlays_counter];
-			k++;
-			if (k == 2) {
-				Mina->currlocation = placeAbbrevToId(place);
-				cycling(Mina->playerTrail);
-				Mina->playerTrail[5] = placeAbbrevToId(place);
-			}
-		}
-		
-		if (pastPlaysID > 26 && pastPlaysID < 31) {
-			hunter_condition(pastPlays[pastPlays_counter], new);
-			k = 0;
-		}
-		// now is looking at Dracula
-		if (pastPlaysID == 0){
-			cycling(new->traplist);
-		}
-		if (pastPlaysID > 32 && pastPlaysID < 35) {
-			place[k] = pastPlays[pastPlays_counter];
-			k++;
-			if (k == 2) {
-				if (placeAbbrevToId(place) < HIDE) {
-					Dracula->currlocation = placeAbbrevToId(place);
-				} else if (placeAbbrevToId(place) == TELEPORT){
-					// TP
-					Dracula->currlocation = CASTLE_DRACULA;
-				} else {
-					// double back && Hide
-					Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
-				}
-					// check wheather in sea
-				if (placeIsSea(Dracula->currlocation) == true) {
-					Dracula->HP -= LIFE_LOSS_SEA;
-					check_HP(new);
-				}
-				if (Dracula->currlocation == CASTLE_DRACULA) {
-					Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
-				}
-				// roll the trail
-				cycling(Dracula->playerTrail);
-				Dracula->playerTrail[5] = Dracula->currlocation;
+			if (pastPlaysID > 18 && pastPlaysID < 23) {
+				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
 		}
+		// now is looking at Mina
+		else if (pastPlaysID > 24 && pastPlaysID < 31) {
 
-		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
+			if (pastPlaysID > 24 && pastPlaysID < 27) {
+				place[k] = pastPlays[pastPlays_counter];
+				k++;
+				if (k == 2) {
+					Mina->currlocation = placeAbbrevToId(place);
+					cycling(Mina->playerTrail);
+					Mina->playerTrail[5] = placeAbbrevToId(place);
+				}
+			}
+			
+			if (pastPlaysID > 26 && pastPlaysID < 31) {
+				hunter_condition(pastPlays[pastPlays_counter], new);
+				k = 0;
+			}
+		} else {
+			// now is looking at Dracula
+			if (pastPlaysID == 0){
+				cycling(new->traplist);
+			}
+			if (pastPlaysID > 32 && pastPlaysID < 35) {
+				place[k] = pastPlays[pastPlays_counter];
+				k++;
+				if (k == 2) {
+					if (placeAbbrevToId(place) < HIDE) {
+						Dracula->currlocation = placeAbbrevToId(place);
+					} else if (placeAbbrevToId(place) == TELEPORT){
+						// TP
+						Dracula->currlocation = CASTLE_DRACULA;
+					} else {
+						// double back && Hide
+						Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
+					}
+						// check wheather in sea
+					if (placeIsSea(Dracula->currlocation) == true) {
+						Dracula->HP -= LIFE_LOSS_SEA;
+						check_HP(new);
+					}
+					if (Dracula->currlocation == CASTLE_DRACULA) {
+						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
+					}
+					// roll the trail
+					cycling(Dracula->playerTrail);
+					Dracula->playerTrail[5] = Dracula->currlocation;
+					k = 0;
+				}
+			}
 
-		}
-		if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
-			new->vampire->survive = 1;
-			new->vampire->born_round_number = new->turn_Number;
-			new->vampire->born_location = Dracula->currlocation;
-		}
-		if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
+			if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
 
+			}
+			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
+				new->vampire->survive = 1;
+				new->vampire->born_round_number = new->turn_Number;
+				new->vampire->born_location = Dracula->currlocation;
+			}
+			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
+
+			}
+			if (pastPlaysID == 38 && pastPlays[pastPlays_counter] == 'V') {
+				new->vampire->survive = 0;
+				new->vampire->born_round_number= -1;
+				new->vampire->born_location = NOWHERE;
+				new->score -= SCORE_LOSS_VAMPIRE_MATURES;
+			}
 		}
-		if (pastPlaysID == 38 && pastPlays[pastPlays_counter] == 'V') {
-			new->vampire->survive = 0;
-			new->vampire->born_round_number= -1;
-			new->vampire->born_location = NOWHERE;
-			new->score -= SCORE_LOSS_VAMPIRE_MATURES;
-		}
+		//if(pastPlaysID == 8 ||pastPlaysID == 9){
+			printf(" check 11%s11\n", place);
+			printf(" check 11%d11\n", placeAbbrevToId(place));
+		//}
 		pastPlays_counter++;
 
 	
