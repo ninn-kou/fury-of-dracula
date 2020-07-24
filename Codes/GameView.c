@@ -31,6 +31,12 @@ void Is_Hunter_rest(GameView gv);
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
 
+#define Godalming (new->player[0])
+#define Seward (new->player[1])
+#define Helsing (new->player[2])
+#define Mina (new->player[3])
+#define Dracula (new->player[4])
+
 typedef struct playerData {
 	Player ID;
 	int HP;
@@ -112,6 +118,7 @@ void cycling(PlaceId array[TRAIL_SIZE]) {
 	for (int i = 0; i < 5; i ++) {
 		array[i] = array[i+1];
 	}
+	array[5] = NOWHERE;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -146,11 +153,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	
 	
 
-	PlayerData *Godalming = new->player[0];
-	PlayerData *Seward = new->player[1];
-	PlayerData *Helsing = new->player[2];
-	PlayerData *Mina = new->player[3];
-	PlayerData *Dracula = new->player[4];
+
 
 
 
@@ -230,14 +233,15 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
-	int whose_turn = 0;
+	
 	char place[2];
 	int k = 0;
 	Round round_number = 0;
-	while (pastPlays_counter < pastPlays_length) {
+	while (pastPlays_counter <= pastPlays_length) {
+
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40;
-		whose_turn = pastPlaysID / 8;
+		int whose_turn = (pastPlaysID + 1) / 8;
 		new->Curr_Player_Number = whose_turn;
 		// set for the counter addition,
 		if(pastPlaysID == 0) {
@@ -246,16 +250,23 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		}
 
 		// now is looking at Godalming
+		
 		if (pastPlaysID > 0 && pastPlaysID < 3) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
+			if (k == 2) {
+				Godalming->currlocation = placeAbbrevToId(place);
+				// printf(" check %s\n", place);
+				// printf("%s\n", placeIdToName(Godalming->currlocation));
+				// printf("check %s\n", placeIdToName(new->player[0]->currlocation));
+				
+				cycling(Godalming->playerTrail);
+				Godalming->playerTrail[5] = placeAbbrevToId(place);
+
+			}
 		}
 
-		if (k == 2) {
-			Godalming->currlocation = placeAbbrevToId(place);
-			cycling(Godalming->playerTrail);
-			Godalming->playerTrail[5] = placeAbbrevToId(place);
-		}
+	
 		if (pastPlaysID > 2 && pastPlaysID < 7) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -264,12 +275,13 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		if (pastPlaysID > 8 && pastPlaysID < 11) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
+			if (k == 2) {
+				Seward->currlocation = placeAbbrevToId(place);
+				cycling(Seward->playerTrail);
+				Seward->playerTrail[5] = placeAbbrevToId(place);
+			}
 		}
-		if (k == 2) {
-			Seward->currlocation = placeAbbrevToId(place);
-			cycling(Seward->playerTrail);
-			Seward->playerTrail[5] = placeAbbrevToId(place);
-		}
+
 		if (pastPlaysID > 10 && pastPlaysID < 15) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -278,12 +290,13 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		if (pastPlaysID > 16 && pastPlaysID < 19) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
+			if (k == 2 ) {
+				Helsing->currlocation = placeAbbrevToId(place);
+				cycling(Helsing->playerTrail);
+				Helsing->playerTrail[5] = placeAbbrevToId(place);
+			}
 		}
-		if (k == 2) {
-			Helsing->currlocation = placeAbbrevToId(place);
-			cycling(Helsing->playerTrail);
-			Helsing->playerTrail[5] = placeAbbrevToId(place);
-		}
+
 		if (pastPlaysID > 18 && pastPlaysID < 23) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -292,12 +305,13 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		if (pastPlaysID > 24 && pastPlaysID < 27) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
+			if (k == 2) {
+				Mina->currlocation = placeAbbrevToId(place);
+				cycling(Mina->playerTrail);
+				Mina->playerTrail[5] = placeAbbrevToId(place);
+			}
 		}
-		if (k == 2) {
-			Mina->currlocation = placeAbbrevToId(place);
-			cycling(Mina->playerTrail);
-			Mina->playerTrail[5] = placeAbbrevToId(place);
-		}
+		
 		if (pastPlaysID > 26 && pastPlaysID < 31) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -351,6 +365,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			new->score -= SCORE_LOSS_VAMPIRE_MATURES;
 		}
 		pastPlays_counter++;
+
+	
 	}
 	return new;
 }
@@ -368,7 +384,7 @@ void GvFree(GameView gv)
 Round GvGetRound(GameView gv)
 {
 	// gets the current round number
-	printf("11111111111\n");
+	// printf("11111111111\n");
 	return (gv->turn_Number);
 }
 
@@ -400,16 +416,20 @@ int GvGetHealth(GameView gv, Player player) {
 //ssh test
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player) {
-	int temp = 0;
+	// int temp = 0;
 	// find the player form the playerlist,
 	// then return the location,
-	while (temp < NUM_PLAYERS) {
-		if (gv->player[temp]->ID == player) {
-			return (gv->player[temp]->currlocation);
-		}
-	}
+	//while (temp < NUM_PLAYERS) {
+	//	if (gv->player[temp]->ID == player) {
+	//		return (gv->player[temp]->currlocation);
+	//	}
+	// }
+	printf("now %s\n", placeIdToName(gv->player[player]->currlocation));
+	printf("now %d\n", gv->player[player]->currlocation);
+	printf("333 %s\n", placeIdToName(gv->player[2]->currlocation)); 
 
-	return NOWHERE;
+	return gv->player[player]->currlocation;
+	
 }
 
 PlaceId GvGetVampireLocation(GameView gv) {
