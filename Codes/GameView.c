@@ -255,18 +255,15 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
 			if (k == 2) {
-				Godalming->currlocation = placeAbbrevToId(place);
-				// printf(" check %s\n", place);
-				// printf("%s\n", placeIdToName(Godalming->currlocation));
-				// printf("check %s\n", placeIdToName(new->player[0]->currlocation));
-				
+				Godalming->currlocation = placeAbbrevToId(place);	
+							
 				cycling(Godalming->playerTrail);
 				Godalming->playerTrail[5] = placeAbbrevToId(place);
 
 			}
 		}
 
-	
+		
 		if (pastPlaysID > 2 && pastPlaysID < 7) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -277,11 +274,16 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			k++;
 			if (k == 2) {
 				Seward->currlocation = placeAbbrevToId(place);
+				printf(" check %s\n", place);
+				printf(" check %d\n", placeAbbrevToId(place));
+				printf("%s\n", placeIdToName(Seward->currlocation));
+				printf("check %s\n", placeIdToName(new->player[1]->currlocation));
 				cycling(Seward->playerTrail);
 				Seward->playerTrail[5] = placeAbbrevToId(place);
 			}
 		}
-
+		//Seward->currlocation = placeAbbrevToId(place);
+		//printf(" looooop %s\n", placeIdToName(Seward->currlocation));
 		if (pastPlaysID > 10 && pastPlaysID < 15) {
 			hunter_condition(pastPlays[pastPlays_counter], new);
 			k = 0;
@@ -323,30 +325,31 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		if (pastPlaysID > 32 && pastPlaysID < 35) {
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
+			if (k == 2) {
+				if (placeAbbrevToId(place) < HIDE) {
+					Dracula->currlocation = placeAbbrevToId(place);
+				} else if (placeAbbrevToId(place) == TELEPORT){
+					// TP
+					Dracula->currlocation = CASTLE_DRACULA;
+				} else {
+					// double back && Hide
+					Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
+				}
+					// check wheather in sea
+				if (placeIsSea(Dracula->currlocation) == true) {
+					Dracula->HP -= LIFE_LOSS_SEA;
+					check_HP(new);
+				}
+				if (Dracula->currlocation == CASTLE_DRACULA) {
+					Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
+				}
+				// roll the trail
+				cycling(Dracula->playerTrail);
+				Dracula->playerTrail[5] = Dracula->currlocation;
+				k = 0;
+			}
 		}
-		if (k == 2) {
-			if (placeAbbrevToId(place) < HIDE) {
-			Dracula->currlocation = placeAbbrevToId(place);
-			} else if (placeAbbrevToId(place) == TELEPORT){
-				// TP
-				Dracula->currlocation = CASTLE_DRACULA;
-			} else {
-				// double back && Hide
-				Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
-			}
-				// check wheather in sea
-			if (placeIsSea(Dracula->currlocation) == true) {
-				Dracula->HP -= LIFE_LOSS_SEA;
-				check_HP(new);
-			}
-			if (Dracula->currlocation == CASTLE_DRACULA) {
-				Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
-			}
-			// roll the trail
-			cycling(Dracula->playerTrail);
-			Dracula->playerTrail[5] = Dracula->currlocation;
-			k = 0;
-		}
+
 		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
 
 		}
@@ -424,9 +427,9 @@ PlaceId GvGetPlayerLocation(GameView gv, Player player) {
 	//		return (gv->player[temp]->currlocation);
 	//	}
 	// }
-	printf("now %s\n", placeIdToName(gv->player[player]->currlocation));
-	printf("now %d\n", gv->player[player]->currlocation);
-	printf("333 %s\n", placeIdToName(gv->player[2]->currlocation)); 
+	//printf("now %s\n", placeIdToName(gv->player[player]->currlocation));
+	//printf("now %d\n", gv->player[player]->currlocation);
+	//printf("333 %s\n", placeIdToName(gv->player[2]->currlocation)); 
 
 	return gv->player[player]->currlocation;
 	
