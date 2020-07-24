@@ -26,6 +26,7 @@ void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]);
 void check_HP(GameView gv);
 void Is_Hunter_rest(GameView gv);
+void Is_need_Recovery(GameView gv);
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
@@ -61,6 +62,11 @@ struct gameView {
 	Map map;
 };
 
+void Is_need_Recovery(GameView gv) {
+	if (gv->player[gv->Curr_Player_Number]->HP == 0) {
+		gv->player[gv->Curr_Player_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	}
+}
 void Is_Hunter_rest(GameView gv) {
 	if (gv->player[gv->Curr_Player_Number]->playerTrail[5] 
 	== gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
@@ -78,7 +84,7 @@ void check_HP(GameView gv) {
 			gv->player[gv->Curr_Player_Number]->currlocation = HOSPITAL_PLACE;
 			cycling(gv->player[gv->Curr_Player_Number]->playerTrail);
 			gv->player[gv->Curr_Player_Number]->playerTrail[5] = HOSPITAL_PLACE;
-			gv->player[gv->Curr_Player_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
+			gv->player[gv->Curr_Player_Number]->HP = 0;
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
@@ -258,6 +264,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID > 0 && pastPlaysID < 3) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
+				// check the life point of hunter, and recovery if is 0
+				Is_need_Recovery(new);
 				if (k == 2) {
 					Godalming->currlocation = placeAbbrevToId(place);	
 					
@@ -279,6 +287,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID > 8 && pastPlaysID < 11) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
+				// check the life point of hunter, and recovery if is 0
+				Is_need_Recovery(new);
 				if (k == 2) {
 					char placenew[2];
 					strcpy(placenew, place);
@@ -302,6 +312,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID > 16 && pastPlaysID < 19) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
+				// check the life point of hunter, and recovery if is 0
+				Is_need_Recovery(new);
 				if (k == 2 ) {
 					Helsing->currlocation = placeAbbrevToId(place);
 					cycling(Helsing->playerTrail);
@@ -320,6 +332,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID > 24 && pastPlaysID < 27) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
+				// check the life point of hunter, and recovery if is 0
+				Is_need_Recovery(new);
 				if (k == 2) {
 					Mina->currlocation = placeAbbrevToId(place);
 					cycling(Mina->playerTrail);
