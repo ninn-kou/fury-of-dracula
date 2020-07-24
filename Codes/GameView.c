@@ -56,8 +56,11 @@ struct gameView {
 
 	Map map;
 };
+
 void Is_Hunter_rest(GameView gv) {
-	if (gv->player[gv->Curr_Player_Number]->playerTrail[5] == gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
+	if (gv->player[gv->Curr_Player_Number]->playerTrail[5] 
+	== gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
+		
 		int limit_HP = 9;
 		gv->player[gv->Curr_Player_Number]->HP += LIFE_GAIN_REST;
 		if (gv->player[gv->Curr_Player_Number]->HP > limit_HP) {
@@ -65,6 +68,7 @@ void Is_Hunter_rest(GameView gv) {
 		}
 	}
 }
+
 void check_HP(GameView gv) {
 	if (gv->player[gv->Curr_Player_Number]->HP <= 0) {
 			gv->player[gv->Curr_Player_Number]->currlocation = HOSPITAL_PLACE;
@@ -74,6 +78,7 @@ void check_HP(GameView gv) {
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
+
 void hunter_condition(char c,GameView gv) {
 
 	switch(c){
@@ -106,6 +111,7 @@ void hunter_condition(char c,GameView gv) {
 		break;
 	}
 }
+
 void cycling(PlaceId array[TRAIL_SIZE]) {
 	for (int i = 0; i < 5; i ++) {
 		array[i] = array[i+1];
@@ -123,6 +129,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
+
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
     // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
 	/*
@@ -134,8 +141,9 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-	new->player = malloc(5 * sizeof(PlayerData *));
-	new->traplist = malloc(sizeof(PlaceId)*6);
+	//new->player = malloc(5 * sizeof(PlayerData *));
+	//new->traplist = malloc(sizeof(PlaceId)*6);
+	new->vampire = malloc(sizeof(struct young_vampire *));
 	
 
 	
@@ -151,11 +159,9 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 
 
-
-
 	int pastPlays_length = strlen(pastPlays);
 	int round = pastPlays_length/40;
-	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; 		// game start at score 366
+	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; // game start at score 366
 	new->turn_Number = round;
 	
 
@@ -164,7 +170,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
-	Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
+	//Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < 6; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
@@ -172,7 +178,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	// initialize for the seward
 	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
 	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Seward->playerTrail = malloc(sizeof(PlaceId)*6);
+	//Seward->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Seward->playerTrail[i] = NOWHERE;
 	}
@@ -180,15 +186,15 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
 	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
+	//Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Helsing->playerTrail[i] = NOWHERE;
 	}
 	Helsing->currlocation = NOWHERE;
 	
-	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
+	Mina->ID = PLAYER_MINA_HARKER;									// the first player is Mina Harker
 	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
-	Mina->playerTrail = malloc(sizeof(PlaceId)*6);
+	//Mina->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Mina->playerTrail[i] = NOWHERE;
 	}
@@ -196,7 +202,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
 	Dracula->HP = GAME_START_BLOOD_POINTS;
-	Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
+	//Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Dracula->playerTrail[i] = NOWHERE;
 	}
@@ -338,7 +344,8 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 void GvFree(GameView gv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	free(gv->map);
+	free(gv->vampire);
 	free(gv);
 }
 
@@ -375,7 +382,6 @@ int GvGetHealth(GameView gv, Player player)
 	}
 	
 	return (blood);
-	
 }
 //ssh test
 
@@ -549,7 +555,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
     while (curr != NULL && curr->type == RAIL) {
         hunter2++;
     }
-    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD || player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
+    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD 
+	|| player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
         int array[1000];       
         int n = 0;
         while (n < 1000) {
