@@ -18,12 +18,12 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-
 // add your own #includes here
 #include <string.h>
 void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]); 
 void check_HP(GameView gv);
+void Is_Hunter_rest(GameView gv);
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
@@ -56,12 +56,21 @@ struct gameView {
 
 	Map map;
 };
+void Is_Hunter_rest(GameView gv) {
+	if (gv->player[gv->Curr_Player_Number]->playerTrail[5] == gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
+		int limit_HP = 9;
+		gv->player[gv->Curr_Player_Number]->HP += LIFE_GAIN_REST;
+		if (gv->player[gv->Curr_Player_Number]->HP > limit_HP) {
+			gv->player[gv->Curr_Player_Number]->HP = limit_HP;
+		}
+	}
+}
 void check_HP(GameView gv) {
-	if (gv->player[gv->turn_Number]->HP <= 0) {
-			gv->player[gv->turn_Number]->currlocation = HOSPITAL_PLACE;
-			cycling(gv->player[gv->turn_Number]->playerTrail);
-			gv->player[gv->turn_Number]->playerTrail[5] = HOSPITAL_PLACE;
-			gv->player[gv->turn_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
+	if (gv->player[gv->Curr_Player_Number]->HP <= 0) {
+			gv->player[gv->Curr_Player_Number]->currlocation = HOSPITAL_PLACE;
+			cycling(gv->player[gv->Curr_Player_Number]->playerTrail);
+			gv->player[gv->Curr_Player_Number]->playerTrail[5] = HOSPITAL_PLACE;
+			gv->player[gv->Curr_Player_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
@@ -69,7 +78,7 @@ void hunter_condition(char c,GameView gv) {
 
 	switch(c){
 	case 'T':
-		gv->player[gv->turn_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
+		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
 		check_HP(gv);
 	
 		for (int i = 0; i < 6; i++) {
@@ -125,8 +134,8 @@ GameView GvNew(char *pastPlays, Message messages[])
         }
     }; 
 	*/
-	// new->player = malloc(5 * sizeof(PlayerData *));
-	// new->traplist = malloc(sizeof(PlaceId)*6);
+	new->player = malloc(5 * sizeof(PlayerData *));
+	new->traplist = malloc(sizeof(PlaceId)*6);
 	
 
 	
@@ -155,7 +164,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	Godalming->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
 	Godalming->HP = GAME_START_HUNTER_LIFE_POINTS;
 	Godalming->currlocation = NOWHERE;
-	// Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
+	Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < 6; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
@@ -163,7 +172,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	// initialize for the seward
 	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
 	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
-	// Seward->playerTrail = malloc(sizeof(PlaceId)*6);
+	Seward->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Seward->playerTrail[i] = NOWHERE;
 	}
@@ -171,7 +180,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
 	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
-	// Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
+	Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Helsing->playerTrail[i] = NOWHERE;
 	}
@@ -179,7 +188,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Mina->ID = PLAYER_MINA_HARKER;								// the first player is Mina Harker
 	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
-	// Mina->playerTrail = malloc(sizeof(PlaceId)*6);
+	Mina->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Mina->playerTrail[i] = NOWHERE;
 	}
@@ -187,7 +196,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	
 	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
 	Dracula->HP = GAME_START_BLOOD_POINTS;
-	// Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
+	Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
 	for(int i = 0; i < TRAIL_SIZE; i++) {
 		Dracula->playerTrail[i] = NOWHERE;
 	}
@@ -201,17 +210,19 @@ GameView GvNew(char *pastPlays, Message messages[])
 
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
+	int whose_turn = 0;
 	char place[2];
-	
-	new->turn_Number = -1;
+	int k = 0;
+	Round round_number = 0;
 	while (pastPlays_counter < pastPlays_length) {
-		int k = 0;
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40;					
-		
+		whose_turn = pastPlaysID / 8;
+		new->Curr_Player_Number = whose_turn;
 		// set for the counter addition,
 		if(pastPlaysID == 0) {
-			new->turn_Number ++;
+			new->turn_Number = round_number;
+			round_number++;
 		}
 
 		// now is looking at Godalming
@@ -280,9 +291,26 @@ GameView GvNew(char *pastPlays, Message messages[])
 			k++;
 		}
 		if (k == 2) {
+			if (placeAbbrevToId(place) < HIDE) {
 			Dracula->currlocation = placeAbbrevToId(place);
+			} else if (placeAbbrevToId(place) == TELEPORT){
+				// TP
+				Dracula->currlocation = CASTLE_DRACULA;
+			} else {
+				// double back && Hide
+				Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
+			}
+				// check wheather in sea
+			if (placeIsSea(Dracula->currlocation) == true) {
+				Dracula->HP -= LIFE_LOSS_SEA;
+				check_HP(new);
+			}
+			if (Dracula->currlocation == CASTLE_DRACULA) {
+				Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
+			}
+			// roll the trail
 			cycling(Dracula->playerTrail);
-			Dracula->playerTrail[5] = placeAbbrevToId(place);
+			Dracula->playerTrail[5] = Dracula->currlocation;
 			k = 0;
 		}
 		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
