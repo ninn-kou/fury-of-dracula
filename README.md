@@ -11,12 +11,12 @@ Group working for COMP2521, Term 2 2020, Assignment 2.
 
 ## Teammates
 
-| Name         | zID      |
-|--------------|----------|
-| Hao Ren      | z5237203 |
-| Xingyu Tan   | z5237560 |
-| Anbang Cheng | z5237233 |
-| Yi Shang     | z5237494 |
+| Name         | zID      | GitHub Accounts        |
+|--------------|----------|------------------------|
+| Hao Ren      | z5237203 | flying-yogurt          |
+| Xingyu Tan   | z5237560 | SteveTANTAN, Steve0321 |
+| Anbang Cheng | z5237233 | AnbangCheng            |
+| Yi Shang     | z5237494 | YiShang08              |
 
 ## Our Meeting History
 
