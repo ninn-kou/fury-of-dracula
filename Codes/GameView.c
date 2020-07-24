@@ -18,42 +18,40 @@
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
+
 // add your own #includes here
 #include <string.h>
+
 void hunter_condition(char c,GameView gv);
-void cycling(PlaceId array[TRAIL_SIZE]); 
+void cycling(PlaceId array[TRAIL_SIZE]);
 void check_HP(GameView gv);
 void Is_Hunter_rest(GameView gv);
+
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
+
 typedef struct playerData {
 	Player ID;
 	int HP;
 	PlaceId currlocation;
-	PlaceId playerTrail[TRAIL_SIZE];    
+	PlaceId playerTrail[TRAIL_SIZE];
 } PlayerData;
 
 typedef struct young_vampire{
-	
 	int survive;    // return 1 for true, 0 for died.
 	int born_round_number; // record which turn the vampire born.
 	PlaceId born_location;  // // record which city the vampire born.
 } *Young_vampire;
 
 struct gameView {
-	
 	int score;
 	Round turn_Number;
-
 	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
-
     PlaceId traplist[TRAIL_SIZE]; // the 1d version of traplist
                     			  // traplist[6]
- 
 	Young_vampire vampire;  // point out the info of vampire
-
 	Map map;
 };
 
@@ -78,35 +76,33 @@ void check_HP(GameView gv) {
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
+<<<<<<< HEAD
 
 void hunter_condition(char c,GameView gv) {
+=======
+>>>>>>> 3cceb4141886f3ac831fdaa7fb3bb49556ef08cf
 
-	switch(c){
+void hunter_condition(char c,GameView gv) {
+	switch (c){
 	case 'T':
 		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
-		check_HP(gv);
-	
+		check_HP (gv);
 		for (int i = 0; i < 6; i++) {
-			if(gv->traplist[i] == 
+			if (gv->traplist[i] ==
 			gv->player[gv->Curr_Player_Number]->currlocation) {
 				gv->traplist[i] = UNKNOWN;
 			}
 		}
-		
 		break;
 	case 'V':
 		gv->vampire->survive = 0;
-
 		break;
-
 	case 'D':
-	
 		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
 		gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
 		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
 		check_HP(gv);
 		break;
-	
 	case '.':
 		break;
 	}
@@ -121,8 +117,7 @@ void cycling(PlaceId array[TRAIL_SIZE]) {
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
-GameView GvNew(char *pastPlays, Message messages[])
-{
+GameView GvNew(char *pastPlays, Message messages[]) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(*new));
 	if (new == NULL) {
@@ -139,22 +134,17 @@ GameView GvNew(char *pastPlays, Message messages[])
             // makesure the trap for all the city is zero;
             new->trap_list[city][i] = 0;
         }
-    }; 
+    };
 	*/
 	//new->player = malloc(5 * sizeof(PlayerData *));
 	//new->traplist = malloc(sizeof(PlaceId)*6);
 	new->vampire = malloc(sizeof(struct young_vampire *));
 	
 
-	
 	PlayerData *Godalming = new->player[0];
-
 	PlayerData *Seward = new->player[1];
-
 	PlayerData *Helsing = new->player[2];
-
 	PlayerData *Mina = new->player[3];
-
 	PlayerData *Dracula = new->player[4];
 
 
@@ -163,7 +153,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 	int round = pastPlays_length/40;
 	new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; // game start at score 366
 	new->turn_Number = round;
-	
 
 	// initialize for the godalming
 	new->Curr_Player_Number = PLAYER_LORD_GODALMING;
@@ -174,7 +163,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	for(int i = 0; i < 6; i++) {
 		Godalming->playerTrail[i] = NOWHERE;
 	}
-	
+
 	// initialize for the seward
 	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
 	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
@@ -199,7 +188,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		Mina->playerTrail[i] = NOWHERE;
 	}
 	Mina->currlocation = NOWHERE;
-	
+
 	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
 	Dracula->HP = GAME_START_BLOOD_POINTS;
 	//Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
@@ -207,8 +196,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 		Dracula->playerTrail[i] = NOWHERE;
 	}
 	Dracula->currlocation = NOWHERE;
-	
-	
+
 	for(int i = 0; i < 6; i++) {
 		new->traplist[i] = NOWHERE;
 	}
@@ -222,7 +210,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 	Round round_number = 0;
 	while (pastPlays_counter < pastPlays_length) {
 		// find whose turn
-		pastPlaysID = pastPlays_counter % 40;					
+		pastPlaysID = pastPlays_counter % 40;
 		whose_turn = pastPlaysID / 8;
 		new->Curr_Player_Number = whose_turn;
 		// set for the counter addition,
@@ -236,7 +224,7 @@ GameView GvNew(char *pastPlays, Message messages[])
 			place[k] = pastPlays[pastPlays_counter];
 			k++;
 		}
-		
+
 		if (k == 2) {
 			Godalming->currlocation = placeAbbrevToId(place);
 			cycling(Godalming->playerTrail);
@@ -321,7 +309,6 @@ GameView GvNew(char *pastPlays, Message messages[])
 		}
 		if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
 
-		
 		}
 		if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
 			new->vampire->survive = 1;
@@ -370,56 +357,52 @@ int GvGetScore(GameView gv)
 	return (gv->score);
 }
 
-int GvGetHealth(GameView gv, Player player)
-{
+int GvGetHealth(GameView gv, Player player) {
 	// find the correct player, then  return the info
 	int temp = 0;
 	int blood = 0;
 	while (temp < NUM_PLAYERS) {
-		if(gv->player[temp]->ID == player){
+		if (gv->player[temp]->ID == player){
 			blood = gv->player[temp]->HP;
 		}
 	}
-	
+
 	return (blood);
 }
 //ssh test
 
-PlaceId GvGetPlayerLocation(GameView gv, Player player)
-{
+PlaceId GvGetPlayerLocation(GameView gv, Player player) {
 	int temp = 0;
 	// find the player form the playerlist,
 	// then return the location,
 	while (temp < NUM_PLAYERS) {
-		if(gv->player[temp]->ID == player){
+		if (gv->player[temp]->ID == player) {
 			return (gv->player[temp]->currlocation);
 		}
 	}
-	
+
 	return NOWHERE;
 }
 
-PlaceId GvGetVampireLocation(GameView gv)
-{
+PlaceId GvGetVampireLocation(GameView gv) {
 	// if the young vampire died, return nowhere;
 	if (!gv->vampire->survive) {
-		return NOWHERE;	
+		return NOWHERE;
 	}
-	
+
 	// else just return the info
 	return (gv->vampire->born_location);
 }
 
-PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
-{
+PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 	int *trap = malloc(sizeof(PlaceId)*MAXMUM_TRAP);
-	for(int i = 0; i < 6; i++) {
+	for (int i = 0; i < 6; i++) {
 		trap[i] = '\0';
 	}
-	
+
 	int j = 0;
-	for(int i = 0; i < 6; i++) {
-		if(gv->traplist[i] != NOWHERE){
+	for (int i = 0; i < 6; i++) {
+		if (gv->traplist[i] != NOWHERE){
 			trap[j] = gv->traplist[i];
 			j++;
 		}
@@ -427,42 +410,33 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps)
     *numTraps = j;
 
     return trap;
-    
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Game History
 
-PlaceId *GvGetMoveHistory(GameView gv, Player player,
-                          int *numReturnedMoves, bool *canFree)
-{
+PlaceId *GvGetMoveHistory(GameView gv, Player player, int *numReturnedMoves, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
 	*canFree = false;
 	return NULL;
 }
 
-PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves,
-                        int *numReturnedMoves, bool *canFree)
-{
+PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves, int *numReturnedMoves, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
 	*canFree = false;
 	return NULL;
 }
 
-PlaceId *GvGetLocationHistory(GameView gv, Player player,
-                              int *numReturnedLocs, bool *canFree)
-{
+PlaceId *GvGetLocationHistory(GameView gv, Player player, int *numReturnedLocs, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	*canFree = false;
 	return NULL;
 }
 
-PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
-                            int *numReturnedLocs, bool *canFree)
-{
+PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, int *numReturnedLocs, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	*canFree = false;
@@ -471,55 +445,49 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
-
 void bubble_sort(int a[],int n){
-    for(int i = 0; i < n - 1; i++){
+    for (int i = 0; i < n - 1; i++){
         bool isSorted = true;
-        for(int j = 0; j < n - 1 - i; j++){
-            if(a[j] > a[j + 1]){
+        for (int j = 0; j < n - 1 - i; j++){
+            if (a[j] > a[j + 1]){
                 isSorted = false;
                 int temp = a[j];
                 a[j] = a[j + 1];
                 a[j + 1]=temp;
-            }  
+            }
         }
-        if(isSorted) break;
+        if (isSorted) break;
     }
 }
 int Firstround(ConnList whole, int *array, int i) {
-       
-    while (whole != NULL && whole->type == RAIL) {        
-        array[i] = whole->p;             
+    while (whole != NULL && whole->type == RAIL) {
+        array[i] = whole->p;
         i++;
         whole = whole->next;
-    } 
-    return i;    
+    }
+    return i;
 }
-int removeDuplicates(int* nums, int numsSize)
-{
-    if(numsSize == 0) {
+int removeDuplicates(int* nums, int numsSize) {
+    if (numsSize == 0) {
         return 0;
     }
     int *a1,*a2;
-    a1 = nums; 
+    a1 = nums;
     a2 = a1 + 1;
     int j = 1;
-    for(int i = 1; i < numsSize; i++)
-    {
-        if(*a1 != *a2) {
+    for (int i = 1; i < numsSize; i++) {
+        if (*a1 != *a2) {
             a1 = a1+1;
             j++;
             *a1 = *a2;
         }
         a2 = a2 + 1;
     }
-    return j; 
+    return j;
 }
-PlaceId *GvGetReachable(GameView gv, Player player, Round round,
-                        PlaceId from, int *numReturnedLocs)
-{
+
+PlaceId *GvGetReachable(GameView gv, Player player, Round round, PlaceId from, int *numReturnedLocs) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	
 	ConnList curr = MapGetConnections(gv->map, from);
 	int count = 0;
 	int dracula = 0;
@@ -564,20 +532,20 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
             n++;
         }
         int roadCounter = 0;
-        if ((player + round) % 4 == 0) { 
+        if ((player + round) % 4 == 0) {
         }
-        if ((player + round) % 4 == 1) {  
+        if ((player + round) % 4 == 1) {
             roadCounter = Firstround(curr, array, roadCounter);
         }
         if ((player + round) % 4 == 2) {
-            int counterArray[1000];            
+            int counterArray[1000];
             int Secondarycounter = 0;
             while (Secondarycounter < 1000) {
                 counterArray[Secondarycounter] = -1;
                 Secondarycounter++;
             }
             int k = Firstround(curr, counterArray, 0);
-            ConnList *Array1 = malloc(k * sizeof(ConnList));            
+            ConnList *Array1 = malloc(k * sizeof(ConnList));
             int l = k - 1;
             int z = k - 1;
             while (z >= 0) {
@@ -587,7 +555,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
             while (l >= 0) {
                 roadCounter = Firstround(Array1[l], array, roadCounter);
                 l--;
-            } 
+            }
         }
         if ((player + round) % 4 == 3) {
             int superArray[1000];
@@ -596,7 +564,7 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 superArray[map] = -1;
                 map++;
             }
-            
+
             int o = Firstround(curr, superArray, 0);
             ConnList *listArray1 = malloc((o) * sizeof(ConnList));
             int p = o - 1;
@@ -605,14 +573,14 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 listArray1[y] = MapGetConnections(gv->map, superArray[y]);
                 y--;
             }
-            
+
             int secondaryArray[1000];
             int c = 0;
             while (c < 1000) {
                 secondaryArray[1000] = -1;
                 c++;
             }
-            
+
             int q = 0;
             while (p >= 0) {
                 q = Firstround(listArray1[p], secondaryArray, q);
@@ -638,18 +606,12 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
             numReturnedLocs[count] = array[num_counter];
             count++;
             num_counter--;
-        } 
+        }
     }
     return numReturnedLocs;
 }
 
-
-
-
-PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
-                              PlaceId from, bool road, bool rail,
-                              bool boat, int *numReturnedLocs)
-{
+PlaceId *GvGetReachableByType(GameView gv, Player player, Round round, PlaceId from, bool road, bool rail, bool boat, int *numReturnedLocs) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	ConnList adjacent = MapGetConnections(gv->map, from);
 	int count = 0;
@@ -688,31 +650,31 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (rail) {
         ConnList curr = adjacent;
         int roadCounter = 0;
-        int array[1000];       
+        int array[1000];
         int n = 0;
         while (n < 1000) {
             array[n] = -1;
             n++;
-        }        
-        if ((player + round) % 4 == 0) {        
+        }
+        if ((player + round) % 4 == 0) {
         } else if ((player + round) % 4 == 1) {
             if (player == PLAYER_DRACULA) {
-                
+
             } else {
                 roadCounter = Firstround(curr, array, roadCounter);
             }
-        } else if ((player + round) % 4 == 2) {            
+        } else if ((player + round) % 4 == 2) {
             if (player == PLAYER_DRACULA) {
-                
+
             } else {
-                int counterArray[1000];            
+                int counterArray[1000];
                 int Secondarycounter = 0;
                 while (Secondarycounter < 1000) {
                     counterArray[Secondarycounter] = -1;
                     Secondarycounter++;
                 }
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                ConnList *Array1 = malloc(k * sizeof(ConnList));
                 int l = k - 1;
                 int z = k - 1;
                 while (z >= 0) {
@@ -723,10 +685,10 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     roadCounter = Firstround(Array1[l], array, roadCounter);
                     l--;
                 }
-            }         
-        } else { 
+            }
+        } else {
             if (player == PLAYER_DRACULA) {
-                
+
             } else {
                 int superArray[1000];
                 int map = 0;
@@ -734,7 +696,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     superArray[map] = -1;
                     map++;
                 }
-                
+
                 int o = Firstround(curr, superArray, 0);
                 ConnList *listArray1 = malloc((o) * sizeof(ConnList));
                 int p = o - 1;
@@ -743,14 +705,14 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     listArray1[y] = MapGetConnections(gv->map, superArray[y]);
                     y--;
                 }
-                
+
                 int secondaryArray[1000];
                 int c = 0;
                 while (c < 1000) {
                     secondaryArray[1000] = -1;
                     c++;
                 }
-                
+
                 int q = 0;
                 while (p >= 0) {
                     q = Firstround(listArray1[p], secondaryArray, q);
@@ -768,7 +730,7 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     counter2--;
                 }
             }
-            
+
         }
         bubble_sort (array, roadCounter);
         int num_array = removeDuplicates(array, roadCounter);
@@ -779,8 +741,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
             count++;
             num_counter--;
         }
-    }        
-	if (boat) {	    
+    }
+	if (boat) {
 	    ConnList curr_boat = MapGetConnections(gv->map, from);
 	    int num_b = 0;
 	    while (curr_boat != NULL && curr_boat->type == BOAT) {
@@ -794,7 +756,6 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
             curr_boat = curr_boat->next;
         }
 	}
-	
 	return numReturnedLocs;
 }
 ////////////////////////////////////////////////////////////////////////
