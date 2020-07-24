@@ -98,7 +98,7 @@ void hunter_condition(char c,GameView gv) {
 		for (int i = 0; i < 6; i++) {
 			if (gv->traplist[i] ==
 			gv->player[gv->Curr_Player_Number]->currlocation) {
-				gv->traplist[i] = UNKNOWN;
+				gv->traplist[i] = NOWHERE;
 			}
 		}
 		break;
@@ -139,35 +139,16 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	}
 
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
-    // malloc sizeof(placeid)*MAX_REAL_PLACE+1)*3
-	/*
-    new->trap_list = malloc(sizeof(PlaceId)*(MAX_REAL_PLACE+1)*MAXMUM_TRAP);
-    for(PlaceId city = MIN_REAL_PLACE; city < (MAX_REAL_PLACE + 1); city++) {
-        for(int i = 0; i < MAXMUM_TRAP; i++) {
-            // makesure the trap for all the city is zero;
-            new->trap_list[city][i] = 0;
-        }
-    };
-	*/
-	//new->player = malloc(5 * sizeof(PlayerData *));
-	//new->traplist = malloc(sizeof(PlaceId)*6);
+    
 
 	new->vampire = malloc(sizeof(Young_vampire));
 	new->vampire->survive = 0;
 	new->vampire->born_round_number = -1;
 	new->vampire->born_location = NOWHERE;
 	
-	
-
-
-
-
 
 	int pastPlays_length = strlen(pastPlays);
 	int round = pastPlays_length/40;
-	//new->score = GAME_START_SCORE - round * SCORE_LOSS_DRACULA_TURN; // game start at score 366
-	//new->turn_Number = round;
-
 
 	new->turn_Number = round;
 	new->score = GAME_START_SCORE;
@@ -187,54 +168,6 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		}
 	}
 
-	/*
-	// initialize for the godalming
-	new->Curr_Player_Number = PLAYER_LORD_GODALMING;
-	new->player[0]->ID = PLAYER_LORD_GODALMING;							// the first player is Lord Godalming
-	new->player[0]->HP = GAME_START_HUNTER_LIFE_POINTS;
-	new->player[0]->currlocation = NOWHERE;
-	//Godalming->playerTrail = malloc(sizeof(PlaceId)*6);
-	for(int i = 0; i < 6; i++) {
-		new->player[0]->playerTrail[i] = NOWHERE;
-	}
-
-	// initialize for the seward
-	Seward->ID = PLAYER_DR_SEWARD;									// the first player is Dr. Seward
-	Seward->HP = GAME_START_HUNTER_LIFE_POINTS;
-	//Seward->playerTrail = malloc(sizeof(PlaceId)*6);
-	for(int i = 0; i < TRAIL_SIZE; i++) {
-		Seward->playerTrail[i] = NOWHERE;
-	}
-	Seward->currlocation = NOWHERE;
-
-	Helsing->ID = PLAYER_VAN_HELSING;								// the first player is Van Helsing
-	Helsing->HP = GAME_START_HUNTER_LIFE_POINTS;
-	//Helsing->playerTrail = malloc(sizeof(PlaceId)*6);
-	for(int i = 0; i < TRAIL_SIZE; i++) {
-		Helsing->playerTrail[i] = NOWHERE;
-	}
-	Helsing->currlocation = NOWHERE;
-	
-	Mina->ID = PLAYER_MINA_HARKER;									// the first player is Mina Harker
-	Mina->HP = GAME_START_HUNTER_LIFE_POINTS;
-	//Mina->playerTrail = malloc(sizeof(PlaceId)*6);
-	for(int i = 0; i < TRAIL_SIZE; i++) {
-		Mina->playerTrail[i] = NOWHERE;
-	}
-	Mina->currlocation = NOWHERE;
-
-	Dracula->ID = PLAYER_DRACULA;									// the first player is Mina Harker
-	Dracula->HP = GAME_START_BLOOD_POINTS;
-	//Dracula->playerTrail = malloc(sizeof(PlaceId)*6);
-	for(int i = 0; i < TRAIL_SIZE; i++) {
-		Dracula->playerTrail[i] = NOWHERE;
-	}
-	Dracula->currlocation = NOWHERE;
-
-	for(int i = 0; i < 6; i++) {
-		new->traplist[i] = NOWHERE;
-	}
-	*/
 	new->map = MapNew();
 
 	int pastPlays_counter = 0;
@@ -293,16 +226,11 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					char placenew[2];
 					strcpy(placenew, place);
 					Seward->currlocation = placeAbbrevToId(placenew);
-					//printf(" check 11%s11\n", placenew);
-					//printf(" check 11%d11\n", placeAbbrevToId(place));
-					//printf("%s\n", placeIdToName(Seward->currlocation));
-					//printf("check %s\n", placeIdToName(new->player[1]->currlocation));
 					cycling(Seward->playerTrail);
 					Seward->playerTrail[5] = Seward->currlocation;
 				}
 			}
-			//Seward->currlocation = placeAbbrevToId(place);
-			//printf(" looooop %s\n", placeIdToName(Seward->currlocation));
+
 			if (pastPlaysID > 10 && pastPlaysID < 15) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
@@ -368,7 +296,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 							Dracula->playerTrail[5 + DOUBLE_BACK_1 - placeAbbrevToId(place)];
 						}
 					}
-						// check wheather in sea
+					
+					// check wheather in sea
 					if (placeIsSea(Dracula->currlocation)) {
 						Dracula->HP -= LIFE_LOSS_SEA;
 						
@@ -376,14 +305,19 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					if (Dracula->currlocation == CASTLE_DRACULA) {
 						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
 					}
+					
 					// roll the trail
 					cycling(Dracula->playerTrail);
 					Dracula->playerTrail[5] = Dracula->currlocation;
 					k = 0;
 				}
 			}
-
+			if(pastPlaysID == 34) {
+				cycling(new->traplist);
+			}
+			
 			if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
+				new->traplist[5] = Dracula->currlocation;
 
 			}
 			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
@@ -394,7 +328,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
 
 			}
-			if (pastPlaysID == 38 && pastPlays[pastPlays_counter] == 'V') {
+			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'V') {
 				new->vampire->survive = 0;
 				new->vampire->born_round_number= -1;
 				new->vampire->born_location = NOWHERE;
@@ -422,7 +356,6 @@ void GvFree(GameView gv)
 Round GvGetRound(GameView gv)
 {
 	// gets the current round number
-	// printf("11111111111\n");
 	return (gv->turn_Number);
 }
 
@@ -439,44 +372,19 @@ int GvGetScore(GameView gv)
 }
 
 int GvGetHealth(GameView gv, Player player) {
-	// find the correct player, then  return the info
-	/*
-	int temp = 0;
-	int blood = 0;
-	while (temp < NUM_PLAYERS) {
-		if (gv->player[temp]->ID == player){
-			blood = gv->player[temp]->HP;
-		}
-	}*/
 
 	return (gv->player[player]->HP);
 }
-//ssh test
+
 
 PlaceId GvGetPlayerLocation(GameView gv, Player player) {
-	// int temp = 0;
-	// find the player form the playerlist,
-	// then return the location,
-	//while (temp < NUM_PLAYERS) {
-	//	if (gv->player[temp]->ID == player) {
-	//		return (gv->player[temp]->currlocation);
-	//	}
-	// }
-	//printf("now %s\n", placeIdToName(gv->player[player]->currlocation));
-	//printf("now %d\n", gv->player[player]->currlocation);
-	//printf("333 %s\n", placeIdToName(gv->player[2]->currlocation)); 
 
 	return gv->player[player]->currlocation;
 	
 }
 
 PlaceId GvGetVampireLocation(GameView gv) {
-	// if the young vampire died, return nowhere;
-	// if (gv->vampire->survive == 0) {
-	//	return NOWHERE;
-	// }
 
-	// else just return the info
 	return (gv->vampire->born_location);
 }
 
