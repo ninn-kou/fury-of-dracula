@@ -23,6 +23,7 @@
 #include <string.h>
 void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]); 
+void check_HP(GameView gv);
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
@@ -55,13 +56,21 @@ struct gameView {
 
 	Map map;
 };
-
+void check_HP(GameView gv) {
+	if (gv->player[gv->turn_Number]->HP <= 0) {
+			gv->player[gv->turn_Number]->currlocation = HOSPITAL_PLACE;
+			cycling(gv->player[gv->turn_Number]->playerTrail);
+			gv->player[gv->turn_Number]->playerTrail[5] = HOSPITAL_PLACE;
+			gv->player[gv->turn_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
+			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
+		}
+}
 void hunter_condition(char c,GameView gv) {
 
 	switch(c){
 	case 'T':
 		gv->player[gv->turn_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
-	
+		check_HP(gv);
 	
 		for (int i = 0; i < 6; i++) {
 			if(gv->traplist[i] == 
@@ -81,6 +90,7 @@ void hunter_condition(char c,GameView gv) {
 		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
 		gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
 		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
+		check_HP(gv);
 		break;
 	
 	case '.':
