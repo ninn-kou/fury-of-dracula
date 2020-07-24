@@ -236,20 +236,22 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	
 	char *place;
 	place = malloc(sizeof(char*)*2);
-	
+
 	int k = 0;
-	Round round_number = 0;
+	new->turn_Number = 0;
 	while (pastPlays_counter <= pastPlays_length) {
 		
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40;
 		int whose_turn = (pastPlaysID + 1) / 8;
+		whose_turn = whose_turn % 5;
 		new->Curr_Player_Number = whose_turn;
 		// set for the counter addition,
-		if(pastPlaysID == 0) {
-			new->turn_Number = round_number;
-			round_number++;
+		if(pastPlaysID == 39) {
+			new->score =  new->score - SCORE_LOSS_DRACULA_TURN;
+			new->turn_Number++;
 		}
+
 
 		// now is looking at Godalming
 		if(pastPlaysID > 0 && pastPlaysID < 7) {
@@ -262,8 +264,6 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					//printf(" check 11%s11\n", place);			
 					cycling(Godalming->playerTrail);
 					Godalming->playerTrail[5] = Godalming->currlocation;
-					place[0] = '\0';
-					place[1] = '\0';
 
 				}
 			}
@@ -346,13 +346,18 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 						// TP
 						Dracula->currlocation = CASTLE_DRACULA;
 					} else {
-						// double back && Hide
-						Dracula->currlocation = Dracula->playerTrail[HIDE+5-placeAbbrevToId(place)];
+						// double back 1 && Hide
+						if(placeAbbrevToId(place) == HIDE) {
+							Dracula->currlocation = Dracula->playerTrail[5];
+						} else{
+							Dracula->currlocation = 
+							Dracula->playerTrail[5 + DOUBLE_BACK_1 - placeAbbrevToId(place)];
+						}
 					}
 						// check wheather in sea
-					if (placeIsSea(Dracula->currlocation) == true) {
+					if (placeIsSea(Dracula->currlocation)) {
 						Dracula->HP -= LIFE_LOSS_SEA;
-						check_HP(new);
+						
 					}
 					if (Dracula->currlocation == CASTLE_DRACULA) {
 						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
@@ -382,10 +387,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				new->score -= SCORE_LOSS_VAMPIRE_MATURES;
 			}
 		}
-		//if(pastPlaysID == 8 ||pastPlaysID == 9){
-			printf(" check 11%s11\n", place);
-			printf(" check 11%d11\n", placeAbbrevToId(place));
-		//}
+
 		pastPlays_counter++;
 
 	
