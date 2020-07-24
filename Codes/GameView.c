@@ -76,11 +76,7 @@ void check_HP(GameView gv) {
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
-<<<<<<< HEAD
 
-void hunter_condition(char c,GameView gv) {
-=======
->>>>>>> 3cceb4141886f3ac831fdaa7fb3bb49556ef08cf
 
 void hunter_condition(char c,GameView gv) {
 	switch (c){
