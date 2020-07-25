@@ -27,6 +27,7 @@ void cycling(PlaceId array[TRAIL_SIZE]);
 void check_HP(GameView gv);
 void Is_Hunter_rest(GameView gv);
 void Is_need_Recovery(GameView gv);
+int moving(PlaceId array[TRAIL_SIZE], PlaceId new, int a);
 
 // TODO: ADD YOUR OWN STRUCTS HERE
 #define MAXMUM_TRAP 6
@@ -43,6 +44,8 @@ typedef struct playerData {
 	int HP;
 	PlaceId currlocation;
 	PlaceId playerTrail[TRAIL_SIZE];
+	int num_move;
+	PlaceId *movelist;
 } PlayerData;
 
 typedef struct young_vampire{
@@ -58,6 +61,7 @@ struct gameView {
 	PlayerData *player[NUM_PLAYERS];
     PlaceId traplist[TRAIL_SIZE]; // the 1d version of traplist
                     			  // traplist[6]
+	
 	Young_vampire vampire;  // point out the info of vampire
 	Map map;
 };
@@ -127,6 +131,13 @@ void cycling(PlaceId array[TRAIL_SIZE]) {
 	array[5] = NOWHERE;
 }
 
+int moving(PlaceId array[TRAIL_SIZE], PlaceId new, int a) {
+
+	array[a] = new;
+	a++;
+	return a;
+}
+
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
@@ -140,7 +151,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
     
-
+	
 	new->vampire = malloc(sizeof(Young_vampire));
 	new->vampire->survive = 0;
 	new->vampire->born_round_number = -1;
@@ -155,6 +166,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 	for (int i = 0; i < 5; i++) {
 		new->player[i] = malloc(sizeof(PlayerData));
+		new->player[i]->movelist = malloc(sizeof(PlaceId)*(round+1));
 		new->player[i]->ID = i;
 		if (i != PLAYER_DRACULA) {
 			new->player[i]->HP= GAME_START_HUNTER_LIFE_POINTS;
@@ -166,6 +178,11 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		for(int j = 0; j < 6; j++) {
 		new->player[i]->playerTrail[j] = NOWHERE;
 		}
+		new->player[i]->num_move = 0;
+		for(int j = 0; j <= round; j++) {
+		new->player[i]->movelist[j] = NOWHERE;
+		}
+
 	}
 
 	new->map = MapNew();
@@ -202,9 +219,11 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				if (k == 2) {
 					Godalming->currlocation = placeAbbrevToId(place);	
 					
-					//printf(" check 11%s11\n", place);			
+							
 					cycling(Godalming->playerTrail);
 					Godalming->playerTrail[5] = Godalming->currlocation;
+
+					Godalming->num_move = moving(Godalming->movelist,Godalming->currlocation,Godalming->num_move);
 
 				}
 			}
@@ -228,6 +247,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Seward->currlocation = placeAbbrevToId(placenew);
 					cycling(Seward->playerTrail);
 					Seward->playerTrail[5] = Seward->currlocation;
+
+					Seward->num_move = moving(Seward->movelist,Seward->currlocation,Seward->num_move);
 				}
 			}
 
@@ -246,6 +267,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Helsing->currlocation = placeAbbrevToId(place);
 					cycling(Helsing->playerTrail);
 					Helsing->playerTrail[5] = placeAbbrevToId(place);
+					Helsing->num_move = moving(Helsing->movelist,Helsing->currlocation,Helsing->num_move);
+
 				}
 			}
 
@@ -266,6 +289,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Mina->currlocation = placeAbbrevToId(place);
 					cycling(Mina->playerTrail);
 					Mina->playerTrail[5] = placeAbbrevToId(place);
+					Mina->num_move = moving(Mina->movelist,Mina->currlocation,Mina->num_move);
+
 				}
 			}
 			
@@ -309,6 +334,9 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					// roll the trail
 					cycling(Dracula->playerTrail);
 					Dracula->playerTrail[5] = Dracula->currlocation;
+					Dracula->num_move = moving(Dracula->movelist,placeAbbrevToId(place),Dracula->num_move);
+
+					
 					k = 0;
 				}
 			}
@@ -416,10 +444,10 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 // Game History
 
 PlaceId *GvGetMoveHistory(GameView gv, Player player, int *numReturnedMoves, bool *canFree) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedMoves = 0;
+	
+	*numReturnedMoves = gv->player[player]->num_move;
 	*canFree = false;
-	return NULL;
+	return gv->player[player]->movelist;
 }
 
 PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves, int *numReturnedMoves, bool *canFree) {
@@ -431,9 +459,26 @@ PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves, int *numReturn
 
 PlaceId *GvGetLocationHistory(GameView gv, Player player, int *numReturnedLocs, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	*canFree = false;
-	return NULL;
+	PlaceId *array = malloc(sizeof(PlaceId)*gv->player[player]->num_move);
+	for (int i = 0; i < gv->player[player]->num_move; i++) {
+		if(gv->player[player]->movelist[i] < 102){
+		array[i] = gv->player[player]->movelist[i];
+		}
+		if(gv->player[player]->movelist[i] >= 103 
+		&& gv->player[player]->movelist[i] <= 107) {
+			int temp = i+ 102 - gv->player[player]->movelist[i];
+
+			array[i] = array[temp];	
+		} 
+		
+		if(gv->player[player]->movelist[i] == 102){
+			array[i] = array[i-1];
+		} 
+	}
+
+	*numReturnedLocs = gv->player[player]->num_move;
+	*canFree = true;
+	return array;
 }
 
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, int *numReturnedLocs, bool *canFree) {
