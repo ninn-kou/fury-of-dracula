@@ -340,11 +340,16 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 	
 	}
+	free(place);
 	return new;
 }
 
 void GvFree(GameView gv)
 {
+	for (int i = 0; i < 5; i++) {
+		free (gv->player[i]);
+	}
+	
 	free(gv->map);
 	free(gv->vampire);
 	free(gv);
@@ -389,6 +394,7 @@ PlaceId GvGetVampireLocation(GameView gv) {
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
+	//create a dynamic memory, and record the placeid.
 	int *trap = malloc(sizeof(PlaceId)*MAXMUM_TRAP);
 	for (int i = 0; i < 6; i++) {
 		trap[i] = '\0';
