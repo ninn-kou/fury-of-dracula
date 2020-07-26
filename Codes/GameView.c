@@ -565,7 +565,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
         curr_r = curr_r->next;
     }
     // if player is a hunter, then get the places that are reachable by rail
-    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD || player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
+    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD 
+	|| player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
         ConnList curr = adjacent;
         int roadCounter = 0;
         int array_local[1000];                       

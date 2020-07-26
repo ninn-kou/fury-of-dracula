@@ -24,7 +24,7 @@
 // TODO: ADD YOUR OWN STRUCTS HERE
 
 struct hunterView {
-	
+	GameView gv;
 };
 
 ////////////////////////////////////////////////////////////////////////
@@ -33,11 +33,12 @@ struct hunterView {
 HunterView HvNew(char *pastPlays, Message messages[])
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	HunterView new = malloc(sizeof(*new));
+	HunterView new = malloc(sizeof(HunterView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
 		exit(EXIT_FAILURE);
 	}
+	new->gv = GvNew(pastPlays, messages);
 
 	return new;
 }
@@ -45,6 +46,7 @@ HunterView HvNew(char *pastPlays, Message messages[])
 void HvFree(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	GvFree(hv->gv);
 	free(hv);
 }
 
@@ -54,37 +56,38 @@ void HvFree(HunterView hv)
 Round HvGetRound(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetRound(hv->gv);
 }
 
 Player HvGetPlayer(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return PLAYER_LORD_GODALMING;
+	return GvGetPlayer(hv->gv);
 }
 
 int HvGetScore(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetScore(hv->gv);
 }
 
 int HvGetHealth(HunterView hv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return 0;
+	return GvGetHealth(hv->gv,player);
 }
 
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetPlayerLocation(hv->gv,player);
+	
 }
 
 PlaceId HvGetVampireLocation(HunterView hv)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	return NOWHERE;
+	return GvGetVampireLocation(hv->gv);
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -93,7 +96,19 @@ PlaceId HvGetVampireLocation(HunterView hv)
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*round = 0;
+
+	int numMoves = 0; bool canFree = false;
+	PlaceId *moves = GvGetMoveHistory(hv->gv, PLAYER_DRACULA, &numMoves, &canFree);
+	numMoves --;
+	while (numMoves >= 0 ) {
+		if(moves[numMoves] < NUM_REAL_PLACES) {
+			*round = numMoves;
+			return(moves[numMoves]);
+		}
+		numMoves--;
+	};
+	
+	*round = 0;	
 	return NOWHERE;
 }
 
@@ -112,7 +127,10 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	return NULL;
+	PlaceId *locs = GvGetReachable(hv->gv, 
+	HvGetPlayer(hv), HvGetRound(hv),
+	HvGetPlayerLocation(hv, HvGetPlayer(hv)), numReturnedLocs);
+	return locs;
 }
 
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
@@ -137,7 +155,14 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	return NULL;
+	int temp = 0;
+	PlaceId *locs = GvGetReachableByType(hv->gv, 
+	player, HvGetRound(hv),
+	HvGetPlayerLocation(hv, player), road, rail, boat, &temp);
+	*numReturnedLocs = temp;
+	return locs;
+	
+	
 }
 
 ////////////////////////////////////////////////////////////////////////
