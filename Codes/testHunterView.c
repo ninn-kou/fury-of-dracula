@@ -405,8 +405,6 @@ int main(void)
 		int numLocs = -1;
 		PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_LORD_GODALMING,
 		                                       false, true, false, &numLocs);
-		printf("2222222%d\n", numLocs);
-		printf("111111111%s\n", placeIdToName(locs[1]));
 
 		assert(numLocs == 5);
 		sortPlaces(locs, numLocs);
