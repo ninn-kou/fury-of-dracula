@@ -490,34 +490,44 @@ PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, int *numRet
 
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
-void bubble_sort(int a[],int n){
-    for (int i = 0; i < n - 1; i++){
+// bubble sort function to make the input array in ascending order
+void bubble_sort(int a[],int n) {
+    for (int i = 0; i < n - 1; i++) {
         bool isSorted = true;
-        for (int j = 0; j < n - 1 - i; j++){
-            if (a[j] > a[j + 1]){
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (a[j] > a[j + 1]) {
                 isSorted = false;
                 int temp = a[j];
                 a[j] = a[j + 1];
-                a[j + 1]=temp;
-            }
+                a[j + 1] = temp;
+            }  
         }
-        if (isSorted) break;
+        if (isSorted) {
+            break;
+        }
     }
 }
-int Firstround(ConnList whole, int *array, int i) {
-    while (whole != NULL && whole->type == RAIL) {
-        array[i] = whole->p;
-        i++;
-        whole = whole->next;
-    }
-    return i;
+// loop through the whole link list to find the cities connected by rails, then
+// put them in the input array
+int Firstround(ConnList city_near, int *array, int i) {
+       
+    while (city_near != NULL) {        
+        if (city_near->type == RAIL) {
+            array[i] = city_near->p;             
+            i++;
+        }
+        city_near = city_near->next;
+    } 
+    return i;    
 }
-int removeDuplicates(int* nums, int numsSize) {
+// remove the same elements in the input array
+int removeDuplicates(int* nums, int numsSize)
+{
     if (numsSize == 0) {
         return 0;
     }
     int *a1,*a2;
-    a1 = nums;
+    a1 = nums; 
     a2 = a1 + 1;
     int j = 1;
     for (int i = 1; i < numsSize; i++) {
@@ -528,198 +538,49 @@ int removeDuplicates(int* nums, int numsSize) {
         }
         a2 = a2 + 1;
     }
-    return j;
+    return j; 
 }
 
-PlaceId *GvGetReachable(GameView gv, Player player, Round round, PlaceId from, int *numReturnedLocs) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	ConnList curr = MapGetConnections(gv->map, from);
-	int count = 0;
-	int dracula = 0;
-	int hunter = 0;
-	while (curr != NULL && curr->type != RAIL) {
-	    if (curr->p == ST_JOSEPH_AND_ST_MARY) {
-	            hunter++;
-	        } else {
-	            dracula++;
-	            hunter++;
-	        }
-	        curr = curr->next;
-	}
-	if (player == PLAYER_DRACULA) {
-	    numReturnedLocs = malloc((dracula) * sizeof(int));
-	    while (curr != NULL && curr->type != RAIL) {
-	        if (curr->p == ST_JOSEPH_AND_ST_MARY) {
-	        } else {
-	            numReturnedLocs[count] = curr->p;
-	            count++;
-	        }
-	        curr = curr->next;
-	    }
-	} else {
-	    numReturnedLocs = malloc((hunter)* sizeof(int));
-	    while (curr != NULL && curr->type != RAIL) {
-	        numReturnedLocs[count] = curr->p;
-	        count++;
-	        curr = curr->next;
-	    }
-	}
-    int hunter2 = 0;
-    while (curr != NULL && curr->type == RAIL) {
-        hunter2++;
-    }
-    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD 
-	|| player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
-        int array[1000];       
-        int n = 0;
-        while (n < 1000) {
-            array[n] = -1;
-            n++;
-        }
-        int roadCounter = 0;
-        if ((player + round) % 4 == 0) {
-        }
-        if ((player + round) % 4 == 1) {
-            roadCounter = Firstround(curr, array, roadCounter);
-        }
-        if ((player + round) % 4 == 2) {
-            int counterArray[1000];
-            int Secondarycounter = 0;
-            while (Secondarycounter < 1000) {
-                counterArray[Secondarycounter] = -1;
-                Secondarycounter++;
-            }
-            int k = Firstround(curr, counterArray, 0);
-            ConnList *Array1 = malloc(k * sizeof(ConnList));
-            int l = k - 1;
-            int z = k - 1;
-            while (z >= 0) {
-                Array1[z] = MapGetConnections(gv->map, counterArray[z]);
-                z--;
-            }
-            while (l >= 0) {
-                roadCounter = Firstround(Array1[l], array, roadCounter);
-                l--;
-            }
-        }
-        if ((player + round) % 4 == 3) {
-            int superArray[1000];
-            int map = 0;
-            while (map < 1000) {
-                superArray[map] = -1;
-                map++;
-            }
-
-            int o = Firstround(curr, superArray, 0);
-            ConnList *listArray1 = malloc((o) * sizeof(ConnList));
-            int p = o - 1;
-            int y = o - 1;
-            while (y >= 0) {
-                listArray1[y] = MapGetConnections(gv->map, superArray[y]);
-                y--;
-            }
-
-            int secondaryArray[1000];
-            int c = 0;
-            while (c < 1000) {
-                secondaryArray[1000] = -1;
-                c++;
-            }
-
-            int q = 0;
-            while (p >= 0) {
-                q = Firstround(listArray1[p], secondaryArray, q);
-                p--;
-            }
-            ConnList *listArray2 = malloc((q) * sizeof(ConnList));
-            int counter2 = q - 1;
-            int counter3 = q - 1;
-            while (counter3 >= 0) {
-                listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
-                counter3--;
-            }
-            while (counter2 >= 0) {
-                roadCounter = Firstround(listArray2[counter2], array, roadCounter);
-                counter2--;
-            }
-        }
-        bubble_sort (array, roadCounter);
-        int num_array = removeDuplicates(array, roadCounter);
-        numReturnedLocs = realloc(numReturnedLocs, (num_array + 1 + count) * sizeof(int));
-        int num_counter = num_array - 1;
-        while (num_counter > 0) {
-            numReturnedLocs[count] = array[num_counter];
-            count++;
-            num_counter--;
-        }
-    }
-    return numReturnedLocs;
-}
-
-PlaceId *GvGetReachableByType(GameView gv, Player player, Round round, PlaceId from, bool road, bool rail, bool boat, int *numReturnedLocs) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+PlaceId *GvGetReachable(GameView gv, Player player, Round round,
+                        PlaceId from, int *numReturnedLocs)
+{
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION	
+	// use curr_r to get all the adjacent city of "from"
 	ConnList adjacent = MapGetConnections(gv->map, from);
+	PlaceId array_all[1000];	
 	int count = 0;
-	if (road) {
-	    ConnList curr_1 = MapGetConnections(gv->map, from);
-	    int num_1 = 0;
-	    int num_2 = 0;
-	    while (curr_1 != NULL && curr_1->type == ROAD) {
-	        if (curr_1->p == ST_JOSEPH_AND_ST_MARY) {
-	            num_1++;
-	        } else {
-	            num_1++;
-	            num_2++;
-	        }
-	        curr_1 = curr_1->next;
-	    }
-	    if (player == PLAYER_DRACULA) {
-	        numReturnedLocs = malloc((num_2 + 1) * sizeof(int));
-	        while (curr_1 != NULL && curr_1->type == ROAD) {
-	            if (curr_1->p == ST_JOSEPH_AND_ST_MARY) {
-	            } else {
-	                numReturnedLocs[count] = curr_1->p;
-	                count++;
-	            }
-	            curr_1 = curr_1->next;
-	        }
-	     } else {
-	        numReturnedLocs = malloc((num_1 + 1)* sizeof(int));
-	        while (curr_1 != NULL && curr_1->type == ROAD) {
-	            numReturnedLocs[count] = curr_1->p;
-	            count++;
-	            curr_1 = curr_1->next;
-	        }
-	    }
-	}
-	if (rail) {
+	ConnList curr_r = MapGetConnections(gv->map, from);
+    // loop through the whole link list to get the cities wanted
+    while (curr_r != NULL) {
+        // if player is dracula, and the place is hospital then it doesn't count
+        if (player == PLAYER_DRACULA && curr_r->p == ST_JOSEPH_AND_ST_MARY) {
+            curr_r = curr_r->next;
+            continue;
+        }
+        // get all the cities that are reachable by boat or road
+        if (curr_r->type == ROAD || curr_r->type == BOAT) {
+            array_all[count] = curr_r->p;
+            count++;
+        }
+        curr_r = curr_r->next;
+    }
+    // if player is a hunter, then get the places that are reachable by rail
+    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD || player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
         ConnList curr = adjacent;
         int roadCounter = 0;
-        int array[1000];
-        int n = 0;
-        while (n < 1000) {
-            array[n] = -1;
-            n++;
-        }
-        if ((player + round) % 4 == 0) {
+        int array_local[1000];                       
+        if ((player + round) % 4 == 0) {        
         } else if ((player + round) % 4 == 1) {
-            if (player == PLAYER_DRACULA) {
-
+            if (player == PLAYER_DRACULA) {                
             } else {
-                roadCounter = Firstround(curr, array, roadCounter);
+                roadCounter = Firstround(curr, array_local, roadCounter);
             }
-        } else if ((player + round) % 4 == 2) {
-            if (player == PLAYER_DRACULA) {
-
+        } else if ((player + round) % 4 == 2) {            
+            if (player == PLAYER_DRACULA) {                
             } else {
-                int counterArray[1000];
-                int Secondarycounter = 0;
-                while (Secondarycounter < 1000) {
-                    counterArray[Secondarycounter] = -1;
-                    Secondarycounter++;
-                }
+                int counterArray[1000];                            
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));
+                ConnList *Array1 = malloc(k * sizeof(ConnList));            
                 int l = k - 1;
                 int z = k - 1;
                 while (z >= 0) {
@@ -727,21 +588,16 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round, PlaceId f
                     z--;
                 }
                 while (l >= 0) {
-                    roadCounter = Firstround(Array1[l], array, roadCounter);
+                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
                     l--;
                 }
-            }
-        } else {
+            roadCounter = Firstround(curr, array_local, roadCounter);
+            }                     
+        } else { 
             if (player == PLAYER_DRACULA) {
-
+                
             } else {
-                int superArray[1000];
-                int map = 0;
-                while (map < 1000) {
-                    superArray[map] = -1;
-                    map++;
-                }
-
+                int superArray[1000];                                
                 int o = Firstround(curr, superArray, 0);
                 ConnList *listArray1 = malloc((o) * sizeof(ConnList));
                 int p = o - 1;
@@ -749,15 +605,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round, PlaceId f
                 while (y >= 0) {
                     listArray1[y] = MapGetConnections(gv->map, superArray[y]);
                     y--;
-                }
-
-                int secondaryArray[1000];
-                int c = 0;
-                while (c < 1000) {
-                    secondaryArray[1000] = -1;
-                    c++;
-                }
-
+                }                
+                int secondaryArray[1000];                                
                 int q = 0;
                 while (p >= 0) {
                     q = Firstround(listArray1[p], secondaryArray, q);
@@ -771,37 +620,180 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round, PlaceId f
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = Firstround(listArray2[counter2], array, roadCounter);
+                    roadCounter = Firstround(listArray2[counter2], array_local, roadCounter);
                     counter2--;
                 }
-            }
-
+                int counterArray[1000];                            
+                int k = Firstround(curr, counterArray, 0);
+                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                int l = k - 1;
+                int z = k - 1;
+                while (z >= 0) {
+                    Array1[z] = MapGetConnections(gv->map, counterArray[z]);
+                    z--;
+                }
+                while (l >= 0) {
+                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
+                    l--;
+                }
+                roadCounter = Firstround(curr, array_local, roadCounter);
+            }            
         }
-        bubble_sort (array, roadCounter);
-        int num_array = removeDuplicates(array, roadCounter);
-        numReturnedLocs = realloc(numReturnedLocs, (num_array + 1 + count) * sizeof(int));
+        bubble_sort (array_local, roadCounter);
+        int num_array = removeDuplicates(array_local, roadCounter);
+      
         int num_counter = num_array - 1;
-        while (num_counter > 0) {
-            numReturnedLocs[count] = array[num_counter];
-            count++;
+        while (num_counter >= 0) {
+            if (array_local[num_counter] != from) {
+                array_all[count] = array_local[num_counter];
+                count++;
+            }
+            num_counter--;
+        } 
+    }
+    bubble_sort (array_all, count);
+	count = removeDuplicates (array_all, count);
+    PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));	
+	numReturn[count] = from;
+	*numReturnedLocs = count + 1;
+	for (int final = 0; final <= count - 1; final++) {
+	    numReturn[final] = array_all[final];
+	}
+	return numReturn;
+}
+
+
+
+
+PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
+                              PlaceId from, bool road, bool rail,
+                              bool boat, int *numReturnedLocs)
+{
+	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	ConnList adjacent = MapGetConnections(gv->map, from);
+	PlaceId array_all[1000];	
+	int count = 0;
+	if (road) {
+	    ConnList curr_r = MapGetConnections(gv->map, from);
+	    while (curr_r != NULL) {
+	        if (player == PLAYER_DRACULA && curr_r->p == ST_JOSEPH_AND_ST_MARY) {
+	            curr_r = curr_r->next;
+	            continue;
+	        }
+	        if (curr_r->type == ROAD) {
+	            array_all[count] = curr_r->p;
+	            count++;
+	        }
+	        curr_r = curr_r->next;
+	    }
+	 }
+	if (rail) {
+        ConnList curr = adjacent;
+        int roadCounter = 0;
+        int array_local[1000];                       
+        if ((player + round) % 4 == 0) {        
+        } else if ((player + round) % 4 == 1) {
+            if (player == PLAYER_DRACULA) {                
+            } else {
+                roadCounter = Firstround(curr, array_local, roadCounter);
+            }
+        } else if ((player + round) % 4 == 2) {            
+            if (player == PLAYER_DRACULA) {                
+            } else {
+                int counterArray[1000];                            
+                int k = Firstround(curr, counterArray, 0);
+                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                int l = k - 1;
+                int z = k - 1;
+                while (z >= 0) {
+                    Array1[z] = MapGetConnections(gv->map, counterArray[z]);
+                    z--;
+                }
+                while (l >= 0) {
+                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
+                    l--;
+                }
+            roadCounter = Firstround(curr, array_local, roadCounter);
+            }                     
+        } else { 
+            if (player == PLAYER_DRACULA) {
+                
+            } else {
+                int superArray[1000];                                
+                int o = Firstround(curr, superArray, 0);
+                ConnList *listArray1 = malloc((o) * sizeof(ConnList));
+                int p = o - 1;
+                int y = o - 1;
+                while (y >= 0) {
+                    listArray1[y] = MapGetConnections(gv->map, superArray[y]);
+                    y--;
+                }                
+                int secondaryArray[1000];                                
+                int q = 0;
+                while (p >= 0) {
+                    q = Firstround(listArray1[p], secondaryArray, q);
+                    p--;
+                }
+                ConnList *listArray2 = malloc((q) * sizeof(ConnList));
+                int counter2 = q - 1;
+                int counter3 = q - 1;
+                while (counter3 >= 0) {
+                    listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
+                    counter3--;
+                }
+                while (counter2 >= 0) {
+                    roadCounter = Firstround(listArray2[counter2], array_local, roadCounter);
+                    counter2--;
+                }
+                int counterArray[1000];                            
+                int k = Firstround(curr, counterArray, 0);
+                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                int l = k - 1;
+                int z = k - 1;
+                while (z >= 0) {
+                    Array1[z] = MapGetConnections(gv->map, counterArray[z]);
+                    z--;
+                }
+                while (l >= 0) {
+                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
+                    l--;
+                }
+                roadCounter = Firstround(curr, array_local, roadCounter);
+            }            
+        }
+        bubble_sort (array_local, roadCounter);
+        int num_array = removeDuplicates(array_local, roadCounter);
+      
+        int num_counter = num_array - 1;
+        while (num_counter >= 0) {
+            if (array_local[num_counter] != from) {
+                array_all[count] = array_local[num_counter];
+                count++;
+            }
             num_counter--;
         }
-    }
-	if (boat) {
-	    ConnList curr_boat = MapGetConnections(gv->map, from);
-	    int num_b = 0;
-	    while (curr_boat != NULL && curr_boat->type == BOAT) {
-	        num_b++;
-	        curr_boat = curr_boat->next;
-	    }
-        numReturnedLocs = realloc(numReturnedLocs, (count + num_b + 1) * sizeof(int));
-        while (curr_boat != NULL && curr_boat->type == BOAT) {
-            numReturnedLocs[count] = curr_boat->p;
-            count++;
+    }        
+	if (boat) {	    
+	    ConnList curr_boat = MapGetConnections(gv->map, from);        
+        while (curr_boat != NULL) {
+            if (curr_boat->type == BOAT) {
+                array_all[count] = curr_boat->p;
+                count++;
+            }
             curr_boat = curr_boat->next;
         }
 	}
-	return numReturnedLocs;
+	bubble_sort (array_all, count);
+	count = removeDuplicates (array_all, count);
+	PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));	
+	numReturn[count] = from;
+	*numReturnedLocs = count + 1;
+	for (int final = 0; final <= count - 1; final++) {
+	    numReturn[final] = array_all[final];
+	}
+	
+	
+	return numReturn;
 }
 ////////////////////////////////////////////////////////////////////////
 // Your own interface functions
