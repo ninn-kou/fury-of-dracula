@@ -783,18 +783,38 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+    *numReturnedLocs = 0;
+    PlaceId from = DvGetPlayerLocation(dv, player);
+    Round round = DvGetRound(dv);
+    Player cur_player = dv->Curr_Player_Number;
+    // if not Godalming
+    if (HvgetPlayer(dv->gv) != 0) {
+	turn++;
+    }
+    int temp = 0;
+    PlaceId *locs = GvGetReachable(dv->gv, player, round, from, &temp);
+    *numReturnedLocs = temp;
+    return locs;
 }
 
 PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-	*numReturnedLocs = 0;
-	return NULL;
+    *numReturnedLocs = 0;
+    PlaceId from = DvGetPlayerLocation(dv, player);
+    Round round = DvGetRound(dv);
+    Player cur_player = dv->Curr_Player_Number;
+    // if not Godalming
+    if (HvgetPlayer(dv->gv) != 0) {
+	turn++;
+    }
+    int temp = 0;
+    PlaceId *locs = GvGetReachableByType(dv->gv, player, round,
+                              from, road, rail,
+                              boat, &temp)
+    *numReturnedLocs = temp;
+    return locs;
 }
 
 ////////////////////////////////////////////////////////////////////////
