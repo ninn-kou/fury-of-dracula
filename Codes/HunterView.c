@@ -223,16 +223,16 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
+	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
+
 	int temp = 0;
 	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != 0) {
+	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
 	PlaceId *locs = GvGetReachable(hv->gv, 
-	HvGetPlayer(hv), turn,
-	HvGetPlayerLocation(hv, HvGetPlayer(hv)), &temp);
+	HvGetPlayer(hv), turn, curr_place, &temp);
 	*numReturnedLocs = temp;
 	return locs;
 }
@@ -242,14 +242,16 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
+	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
 	
 	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != 0) {
+	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
+	
 	int temp = 0;
 	PlaceId *locs = GvGetReachableByType(hv->gv, HvGetPlayer(hv), turn,
-	HvGetPlayerLocation(hv, HvGetPlayer(hv)), road, rail, boat, &temp);
+									curr_place, road, rail, boat, &temp);
 	*numReturnedLocs = temp;
 	return locs;
 
@@ -259,14 +261,28 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
 	*numReturnedLocs = 0;
+	PlaceId curr_place = HvGetPlayerLocation(hv, player);
+
+	// for the cases :
+	// 1. dracula unknow
+	// 2. hunter no move
+	if(player == PLAYER_DRACULA 
+	&& (curr_place == CITY_UNKNOWN || curr_place == SEA_UNKNOWN)) {
+		return NULL;
+	}
+
+	if(player != PLAYER_DRACULA && curr_place == NOWHERE) {
+		return NULL;
+	}
 	
 	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != 0) {
+	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
+	
 	int temp = 0;
 	PlaceId *locs = GvGetReachable(hv->gv, player, turn,
-	HvGetPlayerLocation(hv, player), &temp);
+	curr_place, &temp);
 	*numReturnedLocs = temp;
 	return locs;
 }
@@ -277,14 +293,27 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
+	PlaceId curr_place = HvGetPlayerLocation(hv, player);
+
+	// for the cases :
+	// 1. dracula unknow
+	// 2. hunter no move
+	if(player == PLAYER_DRACULA 
+	&& (curr_place == CITY_UNKNOWN || curr_place == SEA_UNKNOWN)) {
+		return NULL;
+	}
+
+	if(player != PLAYER_DRACULA && curr_place == NOWHERE) {
+		return NULL;
+	}
 	
 	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != 0) {
+	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
 	int temp = 0;
 	PlaceId *locs = GvGetReachableByType(hv->gv, player, turn,
-	HvGetPlayerLocation(hv, player), road, rail, boat, &temp);
+	curr_place, road, rail, boat, &temp);
 	*numReturnedLocs = temp;
 	return locs;
 	

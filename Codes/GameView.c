@@ -153,7 +153,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
     for (int i = 0; i < 6; i++) {
 		new->traplist[i] = NOWHERE;
 	}
-	
+	// initialize the info foe the young_vampire.
 	new->vampire = malloc(sizeof(Young_vampire));
 	new->vampire->survive = 0;
 	new->vampire->born_round_number = -1;
@@ -166,6 +166,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	new->turn_Number = round;
 	new->score = GAME_START_SCORE;
 
+	// initialize for the player[5]
+	// aka playerdata,
 	for (int i = 0; i < 5; i++) {
 		new->player[i] = malloc(sizeof(PlayerData));
 		new->player[i]->movelist = malloc(sizeof(PlaceId)*(round+1));
@@ -236,8 +238,10 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				k = 0;
 				
 			}
-		} else if(pastPlaysID > 8 && pastPlaysID < 15) {
+
 		// now is looking at Seward
+		} else if(pastPlaysID > 8 && pastPlaysID < 15) {
+		
 			if (pastPlaysID > 8 && pastPlaysID < 11) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
@@ -258,8 +262,9 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
+			// now is looking at Helsing
 		} else if(pastPlaysID > 16 && pastPlaysID < 23) {
-		// now is looking at Helsing
+		
 			if (pastPlaysID > 16 && pastPlaysID < 19) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
