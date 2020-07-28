@@ -23,7 +23,8 @@
 // add your own #includes here
 
 typedef struct gameView *GameView;
-
+void bubble_sort(int a[],int n);
+int removeDuplicates(int* nums, int numsSize);
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
 
