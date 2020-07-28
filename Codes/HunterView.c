@@ -225,7 +225,10 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
-
+	if(HvGetPlayer(hv) != PLAYER_DRACULA && curr_place == NOWHERE) {
+		return NULL;
+	}
+	
 	int temp = 0;
 	Round turn = HvGetRound(hv);
 	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
@@ -243,6 +246,9 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
+	if(HvGetPlayer(hv) != PLAYER_DRACULA && curr_place == NOWHERE) {
+		return NULL;
+	}
 	
 	Round turn = HvGetRound(hv);
 	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
