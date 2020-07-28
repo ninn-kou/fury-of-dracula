@@ -150,7 +150,9 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	}
 
     // CREATE THE WHOLE STRUCT OF TRAPLIST;
-    
+    for (int i = 0; i < 6; i++) {
+		new->traplist[i] = NOWHERE;
+	}
 	
 	new->vampire = malloc(sizeof(Young_vampire));
 	new->vampire->survive = 0;
@@ -300,9 +302,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			}
 		} else {
 			// now is looking at Dracula
-			if (pastPlaysID == 0){
-				cycling(new->traplist);
-			}
+			
 			if (pastPlaysID > 32 && pastPlaysID < 35) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
