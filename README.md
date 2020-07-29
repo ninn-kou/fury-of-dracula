@@ -17,7 +17,7 @@ Group working for COMP2521, Term 2 2020, Assignment 2.
 | Hao Ren      | z5237203 | flying-yogurt          |
 | Xingyu Tan   | z5237560 | SteveTANTAN, Steve0321 |
 | Anbang Cheng | z5237233 | AnbangCheng            |
-| Yi Shang     | z5237494 | YiShang08              |
+| Yi Shang     | z5237494 | YiShang08   W15B           |
 
 ## Our Meeting History
 
