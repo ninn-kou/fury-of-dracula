@@ -469,7 +469,183 @@ int main(void)
 		
 		HvFree(hv);
 		printf("Test passed!\n");	
+	} 
+	{
+			
+		
+		char *trail =
+			"GSZ....";
+		
+		Message messages[1] = {};
+		HunterView hv = HvNew(trail, messages);
+		{
+			printf("Checking for no movs by type"
+				"(PLAYER_DR_SEWARD, Round 1)\n");
+			int numLocs = -1;
+			PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DR_SEWARD,
+												true, false, false, &numLocs);
+			assert(numLocs == 0);
+			assert(locs == NULL);
+			
+		
+			free(locs);
+		}
+		printf("Test passed!\n");
+		{
+			printf("Checking for no movs by type"
+			"(player_dracula, Round 2)\n");
+			int numLocs = -1;
+			PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DRACULA,
+												true, false, false, &numLocs);
+			assert(numLocs == 0);
+			assert(locs == NULL);
+			
+		
+			free(locs);
+			printf("Test passed!\n");
+		}
+		{
+			printf("Checking for no movs for curr play by type"
+			"(Round 3)\n");
+			int numLocs = -1;
+			PlaceId *locs = HvWhereCanIGoByType(hv, true, false, false, &numLocs);
+			assert(numLocs == 0);
+			assert(locs == NULL);
+			
+		
+			free(locs);
+			printf("Test passed!\n");
+
+		}
+		{
+			printf("Checking for WhereCanIGo no movs "
+				"( Round 4)\n");
+			int numLocs = -1;
+			PlaceId *locs = HvWhereCanIGo(hv, &numLocs);
+			assert(numLocs == 0);
+			assert(locs == NULL);
+			
+		
+			free(locs);
+			printf("Test passed!\n");
+		}
+		
+		{
+			printf("Checking for WhereCanTheyGO no movs "
+				"(play_decular, Round 4)\n");
+			int numLocs = -1;
+			PlaceId *locs = HvWhereCanTheyGo(hv, PLAYER_DRACULA, &numLocs);
+			assert(numLocs == 0);
+			assert(locs == NULL);
+			
+		
+			free(locs);
+			printf("Test passed!\n");
+		}
+		
+		
+		HvFree(hv);
+		printf("Test passed!\n");
+
+
 	}
+	{///////////////////////////////////////////////////////////////////
+		{
+			char *trail = "GSZ.... SRO....";
+		
+			Message messages[2] = {};
+			HunterView hv = HvNew(trail, messages);
+			printf("\tChecking Rome raod, rail and boat connections "
+			       "(Dr Seward, Round 1)\n");
+			int numLocs = -1;
+			
+			PlaceId *locs = HvWhereCanTheyGoByType(hv, PLAYER_DR_SEWARD,
+													true, true, true, &numLocs);
+			
+			
+			assert(numLocs == 6);
+			sortPlaces(locs, numLocs);			
+			assert(locs[0] == BARI);
+			assert(locs[1] == FLORENCE);
+			assert(locs[2] == MILAN);
+			assert(locs[3] == NAPLES);
+			assert(locs[4] == ROME);
+			assert(locs[5] == TYRRHENIAN_SEA);			
+			free(locs);
+			
+			HvFree(hv);
+			printf("Test passed!\n");
+		}
+
+
+		{
+			char *trail = "GLS.... SLS.... HSW.... MMR.... DCD.V.. "
+			"GPA.... SGE.... HGE.... MGE.... DSZ.V..";
+		
+			Message messages[10] = {};
+			HunterView hv = HvNew(trail, messages);
+			printf("\tChecking Paris rail connections "
+			       "(Lord Godalming, Round 2)\n");
+			
+			int numLocs = -1;
+
+			PlaceId *locs = HvWhereCanIGoByType(hv, false, true,
+			                                     false, &numLocs);
+
+			assert(numLocs == 7);
+			sortPlaces(locs, numLocs);
+			assert(locs[0] == BORDEAUX);
+			assert(locs[1] == BRUSSELS);
+			assert(locs[2] == COLOGNE);
+			assert(locs[3] == LE_HAVRE);
+			assert(locs[4] == MARSEILLES);
+			assert(locs[5] == PARIS);
+			assert(locs[6] == SARAGOSSA);
+			printf("Test passed!\n");
+			free(locs);
+			
+			HvFree(hv);
+			
+		}
+
+		{
+			char *trail = "GLS.... SLS.... HSW.... MMR.... DCD.V.. "
+			"GPA.... SGE.... HGE.... MGE.... DSZ.V.. "
+			"GBA.... SLS.... HSW.... MMR.... DCD.V..";
+		
+			Message messages[15] = {};
+			HunterView hv = HvNew(trail, messages);
+			printf("\tChecking Paris rail connections "
+			       "(Lord Godalming, Round 2)\n");
+			
+			int numLocs = -1;
+
+			PlaceId *locs = HvWhereCanIGo(hv, &numLocs);
+			//printf("111111111111  %d\n", HvGetPlayerLocation(hv,HvGetPlayer(hv)));
+			
+			//printf("111111111111  %d\n", numLocs);
+			assert(numLocs == 10);
+			sortPlaces(locs, numLocs);
+			assert(locs[0] == ALICANTE);
+			assert(locs[1] == BARCELONA);
+			assert(locs[2] == BORDEAUX);
+			assert(locs[3] == LISBON);
+			assert(locs[4] == MADRID);
+			assert(locs[5] == MEDITERRANEAN_SEA);
+			assert(locs[6] == PARIS);
+			assert(locs[7] == SANTANDER);
+			assert(locs[8] == SARAGOSSA);
+			assert(locs[9] == TOULOUSE);
+			printf("Test passed!\n");
+			free(locs);
+			
+			HvFree(hv);
+			
+		}
+		
+		
+	}
+	printf("Test passed!\n");
 	
 	return EXIT_SUCCESS;
 }

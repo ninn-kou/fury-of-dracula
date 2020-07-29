@@ -272,8 +272,8 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 	// for the cases :
 	// 1. dracula unknow
 	// 2. hunter no move
-	if(player == PLAYER_DRACULA 
-	&& (curr_place == CITY_UNKNOWN || curr_place == SEA_UNKNOWN)) {
+	if(player == PLAYER_DRACULA && (curr_place == CITY_UNKNOWN 
+	||curr_place == NOWHERE|| curr_place == SEA_UNKNOWN)) {
 		return NULL;
 	}
 
@@ -304,8 +304,8 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	// for the cases :
 	// 1. dracula unknow
 	// 2. hunter no move
-	if(player == PLAYER_DRACULA 
-	&& (curr_place == CITY_UNKNOWN || curr_place == SEA_UNKNOWN)) {
+	if(player == PLAYER_DRACULA && (curr_place == CITY_UNKNOWN ||
+	curr_place == NOWHERE|| curr_place == SEA_UNKNOWN)) {
 		return NULL;
 	}
 
