@@ -785,11 +785,16 @@ PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
 {
     *numReturnedLocs = 0;
     PlaceId from = DvGetPlayerLocation(dv, player);
+    if (from == NOWHERE) {
+	return NULL;
+    }
     Round round = DvGetRound(dv);
     // if not Godalming
-    if (GvGetPlayer(dv->gv) != 0) {
+    if (player != PLAYER_DRACULA) {
 	round++;
-    }
+    } else {
+	return DvWhereCanIGo(dv, numReturnedLocs);
+	}
     int temp = 0;
     PlaceId *locs = GvGetReachable(dv->gv, player, round, from, &temp);
     *numReturnedLocs = temp;
@@ -802,11 +807,16 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
 {
     *numReturnedLocs = 0;
     PlaceId from = DvGetPlayerLocation(dv, player);
+    if (from == NOWHERE) {
+	return NULL;
+    }
     Round round = DvGetRound(dv);
     // if not Godalming
-    if (GvGetPlayer(dv->gv) != 0) {
+    if (player != PLAYER_DRACULA) {
 	round++;
-    }
+    } else {
+	return DvWhereCanIGoByType(dv,  road, boat, numReturnedLocs);
+	}
     int temp = 0;
     PlaceId *locs = GvGetReachableByType(dv->gv, player, round,
                               from, road, rail,
