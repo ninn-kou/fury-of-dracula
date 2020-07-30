@@ -227,7 +227,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					cycling(Godalming->playerTrail);
 					Godalming->playerTrail[5] = Godalming->currlocation;
 
-					Godalming->num_move = moving(Godalming->movelist,Godalming->currlocation,Godalming->num_move);
+					Godalming->num_move = moving(Godalming->movelist,
+					Godalming->currlocation,Godalming->num_move);
 
 				}
 			}
@@ -254,7 +255,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					cycling(Seward->playerTrail);
 					Seward->playerTrail[5] = Seward->currlocation;
 
-					Seward->num_move = moving(Seward->movelist,Seward->currlocation,Seward->num_move);
+					Seward->num_move = moving(Seward->movelist,
+					Seward->currlocation,Seward->num_move);
 				}
 			}
 
@@ -274,7 +276,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Helsing->currlocation = placeAbbrevToId(place);
 					cycling(Helsing->playerTrail);
 					Helsing->playerTrail[5] = placeAbbrevToId(place);
-					Helsing->num_move = moving(Helsing->movelist,Helsing->currlocation,Helsing->num_move);
+					Helsing->num_move = moving(Helsing->movelist,
+					Helsing->currlocation,Helsing->num_move);
 
 				}
 			}
@@ -296,7 +299,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Mina->currlocation = placeAbbrevToId(place);
 					cycling(Mina->playerTrail);
 					Mina->playerTrail[5] = placeAbbrevToId(place);
-					Mina->num_move = moving(Mina->movelist,Mina->currlocation,Mina->num_move);
+					Mina->num_move = moving(Mina->movelist,
+					Mina->currlocation,Mina->num_move);
 
 				}
 			}
@@ -323,7 +327,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 							Dracula->currlocation = Dracula->playerTrail[5];
 						} else{
 							Dracula->currlocation = 
-							Dracula->playerTrail[5 + DOUBLE_BACK_1 - placeAbbrevToId(place)];
+							Dracula->playerTrail[5 + DOUBLE_BACK_1 
+							- placeAbbrevToId(place)];
 						}
 					}
 					
@@ -339,7 +344,8 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					// roll the trail
 					cycling(Dracula->playerTrail);
 					Dracula->playerTrail[5] = Dracula->currlocation;
-					Dracula->num_move = moving(Dracula->movelist,placeAbbrevToId(place),Dracula->num_move);
+					Dracula->num_move = moving(Dracula->movelist,
+					placeAbbrevToId(place),Dracula->num_move);
 
 					
 					k = 0;
@@ -354,6 +360,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 			}
 			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
+				
 				new->vampire->survive = 1;
 				new->vampire->born_round_number = new->turn_Number;
 				new->vampire->born_location = Dracula->currlocation;
@@ -361,7 +368,10 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
 
 			}
-			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'V') {
+			
+			if ((pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'V')
+			|| (pastPlaysID == 37 && new->vampire->survive == 1
+			&& new->vampire->born_round_number + 6 == new->turn_Number)) {
 				new->vampire->survive = 0;
 				new->vampire->born_round_number= -1;
 				new->vampire->born_location = NOWHERE;
@@ -448,22 +458,57 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 ////////////////////////////////////////////////////////////////////////
 // Game History
 
-PlaceId *GvGetMoveHistory(GameView gv, Player player, int *numReturnedMoves, bool *canFree) {
+PlaceId *GvGetMoveHistory(GameView gv, Player player, 
+int *numReturnedMoves, bool *canFree) {
 	
 	*numReturnedMoves = gv->player[player]->num_move;
 	*canFree = false;
+	if(*numReturnedMoves == 0) {
+		return NULL;
+	}
 	return gv->player[player]->movelist;
+
 }
 
-PlaceId *GvGetLastMoves(GameView gv, Player player, int numMoves, int *numReturnedMoves, bool *canFree) {
+PlaceId *GvGetLastMoves(GameView gv, Player player, 
+int numMoves, int *numReturnedMoves, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
-	*canFree = false;
-	return NULL;
+	
+	int numMovesTemp = 0; 
+	bool canFree_temp = false;
+	PlaceId *moves = GvGetMoveHistory(gv, player, &numMovesTemp, &canFree_temp);
+	
+	PlaceId *array = malloc(sizeof(PlaceId)*numMoves);
+	
+	int number = numMoves;
+	if(number > numMovesTemp) {
+		number = numMovesTemp;
+	}
+	*numReturnedMoves = number;
+	number--;
+	numMovesTemp--;
+	while (number >= 0) {
+		array[number] = moves[numMovesTemp];
+		numMovesTemp--;
+		number--;
+	}
+	if(*numReturnedMoves == 0) {
+		array = NULL;
+	}
+	*canFree = true;
+	if (canFree_temp) free(moves);
+	return array;
 }
 
-PlaceId *GvGetLocationHistory(GameView gv, Player player, int *numReturnedLocs, bool *canFree) {
+PlaceId *GvGetLocationHistory(GameView gv, Player player, 
+int *numReturnedLocs, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	*numReturnedLocs = gv->player[player]->num_move;
+	*canFree = false;
+	if(*numReturnedLocs == 0) {
+		return NULL;
+	}
 	PlaceId *array = malloc(sizeof(PlaceId)*gv->player[player]->num_move);
 	for (int i = 0; i < gv->player[player]->num_move; i++) {
 		if(gv->player[player]->movelist[i] < 102){
@@ -481,16 +526,42 @@ PlaceId *GvGetLocationHistory(GameView gv, Player player, int *numReturnedLocs, 
 		} 
 	}
 
-	*numReturnedLocs = gv->player[player]->num_move;
+	
 	*canFree = true;
+
 	return array;
 }
 
-PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, int *numReturnedLocs, bool *canFree) {
+PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, 
+int *numReturnedLocs, bool *canFree) {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	*canFree = false;
-	return 0;
+	
+	int numlocTemp = 0; 
+	bool canFree_temp = true;
+	PlaceId *moves = GvGetLocationHistory(gv, player, &numlocTemp, &canFree_temp);
+	
+	PlaceId *array = malloc(sizeof(PlaceId)*numLocs);
+	int number = numLocs;
+	if(number > numlocTemp) {
+		number = numlocTemp;
+	}
+	*numReturnedLocs = number;
+	number--;
+	numlocTemp--;
+	while (number >= 0) {
+		array[number] = moves[numlocTemp];
+		numlocTemp--;
+		number--;
+	}
+
+	if (canFree_temp) free(moves);
+	if(*numReturnedLocs == 0) {
+		array = NULL;
+	}
+	*canFree = true;
+
+	return array;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -622,7 +693,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 int counter2 = q - 1;
                 int counter3 = q - 1;
                 while (counter3 >= 0) {
-                    listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
+                    listArray2[counter3] = MapGetConnections(gv->map, 
+					secondaryArray[counter3]);
                     counter3--;
                 }
                 while (counter2 >= 0) {
@@ -744,11 +816,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 int counter2 = q - 1;
                 int counter3 = q - 1;
                 while (counter3 >= 0) {
-                    listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
+                    listArray2[counter3] = MapGetConnections(gv->map, 
+					secondaryArray[counter3]);
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = Firstround(listArray2[counter2], array_local, roadCounter);
+                    roadCounter = Firstround(listArray2[counter2], array_local, 
+					roadCounter);
                     counter2--;
                 }
                 int counterArray[1000];                            
