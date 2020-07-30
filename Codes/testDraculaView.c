@@ -50,7 +50,7 @@ int main(void)
 		assert(DvGetVampireLocation(dv) == NOWHERE);
 		int numTraps = -1;
 		PlaceId *traps = DvGetTrapLocations(dv, &numTraps);
-		//assert(numTraps == 0);
+		assert(numTraps == 0);
 		free(traps);
 
 		printf("Test passed!\n");
