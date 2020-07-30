@@ -19,18 +19,21 @@
 #include "HunterView.h"
 #include "Map.h"
 #include "Places.h"
-// add your own #includes here
-typedef struct QueueRep *Queue;
 
+/////////////////////////////////////////////////////////////
+//                 my own interface functions              //
+/////////////////////////////////////////////////////////////
+typedef struct QueueRep *Queue;
+// using queue struct for BFS finding for shortes path
 Queue newQueue (void);			// create new empty queue
 void dropQueue (Queue);			// free memory used by queue
 void QueueJoin (Queue, PlaceId);	// add item on queue
 PlaceId QueueLeave (Queue);		// remove item from queue
 int QueueIsEmpty (Queue);		// check for no items
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 
 
+// struct using by queue
 typedef struct QueueNode {
 	PlaceId value;
 	struct QueueNode *next;
@@ -40,7 +43,7 @@ typedef struct QueueRep {
 	QueueNode *head; // ptr to first node
 	QueueNode *tail; // ptr to last node
 } QueueRep;
-
+// struct using by hunter view
 struct hunterView {
 	GameView gv;
 	Map	map;
@@ -48,10 +51,9 @@ struct hunterView {
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
-
+// create and malloc info we need 
 HunterView HvNew(char *pastPlays, Message messages[])
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	HunterView new = malloc(sizeof(HunterView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate HunterView!\n");
@@ -62,10 +64,9 @@ HunterView HvNew(char *pastPlays, Message messages[])
 
 	return new;
 }
-
+// free the info 
 void HvFree(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GvFree(hv->gv);
 	MapFree(hv->map);
 	free(hv);
@@ -73,51 +74,60 @@ void HvFree(HunterView hv)
 
 ////////////////////////////////////////////////////////////////////////
 // Game State Information
-
-Round HvGetRound(HunterView hv)
+//Get the current round number
+Round HvGetRound(HunterView hv) 
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	
 	return GvGetRound(hv->gv);
 }
 
-Player HvGetPlayer(HunterView hv)
+// Get the current player
+Player HvGetPlayer(HunterView hv) 
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	
 	return GvGetPlayer(hv->gv);
 }
 
+// Gets the current game score
 int HvGetScore(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	return GvGetScore(hv->gv);
 }
 
+// Gets the current health points for the given player; an value between
+// 0 and 9 for a hunter, or >= 0 for Dracula.
 int HvGetHealth(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	
 	return GvGetHealth(hv->gv,player);
 }
 
+// return the curr location for each "player"
 PlaceId HvGetPlayerLocation(HunterView hv, Player player)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	
 	return GvGetPlayerLocation(hv->gv,player);
 	
 }
 
+// return real placeID FOR the vampire location ID 
+// if the vampire is not exist
+// return nowhere
 PlaceId HvGetVampireLocation(HunterView hv)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	
 	return GvGetVampireLocation(hv->gv);
 }
 
 ////////////////////////////////////////////////////////////////////////
 // Utility Functions
 
+// return the real placeID if we konw the last dracula location
+// if we don't know it 
+// or the location cannot see 
+// just return nowhere.
 PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
-
 	int numMoves = 0; 
 	bool canFree = false;
 	PlaceId *moves = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numMoves, &canFree);
@@ -134,16 +144,20 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 	return NOWHERE;
 }
 
+// get the shortest path to dest for the player "hunter"
+// using the BFS way and Queue method to grab the placeid
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
 	PlaceId src = HvGetPlayerLocation(hv, hunter);
 	assert (hv->map != NULL);
 	int num_place = MapNumPlaces(hv->map);
-
+	// reate the visted array, to record the place, 
+	// we have visted before
 	int *visited = malloc(num_place * sizeof(PlaceId));
    	for (int i = 0; i < num_place; i++) visited[i] = -1;
-	
+	// reate the path array, to record the real place, 
+	// we needed.
 	int *path = malloc(num_place * sizeof(PlaceId));
    	for (int i = 0; i < num_place; i++) path[i] = NOWHERE;
 	
@@ -162,18 +176,25 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			found = 1;
 		
 		} else{
-			int turn = HvGetRound(hv);
-			
+
+			// using round to record the round_number for each
+			// city turn.
+			int round = HvGetRound(hv);
+			// check how many round for this city
+			// check how many roads from present city to src.
 			for(PlaceId i = cur; i != src; i = visited[i]) {
-				turn ++;
+				round ++;
 			}
-			if(HvGetPlayer(hv) != 0) {
-				turn++;
+			// if current player is not the play_godalming
+			// we need adding the round 
+			// as every player's move is in the next round
+			if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
+				round++;
 			}
 		
 			int temp = 0;
-		
-			PlaceId *locs = GvGetReachable(hv->gv, hunter, turn, cur, &temp);
+			// using visited array, and connect each placeid and its parents id.
+			PlaceId *locs = GvGetReachable(hv->gv, hunter, round, cur, &temp);
 			for (int i = 0; i < temp; i++) {
 				// make sure each side meet the condition.
                 if (visited[locs[i]] == -1 ) {
@@ -184,17 +205,16 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
             }	
 		}
 	}
-	
+	// if we have got the dest one,
 	if(found) {
+
 		// first time, record the pathLength in reverse order.
 		PlaceId copy = dest;
 		int number = 0;
 		while(copy != src){
-			
 			path[number] = copy;		
 			copy = visited[copy]; 
 			number++;
-			
 		}
 		path[number] = src;
 		// get the correct number of sides.
@@ -206,6 +226,7 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 			path[number - i] = path[i];
 			path[i] = copy;
 		}
+		// then move forward one to deleting the src city
 		for (int i = 0; i < fixed_number; i++) {
 			path[i] = path[i+1];
 			path[i+1] = NOWHERE;
@@ -221,42 +242,46 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
-
+// grab the city which is reachable for the current player.
 PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
+	// initial the info
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
+	// if the current have not moved before
+	// just return NULL.
 	if(curr_place == NOWHERE) {
 		return NULL;
 	}
-	
-	int temp = 0;
-	
+	// else we reusing GvGetReachable fuction to grab cities
 	PlaceId *locs = GvGetReachable(hv->gv, 
-	HvGetPlayer(hv), HvGetRound(hv), curr_place, &temp);
-	*numReturnedLocs = temp;
+	HvGetPlayer(hv), HvGetRound(hv), curr_place, numReturnedLocs);
+	
 	return locs;
 }
 
+// grab the city which is reachable for the current player 
+// by diff transport method.
 PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
                              bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
+	// initial the info
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
+	// if the current have not moved before
+	// just return NULL.
 	if(curr_place == NOWHERE) {
 		return NULL;
 	}
+
+	// else we reusing GvGetReachable fuction to grab cities
+	PlaceId *locs = GvGetReachableByType(hv->gv, HvGetPlayer(hv), 
+	HvGetRound(hv), curr_place, road, rail, boat, numReturnedLocs);
 	
-
-	int temp = 0;
-	PlaceId *locs = GvGetReachableByType(hv->gv, HvGetPlayer(hv), HvGetRound(hv),
-									curr_place, road, rail, boat, &temp);
-	*numReturnedLocs = temp;
 	return locs;
-
 }
 
+// grab the city which is reachable for the player.
 PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
                           int *numReturnedLocs)
 {
@@ -264,8 +289,9 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 	PlaceId curr_place = HvGetPlayerLocation(hv, player);
 
 	// for the cases :
-	// 1. dracula unknow
+	// 1. dracula start from unknow place
 	// 2. hunter no move
+	// we need return NULL
 	if(player == PLAYER_DRACULA && (curr_place == CITY_UNKNOWN 
 	||curr_place == NOWHERE|| curr_place == SEA_UNKNOWN)) {
 		return NULL;
@@ -274,24 +300,25 @@ PlaceId *HvWhereCanTheyGo(HunterView hv, Player player,
 	if(player != PLAYER_DRACULA && curr_place == NOWHERE) {
 		return NULL;
 	}
-	
+	// if current player is not the play_godalming
+	// we need adding the round 
+	// as every player's move is in the next round
 	Round turn = HvGetRound(hv);
 	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
-	
-	int temp = 0;
+	// we using GvGetReachable fuction to grab cities
 	PlaceId *locs = GvGetReachable(hv->gv, player, turn,
-	curr_place, &temp);
-	*numReturnedLocs = temp;
+	curr_place, numReturnedLocs);
 	return locs;
 }
 
+// grab the city which is reachable for the player 
+// by diff transport method.
 PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, player);
 
@@ -306,24 +333,22 @@ PlaceId *HvWhereCanTheyGoByType(HunterView hv, Player player,
 	if(player != PLAYER_DRACULA && curr_place == NOWHERE) {
 		return NULL;
 	}
-	
+	// if current player is not the play_godalming
+	// we need adding the round 
+	// as every player's move is in the next round
 	Round turn = HvGetRound(hv);
 	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
 		turn++;
 	}
-	int temp = 0;
+	// we using GvGetReachable fuction to grab cities by diff transport methods
 	PlaceId *locs = GvGetReachableByType(hv->gv, player, turn,
-	curr_place, road, rail, boat, &temp);
-	*numReturnedLocs = temp;
+	curr_place, road, rail, boat, numReturnedLocs);
 	return locs;
-	
-	
 }
 
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
-
-// TODO
+/////////////////////////////////////////////////////////////
+//                 my own interface functions              //
+/////////////////////////////////////////////////////////////
 
 // create new empty Queue
 Queue newQueue (void)
