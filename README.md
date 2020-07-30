@@ -12,17 +12,19 @@ Group working for COMP2521, Term 2 2020, Assignment 2.
 
 ## Teammates
 
-| Name         | zID      | GitHub Accounts        |
-|--------------|----------|------------------------|
-| Hao Ren      | z5237203 | flying-yogurt          |
-| Xingyu Tan   | z5237560 | SteveTANTAN, Steve0321 |
-| Anbang Cheng | z5237233 | AnbangCheng            |
-| Yi Shang     | z5237494 | YiShang08   W15B           |
+| Name               | zID      | GitHub Accounts        |
+|--------------------|----------|------------------------|
+| Hao Ren      (W15A)| z5237203 | flying-yogurt          |
+| Xingyu Tan   (W15A)| z5237560 | SteveTANTAN, Steve0321 |
+| Anbang Cheng (W15A)| z5237233 | AnbangCheng            |
+| Yi Shang     (W15B)| z5237494 | YiShang08              |
 
 ## Our Meeting History
 
 - [Meeting 01, 21:36, 19/07/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/6308)
 - [Meeting 02, 15:31, 20/07/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/6436)
+- [Meeting 03, 17:31, 24/07/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/6637)
+
 
 ## Assignment Part 1
 
