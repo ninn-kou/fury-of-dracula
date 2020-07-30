@@ -178,7 +178,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			new->player[i]->HP = GAME_START_BLOOD_POINTS;
 		}
 		new->player[i]->currlocation = NOWHERE;
-		//new->player[i]->playerTrail= malloc(sizeof(PlaceId)*6);
+		
 		for(int j = 0; j < 6; j++) {
 		new->player[i]->playerTrail[j] = NOWHERE;
 		}
@@ -401,36 +401,36 @@ void GvFree(GameView gv)
 ////////////////////////////////////////////////////////////////////////
 // Game State Information
 
+// gets the current round number
 Round GvGetRound(GameView gv)
 {
-	// gets the current round number
 	return (gv->turn_Number);
 }
 
+// Gets the current player;
 Player GvGetPlayer(GameView gv)
 {
-	// Gets the current player;
 	return (gv->Curr_Player_Number);
 }
 
+//Gets the current game score;
 int GvGetScore(GameView gv)
 {
-	//Gets the current game score;
 	return (gv->score);
 }
-
+//gets the PH VALUE for the PLAYER
 int GvGetHealth(GameView gv, Player player) {
 
 	return (gv->player[player]->HP);
 }
 
-
+// gets the player location for the Player
 PlaceId GvGetPlayerLocation(GameView gv, Player player) {
 
 	return gv->player[player]->currlocation;
 	
 }
-
+// gets the player location for the Player if it exist.
 PlaceId GvGetVampireLocation(GameView gv) {
 
 	return (gv->vampire->born_location);
@@ -442,7 +442,7 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 	for (int i = 0; i < 6; i++) {
 		trap[i] = '\0';
 	}
-
+	// excluding all the traps which have been founded
 	int j = 0;
 	for (int i = 0; i < 6; i++) {
 		if (gv->traplist[i] != NOWHERE){
@@ -457,7 +457,8 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 
 ////////////////////////////////////////////////////////////////////////
 // Game History
-
+// 
+// garb the correct moving history.
 PlaceId *GvGetMoveHistory(GameView gv, Player player, 
 int *numReturnedMoves, bool *canFree) {
 	
@@ -469,18 +470,20 @@ int *numReturnedMoves, bool *canFree) {
 	return gv->player[player]->movelist;
 
 }
-
+// grab the last numMoves times move
+// if the total number of moves is less than nummoves
+// just return total number of moves numbers array
 PlaceId *GvGetLastMoves(GameView gv, Player player, 
 int numMoves, int *numReturnedMoves, bool *canFree) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedMoves = 0;
-	
+	// get the total move history first,
 	int numMovesTemp = 0; 
 	bool canFree_temp = false;
 	PlaceId *moves = GvGetMoveHistory(gv, player, &numMovesTemp, &canFree_temp);
-	
+	// using array to record the lastmove array
 	PlaceId *array = malloc(sizeof(PlaceId)*numMoves);
-	
+	// if the total number of moves is less than nummoves
+	// just return total number of moves numbers array
 	int number = numMoves;
 	if(number > numMovesTemp) {
 		number = numMovesTemp;
@@ -488,11 +491,14 @@ int numMoves, int *numReturnedMoves, bool *canFree) {
 	*numReturnedMoves = number;
 	number--;
 	numMovesTemp--;
+	// the copy the placeid onebyone
 	while (number >= 0) {
 		array[number] = moves[numMovesTemp];
 		numMovesTemp--;
 		number--;
 	}
+	// if there is noting inside the move history
+	// just return null.
 	if(*numReturnedMoves == 0) {
 		array = NULL;
 	}
@@ -501,47 +507,57 @@ int numMoves, int *numReturnedMoves, bool *canFree) {
 	return array;
 }
 
+// in  this fuction 
+// we show the real postion for the DOUBLE BACK AND HIDE
 PlaceId *GvGetLocationHistory(GameView gv, Player player, 
 int *numReturnedLocs, bool *canFree) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = gv->player[player]->num_move;
 	*canFree = false;
+	// if there is noting inside the move history
+	// just return null.
 	if(*numReturnedLocs == 0) {
 		return NULL;
 	}
+	// 
+	// showing the real postion for the DOUBLE BACK AND HIDE
 	PlaceId *array = malloc(sizeof(PlaceId)*gv->player[player]->num_move);
 	for (int i = 0; i < gv->player[player]->num_move; i++) {
-		if(gv->player[player]->movelist[i] < 102){
-		array[i] = gv->player[player]->movelist[i];
+		// copy for the normal postion 
+		if(gv->player[player]->movelist[i] < HIDE){
+			array[i] = gv->player[player]->movelist[i];
 		}
-		if(gv->player[player]->movelist[i] >= 103 
-		&& gv->player[player]->movelist[i] <= 107) {
-			int temp = i+ 102 - gv->player[player]->movelist[i];
 
+		// showing the position for double back
+		if(gv->player[player]->movelist[i] >= DOUBLE_BACK_1 
+		&& gv->player[player]->movelist[i] <= DOUBLE_BACK_5) {
+			int temp = i+ HIDE - gv->player[player]->movelist[i];
 			array[i] = array[temp];	
 		} 
-		
-		if(gv->player[player]->movelist[i] == 102){
+
+		// showing the position for hide
+		if(gv->player[player]->movelist[i] == HIDE){
 			array[i] = array[i-1];
 		} 
 	}
-
-	
 	*canFree = true;
-
 	return array;
 }
 
+// in  this fuction 
+// we show the real postion for the DOUBLE BACK AND HIDE 
+// for the last number of moves
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, 
 int *numReturnedLocs, bool *canFree) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
-	
 	int numlocTemp = 0; 
 	bool canFree_temp = true;
+	// get the total local history first,
 	PlaceId *moves = GvGetLocationHistory(gv, player, &numlocTemp, &canFree_temp);
 	
+	// using array to record the lastmove array
 	PlaceId *array = malloc(sizeof(PlaceId)*numLocs);
+	// if the total number of moves is less than nummoves
+	// just return total number of moves numbers array
 	int number = numLocs;
 	if(number > numlocTemp) {
 		number = numlocTemp;
@@ -549,18 +565,20 @@ int *numReturnedLocs, bool *canFree) {
 	*numReturnedLocs = number;
 	number--;
 	numlocTemp--;
+
+	// the copy the placeid onebyone
 	while (number >= 0) {
 		array[number] = moves[numlocTemp];
 		numlocTemp--;
 		number--;
 	}
-
-	if (canFree_temp) free(moves);
+	// if there is noting inside the local history
+	// just return null.
 	if(*numReturnedLocs == 0) {
 		array = NULL;
 	}
 	*canFree = true;
-
+	if (canFree_temp) free(moves);
 	return array;
 }
 
