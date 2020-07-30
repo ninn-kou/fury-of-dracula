@@ -118,8 +118,9 @@ PlaceId HvGetLastKnownDraculaLocation(HunterView hv, Round *round)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 
-	int numMoves = 0; bool canFree = false;
-	PlaceId *moves = GvGetMoveHistory(hv->gv, PLAYER_DRACULA, &numMoves, &canFree);
+	int numMoves = 0; 
+	bool canFree = false;
+	PlaceId *moves = GvGetLocationHistory(hv->gv, PLAYER_DRACULA, &numMoves, &canFree);
 	numMoves --;
 	while (numMoves >= 0 ) {
 		if(moves[numMoves] < NUM_REAL_PLACES) {
@@ -225,17 +226,14 @@ PlaceId *HvWhereCanIGo(HunterView hv, int *numReturnedLocs)
 {
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
-	if(HvGetPlayer(hv) != PLAYER_DRACULA && curr_place == NOWHERE) {
+	if(curr_place == NOWHERE) {
 		return NULL;
 	}
 	
 	int temp = 0;
-	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
-		turn++;
-	}
+	
 	PlaceId *locs = GvGetReachable(hv->gv, 
-	HvGetPlayer(hv), turn, curr_place, &temp);
+	HvGetPlayer(hv), HvGetRound(hv), curr_place, &temp);
 	*numReturnedLocs = temp;
 	return locs;
 }
@@ -246,17 +244,13 @@ PlaceId *HvWhereCanIGoByType(HunterView hv, bool road, bool rail,
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	*numReturnedLocs = 0;
 	PlaceId curr_place = HvGetPlayerLocation(hv, HvGetPlayer(hv));
-	if(HvGetPlayer(hv) != PLAYER_DRACULA && curr_place == NOWHERE) {
+	if(curr_place == NOWHERE) {
 		return NULL;
 	}
 	
-	Round turn = HvGetRound(hv);
-	if(HvGetPlayer(hv) != PLAYER_LORD_GODALMING) {
-		turn++;
-	}
-	
+
 	int temp = 0;
-	PlaceId *locs = GvGetReachableByType(hv->gv, HvGetPlayer(hv), turn,
+	PlaceId *locs = GvGetReachableByType(hv->gv, HvGetPlayer(hv), HvGetRound(hv),
 									curr_place, road, rail, boat, &temp);
 	*numReturnedLocs = temp;
 	return locs;
