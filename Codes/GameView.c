@@ -301,7 +301,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 				}
 			}
-
+			// check condition and reset k = 0
 			if (pastPlaysID > 18 && pastPlaysID < 23) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
@@ -309,14 +309,17 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		}
 		// now is looking at Mina
 		else if (pastPlaysID > 24 && pastPlaysID < 31) {
-
+			// check which city
 			if (pastPlaysID > 24 && pastPlaysID < 27) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
 				// check the life point of hunter, and recovery if is 0
 				Is_need_Recovery(new);
+				// here we get the city abb
 				if (k == 2) {
 					Mina->currlocation = placeAbbrevToId(place);
+					// move forward trail
+					// and put now location into trail
 					cycling(Mina->playerTrail);
 					Mina->playerTrail[5] = placeAbbrevToId(place);
 					Mina->num_move = moving(Mina->movelist,
@@ -324,18 +327,20 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 				}
 			}
-			
+			// check condition and reset k = 0
 			if (pastPlaysID > 26 && pastPlaysID < 31) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
 		} else {
 			// now is looking at Dracula
-			
+			// check which city
 			if (pastPlaysID > 32 && pastPlaysID < 35) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
+				// here we get the city abb and encounter condition
 				if (k == 2) {
+					// nomal city
 					if (placeAbbrevToId(place) < HIDE) {
 						Dracula->currlocation = placeAbbrevToId(place);
 					} else if (placeAbbrevToId(place) == TELEPORT){
@@ -357,6 +362,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 						Dracula->HP -= LIFE_LOSS_SEA;
 						
 					}
+					// if in CASTLE add HP for dracula
 					if (Dracula->currlocation == CASTLE_DRACULA) {
 						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
 					}
@@ -371,24 +377,28 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					k = 0;
 				}
 			}
+			// roll the traplist before check if place trap
 			if(pastPlaysID == 34) {
 				cycling(new->traplist);
 			}
-			
+			// place trap
 			if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
 				new->traplist[5] = Dracula->currlocation;
 
 			}
+			// place vampire
 			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
 				
 				new->vampire->survive = 1;
 				new->vampire->born_round_number = new->turn_Number;
 				new->vampire->born_location = Dracula->currlocation;
 			}
+			// here is destory trap because of old
+			// however we write cycling function, so traps distroy by itself
 			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
 
 			}
-			
+			// vampire has mature, destory vampire and loss score
 			if ((pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'V')
 			|| (pastPlaysID == 37 && new->vampire->survive == 1
 			&& new->vampire->born_round_number + 6 == new->turn_Number)) {
