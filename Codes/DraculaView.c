@@ -26,7 +26,7 @@ struct draculaView {
 };
 
 
-#define MAXIMUM_CITY 128	
+#define MAXIMUM_CITY 128
 
 //Count the number of lists
 extern const char* GvPlayerName(Player id);
@@ -110,19 +110,19 @@ void del_element(int *arr,int n, int delete) //n????????
 int judger(DraculaView dv, int numMoves, PlaceId *moves) {
     bool back = false;
     bool hide = false;
-    // if the round is less than five, then loop the moves made 
+    // if the round is less than five, then loop the moves made
     // in positive sequence
     if (numMoves < 5) {
-        int counter_back = 0;                        
+        int counter_back = 0;
         while (counter_back < numMoves) {
             // if we find that there is a doubleback move in the last five moves
             // then set the back bool to true
-            if (moves[counter_back] == DOUBLE_BACK_1 
-			|| moves[counter_back] == DOUBLE_BACK_2 
-			|| moves[counter_back] == DOUBLE_BACK_3 
-			|| moves[counter_back] == DOUBLE_BACK_4 
+            if (moves[counter_back] == DOUBLE_BACK_1
+			|| moves[counter_back] == DOUBLE_BACK_2
+			|| moves[counter_back] == DOUBLE_BACK_3
+			|| moves[counter_back] == DOUBLE_BACK_4
 			|| moves[counter_back] == DOUBLE_BACK_5) {
-	            back = true;	            
+	            back = true;
 	        }
 	        counter_back++;
 	    }
@@ -131,24 +131,24 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
         // then set the hide bool to true
 	    while (counter_hide < numMoves) {
             if (moves[counter_hide] == HIDE) {
-	            hide = true;	           
+	            hide = true;
 	        }
 	        counter_hide++;
 	    }
-    // if the round is less than five, then loop the moves made 
+    // if the round is less than five, then loop the moves made
     // in negative sequence
     } else {
         int counter_five = numMoves - 5;
         int counter = numMoves - 1;
-        while (counter >= counter_five) {          
+        while (counter >= counter_five) {
             // if we find that there is a doubleback move in the last five moves
             // then set the back bool to true
-            if (moves[counter] == DOUBLE_BACK_1 
-			|| moves[counter] == DOUBLE_BACK_2 
-			|| moves[counter] == DOUBLE_BACK_3 
-			|| moves[counter] == DOUBLE_BACK_4 
-			|| moves[counter] == DOUBLE_BACK_5) {                
-                back = true;               
+            if (moves[counter] == DOUBLE_BACK_1
+			|| moves[counter] == DOUBLE_BACK_2
+			|| moves[counter] == DOUBLE_BACK_3
+			|| moves[counter] == DOUBLE_BACK_4
+			|| moves[counter] == DOUBLE_BACK_5) {
+                back = true;
             }
             counter--;
         }
@@ -157,12 +157,12 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
             // if we find that there is a hide move in the last five moves
             // then set the hide bool to true
             if (moves[counter2] == HIDE) {
-                hide = true;               
+                hide = true;
             }
             counter2--;
         }
     }
-    // if have made douback and hide, return 3, if only made hide move, then 
+    // if have made douback and hide, return 3, if only made hide move, then
     // return 1, if only made doubleback, then return 1, else return 0
     if (back == true && hide == true) {
         return 3;
@@ -170,7 +170,7 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
         return 2;
     } else if (back == true) {
         return 1;
-    } else { 
+    } else {
         return 0;
     }
 }
@@ -178,19 +178,19 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
 //     my own fuction closed     //
 ///////////////////////////////////
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
-{	
+{
 	// create an array to contain all the cities we want
-	int array[1000];	
+	int array[1000];
 	int count = 0;
-	if (GvGetRound(dv->gv) == 0) {	    
-	// if round is between 1 and 5, then loop the moves made 
+	if (GvGetRound(dv->gv) == 0) {
+	// if round is between 1 and 5, then loop the moves made
     // in positive sequence
-	} else if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {	    
+	} else if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {
 	    int accept = 0;
-	    // first get all the adjacent cities of the current location and add 
+	    // first get all the adjacent cities of the current location and add
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	    PlaceId *array1 = GvGetReachable(dv->gv, 
+	    PlaceId *array1 = GvGetReachable(dv->gv,
 		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
@@ -200,9 +200,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
             count++;
         }
         int numMoves = 0; bool canFree = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves, &canFree);
-        int judge = judger(dv, numMoves, moves);	    
+        int judge = judger(dv, numMoves, moves);
 	    // if we have made doubleback move, then add HIDE to the last position
 	    // of the array
 	    if (judge == 1) {
@@ -213,7 +213,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	    }
 	    // if we have made hide move, then add DOUBLEBACK to the last position
 	    // of the array
-	    if (judge == 2) {	               	        
+	    if (judge == 2) {
 	        ConnList curr = MapGetConnections(dv->map, from);
 	        int adjacent[1000];
 	        int adjacent_c = 0;
@@ -223,7 +223,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            q = numMoves - 1;
 	            // loop through all the cities in the trail
 	            while (q >= 0) {
-	                // if we find a city that is the same, then add the 
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
 	                if (curr->p == moves[q]) {
@@ -250,9 +250,9 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	    // if dracula hasn't made a hide or doubleback move
 	    if (judge == 0) {
 	        if (!placeIsSea(moves[numMoves - 1])) {
-	            array[count] = HIDE;        
-	            count = count + 1;	
-	        }        	        
+	            array[count] = HIDE;
+	            count = count + 1;
+	        }
 	        ConnList curr_0 = MapGetConnections(dv->map, from);
 	        int adjacent_0[1000];
 	        int adjacent_c_0 = 0;
@@ -261,7 +261,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	        while (curr_0 != NULL) {
 	            w = numMoves - 1;
 	            while (w >= 0) {
-	                // if we find a city that is the same, then add the 
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
 	                if (curr_0->p == moves[w]) {
@@ -284,16 +284,16 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            final0--;
 	            count++;
 	        }
-	    }	       
-	// if round is larger than 5, then loop the moves made 
+	    }
+	// if round is larger than 5, then loop the moves made
     // in negative sequence
-	} else if (GvGetRound(dv->gv) >= 5) {	    
+	} else if (GvGetRound(dv->gv) >= 5) {
 	    int accept = 0;
-	    // first get all the adjacent cities of the current location and add 
+	    // first get all the adjacent cities of the current location and add
 	    // them to the array
-	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	    
-	    PlaceId *array1 = GvGetReachable(dv->gv, 
-		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
+	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	    PlaceId *array1 = GvGetReachable(dv->gv,
+		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -302,12 +302,12 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
             count++;
         }
         int numMoves = 0; bool canFree = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
-		PLAYER_DRACULA, &numMoves, &canFree);       
-        int judge = judger(dv, numMoves, moves);	    	    
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
+		PLAYER_DRACULA, &numMoves, &canFree);
+        int judge = judger(dv, numMoves, moves);
 	    // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
-	    if (judge == 2) {	        
+	    if (judge == 2) {
 	        ConnList curr_2 = MapGetConnections(dv->map, from);
 	        int adjacent_2[1000];
 	        int adjacent_c_2 = 0;
@@ -318,7 +318,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            z = numMoves - 5;
 	            // loop through all the cities in the trail
 	            while (z <= r) {
-	                // if we find a city that is the same, then add the 
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
 	                if (curr_2->p == moves[z]) {
@@ -339,43 +339,43 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            final3--;
 	            count++;
 	        }
-	    // if we have made doubleback move, then add city that dracula can hide 
+	    // if we have made doubleback move, then add city that dracula can hide
 	    // to the last position of the array to the last position
-	    } else if (judge == 1) {	        
+	    } else if (judge == 1) {
 	       if (!placeIsSea(moves[numMoves - 1])) {
 	           array[count] = HIDE;
 	           count = count + 1;
 	       }
 	    // if dracula hasn't made a hide or doubleback move
-	    } else if (judge == 0) {	        
+	    } else if (judge == 0) {
 	        if (!placeIsSea(moves[numMoves - 1])) {
-	            array[count] = HIDE;       
-	            count = count + 1;	
-	        }        	        
-	        ConnList curr_1 = MapGetConnections(dv->map, from);	        
+	            array[count] = HIDE;
+	            count = count + 1;
+	        }
+	        ConnList curr_1 = MapGetConnections(dv->map, from);
 	        int adjacent_1[1000];
 	        int adjacent_c_1 = 0;
-	        int w = numMoves - 1;	        
+	        int w = numMoves - 1;
 	        // loop through all the adjacent cities
 	        while (curr_1 != NULL) {
 	            w = numMoves - 1;
-	            while (w >= 0) {	                
-	                // if we find a city that is the same, then add the 
+	            while (w >= 0) {
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
-	                if (curr_1->p == moves[w]) {	                    
+	                if (curr_1->p == moves[w]) {
 	                    adjacent_1[adjacent_c_1] = numMoves - w;
 	                    adjacent_c_1++;
 	                }
 	                w--;
 	            }
 	            curr_1 = curr_1->next;
-	        }	        
+	        }
 	        adjacent_1[adjacent_c_1] = 1;
 	        adjacent_c_1++;
 	        // sort and remove duplicates in the array
 	        bubble_sort (adjacent_1, adjacent_c_1);
-	        adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);	       	        
+	        adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);
 	        int final1 = adjacent_c_1 - 1;
 	        // add cities we finally get to the main array
 	        while (final1 >= 0) {
@@ -383,13 +383,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            final1--;
 	            count++;
 	        }
-	    }		
-	}	 
+	    }
+	}
 	// remove the cities in the trail because the fact that dracula can't move
 	// back for the round between 1 and 5
 	if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {
 	    int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge, &canFree);
 	    int p = 0;
 	    int count_judge = count - 1;
@@ -398,7 +398,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	        while (count_judge >= 0) {
 	            if (moves_judge[p] == array[count_judge]) {
 	                del_element(array, count, moves_judge[p]);
-	                count--;	                
+	                count--;
 	            }
 	        count_judge--;
 	        }
@@ -409,7 +409,7 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	// back fo the rounds larger than 5
 	if (GvGetRound(dv->gv) >= 5) {
 	    int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge1, &canFree);
 	    int a = numMoves_judge1 - 1;
 	    int b = numMoves_judge1 - 5;
@@ -420,13 +420,13 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	            if (moves_judge1[a] == array[count_judge]) {
 	                del_element(array, count, moves_judge1[a]);
 	                count--;
-	               
+
 	            }
 	        count_judge--;
 	        }
 	    a--;
 	    }
-	}	  		
+	}
 	// and the cities to the array wanted
 	PlaceId *array_final = malloc(1000 * sizeof(PlaceId));
 	*numReturnedMoves = count;
@@ -434,29 +434,29 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	while (final_count >= 0) {
 	    array_final[final_count] = array[final_count];
 	    final_count--;
-	}	
+	}
 	if (*numReturnedMoves == 0) {
 	    return NULL;
 	} else {
 	    return array_final;
-    }    
+    }
 }
 
 PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 {
 	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	// create an array to contain all the cities we want
-	int array[1000];	
+	int array[1000];
 	int count = 0;
-	if (GvGetRound(dv->gv) == 0) {	    
-	// if round is between 1 and 5, then loop the moves made 
+	if (GvGetRound(dv->gv) == 0) {
+	// if round is between 1 and 5, then loop the moves made
     // in positive sequence
-	} else if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {	    
+	} else if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {
 	    int accept = 0;
-	    // first get all the adjacent cities of the current location and add 
+	    // first get all the adjacent cities of the current location and add
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, 
+	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA,
 		GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
@@ -468,7 +468,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
         // remove the cities in the trail because the fact that dracula can't move
 	    // back for the round between 1 and 5
         int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge, &canFree);
 	    int p = 0;
 	    int count_judge = count - 1;
@@ -477,27 +477,27 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	        while (count_judge >= 0) {
 	            if (moves_judge[p] == array[count_judge]) {
 	                del_element(array, count, moves_judge[p]);
-	                count--;	                
+	                count--;
 	            }
 	        count_judge--;
 	        }
 	    p++;
 	    }
         int numMoves = 0; bool canFree1 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
-		PLAYER_DRACULA, &numMoves, &canFree1);       
-        int judge = judger(dv, numMoves, moves);	    
-	    // if we have made doubleback move, then add city that dracula can hide 
-	    // to the last position of the array to the last position	    
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
+		PLAYER_DRACULA, &numMoves, &canFree1);
+        int judge = judger(dv, numMoves, moves);
+	    // if we have made doubleback move, then add city that dracula can hide
+	    // to the last position of the array to the last position
 	    if (judge == 1) {
-	        if (!placeIsSea(moves[numMoves - 1])) {	            
+	        if (!placeIsSea(moves[numMoves - 1])) {
 	            array[count] = from;
 	            count = count + 1;
 	        }
 	    }
 	    // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
-	    if (judge == 2) {	               	        
+	    if (judge == 2) {
 	        ConnList curr = MapGetConnections(dv->map, from);
 	        int adjacent[1000];
 	        int adjacent_c = 0;
@@ -507,7 +507,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	            q = numMoves - 1;
 	            // loop through all the cities in the trail
 	            while (q >= 0) {
-	                // if we find a city that is the same, then add the 
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
 	                if (curr->p == moves[q]) {
@@ -532,7 +532,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	        }
 	    }
 	    // if dracula hasn't made a hide or doubleback move
-	    if (judge == 0) {	               	        
+	    if (judge == 0) {
 	        ConnList curr_0 = MapGetConnections(dv->map, from);
 	        int adjacent_0[1000];
 	        int adjacent_c_0 = 0;
@@ -541,7 +541,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	        while (curr_0 != NULL) {
 	            w = numMoves - 1;
 	            while (w >= 0) {
-	                // if we find a city that is the same, then add the 
+	                // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
 	                if (curr_0->p == moves[w]) {
@@ -564,16 +564,16 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	            final0--;
 	            count++;
 	        }
-	    }	       
-	// if round is larger than 5, then loop the moves made 
+	    }
+	// if round is larger than 5, then loop the moves made
     // in negative sequence
-	} else if (GvGetRound(dv->gv) >= 5) {	    
+	} else if (GvGetRound(dv->gv) >= 5) {
 	    int accept = 0;
-	    // first get all the adjacent cities of the current location and add 
+	    // first get all the adjacent cities of the current location and add
 	    // them to the array
-	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	    
-	    PlaceId *array1 = GvGetReachable(dv->gv, 
-		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
+	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
+	    PlaceId *array1 = GvGetReachable(dv->gv,
+		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -584,7 +584,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
         // remove the cities in the trail because the fact that dracula can't move
 	    // back fo the rounds larger than 5
         int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge1, &canFree);
 	    int a = numMoves_judge1 - 1;
 	    int b = numMoves_judge1 - 5;
@@ -595,7 +595,7 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	            if (moves_judge1[a] == array[count_judge]) {
 	                del_element(array, count, moves_judge1[a]);
 	                count--;
-	               
+
 	            }
 	        count_judge--;
 	        }
@@ -603,12 +603,12 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	    }
 	    // tell and add the HIDE and DOUBLEBACK move just like above
         int numMoves = 0; bool canFree2 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
-		PLAYER_DRACULA, &numMoves, &canFree2);       
-        int judge = judger(dv, numMoves, moves);	    	    
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
+		PLAYER_DRACULA, &numMoves, &canFree2);
+        int judge = judger(dv, numMoves, moves);
 	    // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
-	    if (judge == 2) {	        
+	    if (judge == 2) {
 	        ConnList curr = MapGetConnections(dv->map, from);
 	        int adjacent[1000];
 	        int adjacent_c = 0;
@@ -634,39 +634,39 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	            final--;
 	            count++;
 	        }
-	    // if we have made doubleback move, then add city that dracula can hide 
+	    // if we have made doubleback move, then add city that dracula can hide
 	    // to the last position of the array to the last position
-	    } else if (judge == 1) {	        
-	        if (!placeIsSea(moves[numMoves - 1])) {	            
+	    } else if (judge == 1) {
+	        if (!placeIsSea(moves[numMoves - 1])) {
 	            array[count] = from;
 	            count = count + 1;
 	        }
 	    // if dracula hasn't made a hide or doubleback move
-	    } else if (judge == 0) {	        	        	        	        
-	        ConnList curr_1 = MapGetConnections(dv->map, from);	        
+	    } else if (judge == 0) {
+	        ConnList curr_1 = MapGetConnections(dv->map, from);
 	        int adjacent_1[1000];
 	        int adjacent_c_1 = 0;
-	        int w = numMoves - 1;	        
+	        int w = numMoves - 1;
 	        // loop through all the adjacent cities
 	        while (curr_1 != NULL) {
 	            w = numMoves - 1;
-	            // if we find a city that is the same, then add the 
+	            // if we find a city that is the same, then add the
 	            // difference between numMoves and the index of that city
 	            // to an array
-	            while (w >= 0) {	                
-	                if (curr_1->p == moves[w]) {	                    
+	            while (w >= 0) {
+	                if (curr_1->p == moves[w]) {
 	                    adjacent_1[adjacent_c_1] = numMoves - w;
 	                    adjacent_c_1++;
 	                }
 	                w--;
 	            }
 	            curr_1 = curr_1->next;
-	        }	        
+	        }
 	        adjacent_1[adjacent_c_1] = 1;
 	        adjacent_c_1++;
 	        // sort and remove duplicates in the array
 	        bubble_sort(adjacent_1, adjacent_c_1);
-	        adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);	       	        
+	        adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);
 	        int final1 = adjacent_c_1 - 1;
 	        // add cities we finally get to the main array
 	        while (final1 >= 0) {
@@ -674,54 +674,54 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	            final1--;
 	            count++;
 	        }
-	    }		
-	}	
-	// and the cities to the array wanted	
+	    }
+	}
+	// and the cities to the array wanted
 	PlaceId *array_final = malloc(1000 * sizeof(PlaceId));
 	*numReturnedLocs = count;
 	int final_count = count - 1;
 	while (final_count >= 0) {
 	    array_final[final_count] = array[final_count];
 	    final_count--;
-	}	
+	}
 	if (*numReturnedLocs == 0) {
 	    return NULL;
 	} else {
 	    return array_final;
-    } 
+    }
 }
 
 PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                              int *numReturnedLocs)
 {
     // create an array to contain all the cities we want
-    int array[1000];	
+    int array[1000];
 	int count = 0;
-	
-    if (GvGetRound(dv->gv) == 0) {	    
-    // if round is between 1 and 5, then loop the moves made 
+
+    if (GvGetRound(dv->gv) == 0) {
+    // if round is between 1 and 5, then loop the moves made
     // in positive sequence
     } else if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {
         int accept = 0;
         int round = GvGetRound(dv->gv);
-        // first get all the adjacent cities of the current location and add 
+        // first get all the adjacent cities of the current location and add
 	    // them to the array
-        PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	
+        PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
         PlaceId *array1;
-        // tell which transport type we want, and use corresponding 
+        // tell which transport type we want, and use corresponding
         // GvGetReachableByType to get the cities the player can go
         if (road && boat) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, true, false, true, &accept);
         } else if (road) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, true, false, false, &accept);
         } else if (boat) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, false, false, true, &accept);
         }
-        
-        
+
+
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -732,7 +732,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // remove the cities in the trail because the fact that dracula can't move
 	    // back for the round between 1 and 5
         int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge, &canFree);
         int p = 0;
         int count_judge = count - 1;
@@ -741,29 +741,29 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
             while (count_judge >= 0) {
                 if (moves_judge[p] == array[count_judge]) {
                     del_element(array, count, moves_judge[p]);
-                    count--;	                
+                    count--;
                 }
             count_judge--;
             }
         p++;
         }
-        
-        
+
+
         int numMoves = 0; bool canFree1 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
-		PLAYER_DRACULA, &numMoves, &canFree1);       
-        int judge = judger(dv, numMoves, moves);	    
-        // if we have made doubleback move, then add city that dracula can hide 
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
+		PLAYER_DRACULA, &numMoves, &canFree1);
+        int judge = judger(dv, numMoves, moves);
+        // if we have made doubleback move, then add city that dracula can hide
 	    // to the last position of the array to the last position
         if (judge == 1) {
-            if (!placeIsSea(moves[numMoves - 1])) {	            
+            if (!placeIsSea(moves[numMoves - 1])) {
                 array[count] = from;
                 count = count + 1;
             }
         }
         // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
-        if (judge == 2) {	               	        
+        if (judge == 2) {
             ConnList curr = MapGetConnections(dv->map, from);
             int adjacent[1000];
             int adjacent_c = 0;
@@ -773,7 +773,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 q = numMoves - 1;
                 // loop through all the cities in the trail
                 while (q >= 0) {
-                    // if we find a city that is the same, then add the 
+                    // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
                     if (curr->p == moves[q]) {
@@ -798,16 +798,16 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
             }
         }
         // if dracula hasn't made a hide or doubleback move
-        if (judge == 0) {	               	        
+        if (judge == 0) {
             ConnList curr_0 = MapGetConnections(dv->map, from);
             int adjacent_0[1000];
             int adjacent_c_0 = 0;
             int w = numMoves - 1;
             // loop through all the adjacent cities
             while (curr_0 != NULL) {
-                w = numMoves - 1;               
+                w = numMoves - 1;
                 while (w >= 0) {
-                    // if we find a city that is the same, then add the 
+                    // if we find a city that is the same, then add the
 	                // difference between numMoves and the index of that city
 	                // to an array
                     if (curr_0->p == moves[w]) {
@@ -831,27 +831,27 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 count++;
             }
         }
-    // if round is larger than 5, then loop the moves made 
-    // in negative sequence  
-    } else if (GvGetRound(dv->gv) >= 5) {	    
+    // if round is larger than 5, then loop the moves made
+    // in negative sequence
+    } else if (GvGetRound(dv->gv) >= 5) {
         int accept = 0;
         int round = GvGetRound(dv->gv);
-        // first get all the adjacent cities of the current location and add 
+        // first get all the adjacent cities of the current location and add
 	    // them to the array
-        PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	    
+        PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
         PlaceId *array1;
-        // tell which transport type we want, and use corresponding 
+        // tell which transport type we want, and use corresponding
         // GvGetReachableByType to get the cities the player can go
         if (road && boat) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, true, false, true, &accept);
         } else if (road) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, true, false, false, &accept);
         } else if (boat) {
-            array1 = GvGetReachableByType(dv->gv, 
+            array1 = GvGetReachableByType(dv->gv,
 			PLAYER_DRACULA, round, from, false, false, true, &accept);
-        }   
+        }
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -862,7 +862,7 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // remove the cities in the trail because the fact that dracula can't move
 	    // back fo the rounds larger than 5
         int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv,
 		PLAYER_DRACULA, &numMoves_judge1, &canFree);
         int a = numMoves_judge1 - 1;
         int b = numMoves_judge1 - 5;
@@ -873,18 +873,18 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 if (moves_judge1[a] == array[count_judge]) {
                     del_element(array, count, moves_judge1[a]);
                     count--;
-                   
+
                 }
             count_judge--;
             }
             a--;
-        }        
+        }
         int numMoves = 0; bool canFree2 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, 
-		PLAYER_DRACULA, &numMoves, &canFree2);       
-        int judge = judger(dv, numMoves, moves);	    	    
+        PlaceId *moves = GvGetMoveHistory(dv->gv,
+		PLAYER_DRACULA, &numMoves, &canFree2);
+        int judge = judger(dv, numMoves, moves);
         // tell and add the HIDE and DOUBLEBACK move just like above
-        if (judge == 2) {	        
+        if (judge == 2) {
             ConnList curr = MapGetConnections(dv->map, from);
             int adjacent[1000];
             int adjacent_c = 0;
@@ -910,32 +910,32 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 final--;
                 count++;
             }
-        } else if (judge == 1) {	        
-            if (!placeIsSea(moves[numMoves - 1])) {	            
+        } else if (judge == 1) {
+            if (!placeIsSea(moves[numMoves - 1])) {
                 array[count] = from;
                 count = count + 1;
             }
-        } else if (judge == 0) {	        
-            	        	        
-            ConnList curr_1 = MapGetConnections(dv->map, from);	        
+        } else if (judge == 0) {
+
+            ConnList curr_1 = MapGetConnections(dv->map, from);
             int adjacent_1[1000];
             int adjacent_c_1 = 0;
-            int w = numMoves - 1;	        
+            int w = numMoves - 1;
             while (curr_1 != NULL) {
                 w = numMoves - 1;
-                while (w >= 0) {	                
-                    if (curr_1->p == moves[w]) {	                    
+                while (w >= 0) {
+                    if (curr_1->p == moves[w]) {
                         adjacent_1[adjacent_c_1] = numMoves - w;
                         adjacent_c_1++;
                     }
                     w--;
                 }
                 curr_1 = curr_1->next;
-            }	        
+            }
             adjacent_1[adjacent_c_1] = 1;
             adjacent_c_1++;
             bubble_sort(adjacent_1, adjacent_c_1);
-            adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);	       	        
+            adjacent_c_1 = removeDuplicates(adjacent_1, adjacent_c_1);
             int final1 = adjacent_c_1 - 1;
             while (final1 >= 0) {
                 array[count] = moves[numMoves - adjacent_1[final1]];
@@ -943,20 +943,20 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
                 count++;
             }
         }
-    }			
-	// and the cities to the array wanted		
+    }
+	// and the cities to the array wanted
 	PlaceId *array_final = malloc(1000 * sizeof(PlaceId));
 	*numReturnedLocs = count;
 	int final_count = count - 1;
 	while (final_count >= 0) {
 	    array_final[final_count] = array[final_count];
 	    final_count--;
-	}	
+	}
 	if (*numReturnedLocs == 0) {
 	    return NULL;
 	} else {
 	    return array_final;
-    } 
+    }
 }
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
