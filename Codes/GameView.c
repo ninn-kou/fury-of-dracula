@@ -66,17 +66,17 @@ struct gameView {
 ////////////////////////////////////////////////////////////////////////////////
 
 void Is_need_Recovery(GameView gv) {
-	// if hunter die, recover him, and move to hospital later...
+	// If hunter is died, recover and move it to hospital later.
 	if (gv->player[gv->Curr_Player_Number]->HP == 0) {
 		gv->player[gv->Curr_Player_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
 	}
 }
 
 void Is_Hunter_rest(GameView gv) {
-	// check the hunter wheather stay at the same city, if yes ,get 1 HP
+	// Check whether the hunter staied at the same city, if yes ,get 1 HP.
 	if (gv->player[gv->Curr_Player_Number]->playerTrail[5]
-	== gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
-		// hunter's HP can't over 9
+		== gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
+		// Maximum HP limit for hunters is 9.
 		int limit_HP = 9;
 		gv->player[gv->Curr_Player_Number]->HP += LIFE_GAIN_REST;
 		if (gv->player[gv->Curr_Player_Number]->HP > limit_HP) {
@@ -86,56 +86,57 @@ void Is_Hunter_rest(GameView gv) {
 }
 
 void check_HP(GameView gv) {
-	// if the hunter's HP is lower than 0, move him to hospital and loss score
+	// If the hunter's HP is lower than 0, move it to hospital and lose score.
 	if (gv->player[gv->Curr_Player_Number]->HP <= 0) {
-			gv->player[gv->Curr_Player_Number]->currlocation = HOSPITAL_PLACE;
-			cycling(gv->player[gv->Curr_Player_Number]->playerTrail);
-			gv->player[gv->Curr_Player_Number]->playerTrail[5] = HOSPITAL_PLACE;
-			gv->player[gv->Curr_Player_Number]->HP = 0;
-			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
-		}
-}
-
-void hunter_condition(char c,GameView gv) {
-	// here are 4 encounter for hunters
-	// T for trap
-	// V for vampire
-	// D for encounter dracula
-	switch (c){
-	case 'T':
-		// hunter loss HP and check HP whether is lower than 0
-		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
-		check_HP (gv);
-		// distroy trap
-		for (int i = 0; i < 6; i++) {
-			if (gv->traplist[i] ==
-			gv->player[gv->Curr_Player_Number]->currlocation) {
-				gv->traplist[i] = NOWHERE;
-			}
-		}
-		break;
-	case 'V':
-		// hunter kill vampire
-		gv->vampire->survive = 0;
-
-		gv->vampire->born_round_number= -1;
-		gv->vampire->born_location = NOWHERE;
-
-		break;
-	case 'D':
-		// hunter and dracula both loss HP and show dracula's location
-		gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
-		gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
-		gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
-		check_HP(gv);
-		break;
-	case '.':
-		// nothing happen
-		break;
+		gv->player[gv->Curr_Player_Number]->currlocation = HOSPITAL_PLACE;
+		cycling(gv->player[gv->Curr_Player_Number]->playerTrail);
+		gv->player[gv->Curr_Player_Number]->playerTrail[5] = HOSPITAL_PLACE;
+		gv->player[gv->Curr_Player_Number]->HP = 0;
+		gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 	}
 }
 
-// move trail array forward
+void hunter_condition(char c,GameView gv) {
+	// Here are 3 encounters to hunters:
+	// 	T for trap;
+	// 	V for vampire;
+	// 	D for encounter dracula.
+	switch (c){
+		case 'T':
+			// Hunter lose HP and check whether HP is lower than 0.
+			gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_TRAP_ENCOUNTER;
+			check_HP (gv);
+			// Distroy trap.
+			for (int i = 0; i < 6; i++) {
+				if (gv->traplist[i] ==
+					gv->player[gv->Curr_Player_Number]->currlocation) {
+					gv->traplist[i] = NOWHERE;
+				}
+			}
+			break;
+
+		case 'V':
+			// hunter kill vampire
+			gv->vampire->survive = 0;
+			gv->vampire->born_round_number= -1;
+			gv->vampire->born_location = NOWHERE;
+			break;
+
+		case 'D':
+			// Both hunter and Dracula lose HP and show Dracula's location.
+			gv->player[gv->Curr_Player_Number]->HP -= LIFE_LOSS_DRACULA_ENCOUNTER;
+			gv->player[4]->HP -= LIFE_LOSS_HUNTER_ENCOUNTER;
+			gv->player[4]->currlocation = gv->player[gv->Curr_Player_Number]->currlocation;
+			check_HP(gv);
+			break;
+
+		case '.':
+			// Do nothing.
+			break;
+	}
+}
+
+// Moving trail array forward.
 void cycling(PlaceId array[TRAIL_SIZE]) {
 	for (int i = 0; i < 5; i ++) {
 		array[i] = array[i+1];
@@ -159,17 +160,16 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
 		exit(EXIT_FAILURE);
 	}
-
-    // CREATE THE WHOLE STRUCT OF TRAPLIST;
+	// Create the struct of traplist.
     for (int i = 0; i < 6; i++) {
 		new->traplist[i] = NOWHERE;
 	}
-	// initialize the info foe the young_vampire.
+
+	// Initialize the info for the young_vampire.
 	new->vampire = malloc(sizeof(Young_vampire));
 	new->vampire->survive = 0;
 	new->vampire->born_round_number = -1;
 	new->vampire->born_location = NOWHERE;
-
 
 	int pastPlays_length = strlen(pastPlays);
 	int round = pastPlays_length/40;
@@ -177,8 +177,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	new->turn_Number = round;
 	new->score = GAME_START_SCORE;
 
-	// initialize for the player[5]
-	// aka playerdata,
+	// Initialize for the player[5], AKA playerdata,
 	for (int i = 0; i < 5; i++) {
 		new->player[i] = malloc(sizeof(PlayerData));
 		new->player[i]->movelist = malloc(sizeof(PlaceId)*(round+1));
@@ -189,13 +188,12 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			new->player[i]->HP = GAME_START_BLOOD_POINTS;
 		}
 		new->player[i]->currlocation = NOWHERE;
-
-		for(int j = 0; j < 6; j++) {
-		new->player[i]->playerTrail[j] = NOWHERE;
+		for (int j = 0; j < 6; j++) {
+			new->player[i]->playerTrail[j] = NOWHERE;
 		}
 		new->player[i]->num_move = 0;
-		for(int j = 0; j <= round; j++) {
-		new->player[i]->movelist[j] = NOWHERE;
+		for (int j = 0; j <= round; j++) {
+			new->player[i]->movelist[j] = NOWHERE;
 		}
 
 	}
@@ -204,39 +202,35 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
-
 	char *place;
 	place = malloc(sizeof(char*)*2);
 
 	int k = 0;
 	new->turn_Number = 0;
 	while (pastPlays_counter <= pastPlays_length) {
-
-		// find whose turn
+		// Whose round?
 		pastPlaysID = pastPlays_counter % 40;
 		int whose_turn = (pastPlaysID + 1) / 8;
 		whose_turn = whose_turn % 5;
 		new->Curr_Player_Number = whose_turn;
-		// set for the counter addition,
-		if(pastPlaysID == 39) {
+		// Seting for the counter addition.
+		if (pastPlaysID == 39) {
 			new->score =  new->score - SCORE_LOSS_DRACULA_TURN;
 			new->turn_Number++;
 		}
 
-
-		// now is looking at Godalming
-		if(pastPlaysID > 0 && pastPlaysID < 7) {
-			// check which city
+		// Godalming:
+		if (pastPlaysID > 0 && pastPlaysID < 7) {
+			// Check the city.
 			if (pastPlaysID > 0 && pastPlaysID < 3) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
-				// check the life point of hunter, and recovery if is 0
+				// Check the life point of hunter, and recover if is 0.
 				Is_need_Recovery(new);
-				// here we get the city abb
 				if (k == 2) {
 					Godalming->currlocation = placeAbbrevToId(place);
-					// move forward trail
-					// and put now location into trail
+					// Moving the trail forward;
+					// And adding current location into trail.
 					cycling(Godalming->playerTrail);
 					Godalming->playerTrail[5] = Godalming->currlocation;
 
@@ -246,28 +240,26 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				}
 			}
 
-			// check condition and reset k = 0
+			// Check conditions and reset k = 0.
 			if (pastPlaysID > 2 && pastPlaysID < 7) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
-
 			}
 
-		// now is looking at Seward
-		} else if(pastPlaysID > 8 && pastPlaysID < 15) {
-			// check which city
+		// Seward:
+		} else if (pastPlaysID > 8 && pastPlaysID < 15) {
+			// Check the city.
 			if (pastPlaysID > 8 && pastPlaysID < 11) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
-				// check the life point of hunter, and recovery if is 0
+				// Check the life point of hunter, and recover if is 0.
 				Is_need_Recovery(new);
-				// here we get the city abb
 				if (k == 2) {
 					char placenew[2];
 					strcpy(placenew, place);
 					Seward->currlocation = placeAbbrevToId(placenew);
-					// move forward trail
-					// and put now location into trail
+					// Moving the trail forward;
+					// And adding current location into trail.
 					cycling(Seward->playerTrail);
 					Seward->playerTrail[5] = Seward->currlocation;
 
@@ -275,24 +267,24 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Seward->currlocation,Seward->num_move);
 				}
 			}
-			// check condition and reset k = 0
+			// Check conditions and reset k = 0.
 			if (pastPlaysID > 10 && pastPlaysID < 15) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
-			// now is looking at Helsing
-		} else if(pastPlaysID > 16 && pastPlaysID < 23) {
-			// check which city
+
+		// Helsing:
+		} else if (pastPlaysID > 16 && pastPlaysID < 23) {
+			// Check the city.
 			if (pastPlaysID > 16 && pastPlaysID < 19) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
-				// check the life point of hunter, and recovery if is 0
+				// Check the life point of hunter, and recover if is 0.
 				Is_need_Recovery(new);
-				// here we get the city abb
-				if (k == 2 ) {
+				if (k == 2) {
 					Helsing->currlocation = placeAbbrevToId(place);
-					// move forward trail
-					// and put now location into trail
+					// Moving the trail forward;
+					// And adding current location into trail.
 					cycling(Helsing->playerTrail);
 					Helsing->playerTrail[5] = placeAbbrevToId(place);
 					Helsing->num_move = moving(Helsing->movelist,
@@ -300,25 +292,24 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 				}
 			}
-			// check condition and reset k = 0
+			// Check conditions and reset k = 0.
 			if (pastPlaysID > 18 && pastPlaysID < 23) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
-		}
-		// now is looking at Mina
-		else if (pastPlaysID > 24 && pastPlaysID < 31) {
-			// check which city
+
+		// Mina:
+		} else if (pastPlaysID > 24 && pastPlaysID < 31) {
+			// Check the city.
 			if (pastPlaysID > 24 && pastPlaysID < 27) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
-				// check the life point of hunter, and recovery if is 0
+				// Check the life point of hunter, and recover if is 0.
 				Is_need_Recovery(new);
-				// here we get the city abb
 				if (k == 2) {
 					Mina->currlocation = placeAbbrevToId(place);
-					// move forward trail
-					// and put now location into trail
+					// Moving the trail forward;
+					// And adding current location into trail.
 					cycling(Mina->playerTrail);
 					Mina->playerTrail[5] = placeAbbrevToId(place);
 					Mina->num_move = moving(Mina->movelist,
@@ -326,81 +317,80 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 				}
 			}
-			// check condition and reset k = 0
+			// Check conditions and reset k = 0.
 			if (pastPlaysID > 26 && pastPlaysID < 31) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
 			}
+
+		// Dracula:
 		} else {
-			// now is looking at Dracula
-			// check which city
+			// Check the city.
 			if (pastPlaysID > 32 && pastPlaysID < 35) {
 				place[k] = pastPlays[pastPlays_counter];
 				k++;
-				// here we get the city abb and encounter condition
 				if (k == 2) {
-					// nomal city
+					// Nomal city;
 					if (placeAbbrevToId(place) < HIDE) {
 						Dracula->currlocation = placeAbbrevToId(place);
-					} else if (placeAbbrevToId(place) == TELEPORT){
-						// TP
+					} else if (placeAbbrevToId(place) == TELEPORT) {
+						// TP;
 						Dracula->currlocation = CASTLE_DRACULA;
 					} else {
-						// double back 1 && Hide
-						if(placeAbbrevToId(place) == HIDE) {
+						// Double back 1 && Hide;
+						if (placeAbbrevToId(place) == HIDE) {
 							Dracula->currlocation = Dracula->playerTrail[5];
-						} else{
+						} else {
 							Dracula->currlocation =
 							Dracula->playerTrail[5 + DOUBLE_BACK_1
 							- placeAbbrevToId(place)];
 						}
 					}
 
-					// check wheather in sea
+					// If in sea?
 					if (placeIsSea(Dracula->currlocation)) {
 						Dracula->HP -= LIFE_LOSS_SEA;
 
 					}
-					// if in CASTLE add HP for dracula
+					// If in CASTLE?
+					// Adding HP of Dracula.
 					if (Dracula->currlocation == CASTLE_DRACULA) {
 						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
 					}
 
-					// roll the trail
+					// Moving trail forward.
 					cycling(Dracula->playerTrail);
 					Dracula->playerTrail[5] = Dracula->currlocation;
 					Dracula->num_move = moving(Dracula->movelist,
 					placeAbbrevToId(place),Dracula->num_move);
-
-
 					k = 0;
 				}
 			}
-			// roll the traplist before check if place trap
-			if(pastPlaysID == 34) {
+
+			// Roll the traplist before checking of placing trap.
+			if (pastPlaysID == 34) {
 				cycling(new->traplist);
 			}
-			// place trap
-			if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T'){
+			// Place trap;
+			if (pastPlaysID == 35 && pastPlays[pastPlays_counter] == 'T') {
 				new->traplist[5] = Dracula->currlocation;
 
 			}
-			// place vampire
+			// Place vampire;
 			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
-
 				new->vampire->survive = 1;
 				new->vampire->born_round_number = new->turn_Number;
 				new->vampire->born_location = Dracula->currlocation;
 			}
-			// here is destory trap because of old
-			// however we write cycling function, so traps distroy by itself
+			// Destory olf trap.
+			// However, we write cycling functions, so traps distroy by itself.
 			if (pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'M') {
 
 			}
 			// vampire has mature, destory vampire and loss score
 			if ((pastPlaysID == 37 && pastPlays[pastPlays_counter] == 'V')
-			|| (pastPlaysID == 37 && new->vampire->survive == 1
-			&& new->vampire->born_round_number + 6 == new->turn_Number)) {
+				|| (pastPlaysID == 37 && new->vampire->survive == 1
+				&& new->vampire->born_round_number + 6 == new->turn_Number)) {
 				new->vampire->survive = 0;
 				new->vampire->born_round_number= -1;
 				new->vampire->born_location = NOWHERE;
@@ -409,7 +399,6 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 		}
 
 		pastPlays_counter++;
-
 
 	}
 	free(place);
