@@ -116,7 +116,7 @@ void hunter_condition(char c,GameView gv) {
 			break;
 
 		case 'V':
-			// hunter kill vampire
+			// Vampire killed by hunters.
 			gv->vampire->survive = 0;
 			gv->vampire->born_round_number= -1;
 			gv->vampire->born_location = NOWHERE;
@@ -419,136 +419,129 @@ void GvFree(GameView gv) {
 // PART 2/4    Game State Information
 ////////////////////////////////////////////////////////////////////////////////
 
-// gets the current round number
+// Gets the current round number.
 Round GvGetRound(GameView gv) {
 	return (gv->turn_Number);
 }
 
-// Gets the current player;
+// Gets the current player.
 Player GvGetPlayer(GameView gv) {
 	return (gv->Curr_Player_Number);
 }
 
-//Gets the current game score;
+//Gets the current game score.
 int GvGetScore(GameView gv) {
 	return (gv->score);
 }
-//gets the PH VALUE for the PLAYER
+// Gets the Hp for the PLAYER.
 int GvGetHealth(GameView gv, Player player) {
 	return (gv->player[player]->HP);
 }
 
-// gets the player location for the Player
+// Gets the location for the Player.
 PlaceId GvGetPlayerLocation(GameView gv, Player player) {
 	return gv->player[player]->currlocation;
 }
-// gets the player location for the Player if it exist.
+// Gets the player location if it exist.
 PlaceId GvGetVampireLocation(GameView gv) {
 	return (gv->vampire->born_location);
 }
 
 PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
-	//create a dynamic memory, and record the placeid.
+	// Create a dynamic memory, and record the place ID.
 	int *trap = malloc(sizeof(PlaceId)*MAXMUM_TRAP);
 	for (int i = 0; i < 6; i++) {
 		trap[i] = '\0';
 	}
-	// excluding all the traps which have been founded
+	// Excluding all the traps which had been found.
 	int j = 0;
 	for (int i = 0; i < 6; i++) {
-		if (gv->traplist[i] != NOWHERE){
+		if (gv->traplist[i] != NOWHERE) {
 			trap[j] = gv->traplist[i];
 			j++;
 		}
 	}
     *numTraps = j;
-
     return trap;
 }
 
-////////////////////////////////////////////////////////////////////////
-// Game History
-//
-// garb the correct moving history.
-PlaceId *GvGetMoveHistory(GameView gv, Player player,
-int *numReturnedMoves, bool *canFree) {
+////////////////////////////////////////////////////////////////////////////////
+// PART 3/4    Game History
+////////////////////////////////////////////////////////////////////////////////
 
+// Garb the correct moving history.
+PlaceId *GvGetMoveHistory(GameView gv, Player player,
+						  int *numReturnedMoves, bool *canFree) {
 	*numReturnedMoves = gv->player[player]->num_move;
 	*canFree = false;
-	if(*numReturnedMoves == 0) {
+	if (*numReturnedMoves == 0) {
 		return NULL;
 	}
 	return gv->player[player]->movelist;
-
 }
-// grab the last numMoves times move
-// if the total number of moves is less than nummoves
-// just return total number of moves numbers array
+
+// Grab the last numMoves times.
+// If the total number of moves is less than numMoves, return all of moves array.
 PlaceId *GvGetLastMoves(GameView gv, Player player,
-int numMoves, int *numReturnedMoves, bool *canFree) {
+						int numMoves, int *numReturnedMoves, bool *canFree) {
 	*numReturnedMoves = 0;
-	// get the total move history first,
+
+	// Get the total move history;
 	int numMovesTemp = 0;
 	bool canFree_temp = false;
 	PlaceId *moves = GvGetMoveHistory(gv, player, &numMovesTemp, &canFree_temp);
-	// using array to record the lastmove array
+
+	// Using array to record the lastmove array;
 	PlaceId *array = malloc(sizeof(PlaceId)*numMoves);
-	// if the total number of moves is less than nummoves
-	// just return total number of moves numbers array
+
+	// If the total number of moves is less than numMoves, return all moves array;
 	int number = numMoves;
-	if(number > numMovesTemp) {
-		number = numMovesTemp;
-	}
+	if (number > numMovesTemp) number = numMovesTemp;
 	*numReturnedMoves = number;
 	number--;
 	numMovesTemp--;
-	// the copy the placeid onebyone
+	// Duplicate of place IDs.
+
 	while (number >= 0) {
 		array[number] = moves[numMovesTemp];
 		numMovesTemp--;
 		number--;
 	}
-	// if there is noting inside the move history
-	// just return null.
-	if(*numReturnedMoves == 0) {
-		array = NULL;
-	}
+
+	// Return NULL if move history is empty.
+	if (*numReturnedMoves == 0) array = NULL;
 	*canFree = true;
 	if (canFree_temp) free(moves);
 	return array;
 }
 
-// in  this fuction
-// we show the real postion for the DOUBLE BACK AND HIDE
+// Show the real postion for the DOUBLE BACK and HIDE.
 PlaceId *GvGetLocationHistory(GameView gv, Player player,
-int *numReturnedLocs, bool *canFree) {
+							  int *numReturnedLocs, bool *canFree) {
 	*numReturnedLocs = gv->player[player]->num_move;
 	*canFree = false;
-	// if there is noting inside the move history
-	// just return null.
-	if(*numReturnedLocs == 0) {
-		return NULL;
-	}
-	//
-	// showing the real postion for the DOUBLE BACK AND HIDE
+
+	// If there is noting inside the move history, return NULL.
+	if (*numReturnedLocs == 0) return NULL;
+
+	// Show the real postion for the DOUBLE_BACK and HIDE.
 	PlaceId *array = malloc(sizeof(PlaceId)*gv->player[player]->num_move);
+
 	for (int i = 0; i < gv->player[player]->num_move; i++) {
-		// copy for the normal postion
-		if(gv->player[player]->movelist[i] < HIDE){
+		// Copy for the normal postion.
+		if (gv->player[player]->movelist[i] < HIDE){
 			array[i] = gv->player[player]->movelist[i];
 		}
 
-		// showing the position for double back
-		if(gv->player[player]->movelist[i] >= DOUBLE_BACK_1
-		&& gv->player[player]->movelist[i] <= DOUBLE_BACK_5) {
+		// Show the position for DOUBLE_BACK.
+		if (gv->player[player]->movelist[i] >= DOUBLE_BACK_1
+			&& gv->player[player]->movelist[i] <= DOUBLE_BACK_5) {
 			int temp = i+ HIDE - gv->player[player]->movelist[i];
 			array[i] = array[temp];
 		}
 
-		// showing the position for hide
-		if(gv->player[player]->movelist[i] == HIDE){
-			array[i] = array[i-1];
-		}
+		// Show the position for HIDE.
+		if (gv->player[player]->movelist[i] == HIDE) array[i] = array[i-1];
 	}
 	*canFree = true;
 	return array;
@@ -558,36 +551,33 @@ int *numReturnedLocs, bool *canFree) {
 // we show the real postion for the DOUBLE BACK AND HIDE
 // for the last number of moves
 PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
-int *numReturnedLocs, bool *canFree) {
+							int *numReturnedLocs, bool *canFree) {
 	*numReturnedLocs = 0;
 	int numlocTemp = 0;
 	bool canFree_temp = true;
-	// get the total local history first,
+
+	// Get all location history;
 	PlaceId *moves = GvGetLocationHistory(gv, player, &numlocTemp, &canFree_temp);
 
-	// using array to record the lastmove array
+	// Using array to record the lastmove array;
 	PlaceId *array = malloc(sizeof(PlaceId)*numLocs);
-	// if the total number of moves is less than nummoves
-	// just return total number of moves numbers array
+
+	// If the total number of moves is less than numMoves, return all of moves numbers array.
 	int number = numLocs;
-	if(number > numlocTemp) {
-		number = numlocTemp;
-	}
+	if (number > numlocTemp) number = numlocTemp;
 	*numReturnedLocs = number;
 	number--;
 	numlocTemp--;
 
-	// the copy the placeid onebyone
+	// Copy place IDs.
 	while (number >= 0) {
 		array[number] = moves[numlocTemp];
 		numlocTemp--;
 		number--;
 	}
-	// if there is noting inside the local history
-	// just return null.
-	if(*numReturnedLocs == 0) {
-		array = NULL;
-	}
+
+	// Return NULL if the location history is empty.
+	if (*numReturnedLocs == 0) array = NULL;
 	*canFree = true;
 	if (canFree_temp) free(moves);
 	return array;
