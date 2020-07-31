@@ -1,10 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
+//
 // COMP2521 20T2 ... the Fury of Dracula
 // GameView.c: GameView ADT implementation
-//
-// 2014-07-01	v1.0	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2017-12-01	v1.1	Team Dracula <cs2521@cse.unsw.edu.au>
-// 2018-12-31	v2.0	Team Dracula <cs2521@cse.unsw.edu.au>
 // 2020-07-10   v3.0    Team Dracula <cs2521@cse.unsw.edu.au>
 //
 ////////////////////////////////////////////////////////////////////////
@@ -19,9 +16,10 @@
 #include "Map.h"
 #include "Places.h"
 
-// add your own #includes here
+// Our "#include":
 #include <string.h>
-// here is my own functions
+
+// Private functions:
 void hunter_condition(char c,GameView gv);
 void cycling(PlaceId array[TRAIL_SIZE]);
 void check_HP(GameView gv);
@@ -29,10 +27,9 @@ void Is_Hunter_rest(GameView gv);
 void Is_need_Recovery(GameView gv);
 int moving(PlaceId array[TRAIL_SIZE], PlaceId new, int a);
 
-// TODO: ADD YOUR OWN STRUCTS HERE
+// Our "#define":
 #define MAXMUM_TRAP 6
 #define NOT_FIND -100
-
 #define Godalming (new->player[0])
 #define Seward (new->player[1])
 #define Helsing (new->player[2])
@@ -49,9 +46,9 @@ typedef struct playerData {
 } PlayerData;
 
 typedef struct young_vampire{
-	int survive;    // return 1 for true, 0 for died.
-	int born_round_number; // record which turn the vampire born.
-	PlaceId born_location;  // // record which city the vampire born.
+	int survive;    				 // 1 for alive, 0 for died.
+	int born_round_number; 			 // Recording which round the vampire born.
+	PlaceId born_location;  		 // Recording which city the vampire born.
 } *Young_vampire;
 
 struct gameView {
@@ -59,15 +56,14 @@ struct gameView {
 	Round turn_Number;
 	Player Curr_Player_Number;
 	PlayerData *player[NUM_PLAYERS];
-    PlaceId traplist[TRAIL_SIZE]; // the 1d version of traplist
-                    			  // traplist[6]
-	
-	Young_vampire vampire;  // point out the info of vampire
+    PlaceId traplist[TRAIL_SIZE]; 	 // The 1d version of traplist[6].
+	Young_vampire vampire;  		 // Point out the info of vampire.
 	Map map;
 };
-////////////////////////////////////////////
-//    My own Fuction for Part1            //
-////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////////////////////////
+// Private functions for PART1: Constructor/Destructor.
+////////////////////////////////////////////////////////////////////////////////
 
 void Is_need_Recovery(GameView gv) {
 	// if hunter die, recover him, and move to hospital later...
@@ -75,9 +71,10 @@ void Is_need_Recovery(GameView gv) {
 		gv->player[gv->Curr_Player_Number]->HP = GAME_START_HUNTER_LIFE_POINTS;
 	}
 }
+
 void Is_Hunter_rest(GameView gv) {
 	// check the hunter wheather stay at the same city, if yes ,get 1 HP
-	if (gv->player[gv->Curr_Player_Number]->playerTrail[5] 
+	if (gv->player[gv->Curr_Player_Number]->playerTrail[5]
 	== gv->player[gv->Curr_Player_Number]->playerTrail[4]) {
 		// hunter's HP can't over 9
 		int limit_HP = 9;
@@ -98,7 +95,6 @@ void check_HP(GameView gv) {
 			gv->score = (gv->score) - SCORE_LOSS_HUNTER_HOSPITAL;
 		}
 }
-
 
 void hunter_condition(char c,GameView gv) {
 	// here are 4 encounter for hunters
@@ -121,7 +117,7 @@ void hunter_condition(char c,GameView gv) {
 	case 'V':
 		// hunter kill vampire
 		gv->vampire->survive = 0;
-		
+
 		gv->vampire->born_round_number= -1;
 		gv->vampire->born_location = NOWHERE;
 
@@ -138,6 +134,7 @@ void hunter_condition(char c,GameView gv) {
 		break;
 	}
 }
+
 // move trail array forward
 void cycling(PlaceId array[TRAIL_SIZE]) {
 	for (int i = 0; i < 5; i ++) {
@@ -147,20 +144,16 @@ void cycling(PlaceId array[TRAIL_SIZE]) {
 }
 
 int moving(PlaceId array[TRAIL_SIZE], PlaceId new, int a) {
-
 	array[a] = new;
 	a++;
 	return a;
 }
-////////////////////////////////////////////
-//    My own Fuction for Part1 closed     //
-////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////////////////
-// Constructor/Destructor
+////////////////////////////////////////////////////////////////////////////////
+// PART 1/4    Constructor/Destructor
+////////////////////////////////////////////////////////////////////////////////
 
 GameView GvNew(char *pastPlays, Message messages[]) {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	GameView new = malloc(sizeof(struct gameView));
 	if (new == NULL) {
 		fprintf(stderr, "Couldn't allocate GameView!\n");
@@ -176,7 +169,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 	new->vampire->survive = 0;
 	new->vampire->born_round_number = -1;
 	new->vampire->born_location = NOWHERE;
-	
+
 
 	int pastPlays_length = strlen(pastPlays);
 	int round = pastPlays_length/40;
@@ -196,7 +189,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			new->player[i]->HP = GAME_START_BLOOD_POINTS;
 		}
 		new->player[i]->currlocation = NOWHERE;
-		
+
 		for(int j = 0; j < 6; j++) {
 		new->player[i]->playerTrail[j] = NOWHERE;
 		}
@@ -211,14 +204,14 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 	int pastPlays_counter = 0;
 	int pastPlaysID = 0;
-	
+
 	char *place;
 	place = malloc(sizeof(char*)*2);
 
 	int k = 0;
 	new->turn_Number = 0;
 	while (pastPlays_counter <= pastPlays_length) {
-		
+
 		// find whose turn
 		pastPlaysID = pastPlays_counter % 40;
 		int whose_turn = (pastPlaysID + 1) / 8;
@@ -241,7 +234,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				Is_need_Recovery(new);
 				// here we get the city abb
 				if (k == 2) {
-					Godalming->currlocation = placeAbbrevToId(place);	
+					Godalming->currlocation = placeAbbrevToId(place);
 					// move forward trail
 					// and put now location into trail
 					cycling(Godalming->playerTrail);
@@ -253,11 +246,11 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 				}
 			}
 
-			// check condition and reset k = 0 
+			// check condition and reset k = 0
 			if (pastPlaysID > 2 && pastPlaysID < 7) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
-				
+
 			}
 
 		// now is looking at Seward
@@ -282,7 +275,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 					Seward->currlocation,Seward->num_move);
 				}
 			}
-			// check condition and reset k = 0 
+			// check condition and reset k = 0
 			if (pastPlaysID > 10 && pastPlaysID < 15) {
 				hunter_condition(pastPlays[pastPlays_counter], new);
 				k = 0;
@@ -357,29 +350,29 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 						if(placeAbbrevToId(place) == HIDE) {
 							Dracula->currlocation = Dracula->playerTrail[5];
 						} else{
-							Dracula->currlocation = 
-							Dracula->playerTrail[5 + DOUBLE_BACK_1 
+							Dracula->currlocation =
+							Dracula->playerTrail[5 + DOUBLE_BACK_1
 							- placeAbbrevToId(place)];
 						}
 					}
-					
+
 					// check wheather in sea
 					if (placeIsSea(Dracula->currlocation)) {
 						Dracula->HP -= LIFE_LOSS_SEA;
-						
+
 					}
 					// if in CASTLE add HP for dracula
 					if (Dracula->currlocation == CASTLE_DRACULA) {
 						Dracula->HP += LIFE_GAIN_CASTLE_DRACULA;
 					}
-					
+
 					// roll the trail
 					cycling(Dracula->playerTrail);
 					Dracula->playerTrail[5] = Dracula->currlocation;
 					Dracula->num_move = moving(Dracula->movelist,
 					placeAbbrevToId(place),Dracula->num_move);
 
-					
+
 					k = 0;
 				}
 			}
@@ -394,7 +387,7 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 			}
 			// place vampire
 			if (pastPlaysID == 36 && pastPlays[pastPlays_counter] == 'V') {
-				
+
 				new->vampire->survive = 1;
 				new->vampire->born_round_number = new->turn_Number;
 				new->vampire->born_location = Dracula->currlocation;
@@ -417,58 +410,51 @@ GameView GvNew(char *pastPlays, Message messages[]) {
 
 		pastPlays_counter++;
 
-	
+
 	}
 	free(place);
 	return new;
 }
 
-void GvFree(GameView gv)
-{
+void GvFree(GameView gv) {
 	for (int i = 0; i < 5; i++) {
 		free (gv->player[i]);
 	}
-	
+
 	free(gv->map);
 	free(gv->vampire);
 	free(gv);
 }
 
-////////////////////////////////////////////////////////////////////////
-// Game State Information
+////////////////////////////////////////////////////////////////////////////////
+// PART 2/4    Game State Information
+////////////////////////////////////////////////////////////////////////////////
 
 // gets the current round number
-Round GvGetRound(GameView gv)
-{
+Round GvGetRound(GameView gv) {
 	return (gv->turn_Number);
 }
 
 // Gets the current player;
-Player GvGetPlayer(GameView gv)
-{
+Player GvGetPlayer(GameView gv) {
 	return (gv->Curr_Player_Number);
 }
 
 //Gets the current game score;
-int GvGetScore(GameView gv)
-{
+int GvGetScore(GameView gv) {
 	return (gv->score);
 }
 //gets the PH VALUE for the PLAYER
 int GvGetHealth(GameView gv, Player player) {
-
 	return (gv->player[player]->HP);
 }
 
 // gets the player location for the Player
 PlaceId GvGetPlayerLocation(GameView gv, Player player) {
-
 	return gv->player[player]->currlocation;
-	
 }
 // gets the player location for the Player if it exist.
 PlaceId GvGetVampireLocation(GameView gv) {
-
 	return (gv->vampire->born_location);
 }
 
@@ -493,11 +479,11 @@ PlaceId *GvGetTrapLocations(GameView gv, int *numTraps) {
 
 ////////////////////////////////////////////////////////////////////////
 // Game History
-// 
+//
 // garb the correct moving history.
-PlaceId *GvGetMoveHistory(GameView gv, Player player, 
+PlaceId *GvGetMoveHistory(GameView gv, Player player,
 int *numReturnedMoves, bool *canFree) {
-	
+
 	*numReturnedMoves = gv->player[player]->num_move;
 	*canFree = false;
 	if(*numReturnedMoves == 0) {
@@ -509,11 +495,11 @@ int *numReturnedMoves, bool *canFree) {
 // grab the last numMoves times move
 // if the total number of moves is less than nummoves
 // just return total number of moves numbers array
-PlaceId *GvGetLastMoves(GameView gv, Player player, 
+PlaceId *GvGetLastMoves(GameView gv, Player player,
 int numMoves, int *numReturnedMoves, bool *canFree) {
 	*numReturnedMoves = 0;
 	// get the total move history first,
-	int numMovesTemp = 0; 
+	int numMovesTemp = 0;
 	bool canFree_temp = false;
 	PlaceId *moves = GvGetMoveHistory(gv, player, &numMovesTemp, &canFree_temp);
 	// using array to record the lastmove array
@@ -543,9 +529,9 @@ int numMoves, int *numReturnedMoves, bool *canFree) {
 	return array;
 }
 
-// in  this fuction 
+// in  this fuction
 // we show the real postion for the DOUBLE BACK AND HIDE
-PlaceId *GvGetLocationHistory(GameView gv, Player player, 
+PlaceId *GvGetLocationHistory(GameView gv, Player player,
 int *numReturnedLocs, bool *canFree) {
 	*numReturnedLocs = gv->player[player]->num_move;
 	*canFree = false;
@@ -554,42 +540,42 @@ int *numReturnedLocs, bool *canFree) {
 	if(*numReturnedLocs == 0) {
 		return NULL;
 	}
-	// 
+	//
 	// showing the real postion for the DOUBLE BACK AND HIDE
 	PlaceId *array = malloc(sizeof(PlaceId)*gv->player[player]->num_move);
 	for (int i = 0; i < gv->player[player]->num_move; i++) {
-		// copy for the normal postion 
+		// copy for the normal postion
 		if(gv->player[player]->movelist[i] < HIDE){
 			array[i] = gv->player[player]->movelist[i];
 		}
 
 		// showing the position for double back
-		if(gv->player[player]->movelist[i] >= DOUBLE_BACK_1 
+		if(gv->player[player]->movelist[i] >= DOUBLE_BACK_1
 		&& gv->player[player]->movelist[i] <= DOUBLE_BACK_5) {
 			int temp = i+ HIDE - gv->player[player]->movelist[i];
-			array[i] = array[temp];	
-		} 
+			array[i] = array[temp];
+		}
 
 		// showing the position for hide
 		if(gv->player[player]->movelist[i] == HIDE){
 			array[i] = array[i-1];
-		} 
+		}
 	}
 	*canFree = true;
 	return array;
 }
 
-// in  this fuction 
-// we show the real postion for the DOUBLE BACK AND HIDE 
+// in  this fuction
+// we show the real postion for the DOUBLE BACK AND HIDE
 // for the last number of moves
-PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs, 
+PlaceId *GvGetLastLocations(GameView gv, Player player, int numLocs,
 int *numReturnedLocs, bool *canFree) {
 	*numReturnedLocs = 0;
-	int numlocTemp = 0; 
+	int numlocTemp = 0;
 	bool canFree_temp = true;
 	// get the total local history first,
 	PlaceId *moves = GvGetLocationHistory(gv, player, &numlocTemp, &canFree_temp);
-	
+
 	// using array to record the lastmove array
 	PlaceId *array = malloc(sizeof(PlaceId)*numLocs);
 	// if the total number of moves is less than nummoves
@@ -633,7 +619,7 @@ void bubble_sort(int a[],int n) {
                 int temp = a[j];
                 a[j] = a[j + 1];
                 a[j + 1] = temp;
-            }  
+            }
         }
         if (isSorted) {
             break;
@@ -643,15 +629,15 @@ void bubble_sort(int a[],int n) {
 // loop through the whole link list to find the cities connected by rails, then
 // put them in the input array
 int Firstround(ConnList city_near, int *array, int i) {
-       
-    while (city_near != NULL) {        
+
+    while (city_near != NULL) {
         if (city_near->type == RAIL) {
-            array[i] = city_near->p;             
+            array[i] = city_near->p;
             i++;
         }
         city_near = city_near->next;
-    } 
-    return i;    
+    }
+    return i;
 }
 // remove the same elements in the input array
 int removeDuplicates(int* nums, int numsSize)
@@ -660,7 +646,7 @@ int removeDuplicates(int* nums, int numsSize)
         return 0;
     }
     int *a1,*a2;
-    a1 = nums; 
+    a1 = nums;
     a2 = a1 + 1;
     int j = 1;
     for (int i = 1; i < numsSize; i++) {
@@ -671,7 +657,7 @@ int removeDuplicates(int* nums, int numsSize)
         }
         a2 = a2 + 1;
     }
-    return j; 
+    return j;
 }
 ////////////////////////////////////////////
 //    My own Fuction for Part4 closed     //
@@ -680,10 +666,9 @@ int removeDuplicates(int* nums, int numsSize)
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION	
 	// use curr_r to get all the adjacent city of "from"
 	ConnList adjacent = MapGetConnections(gv->map, from);
-	PlaceId array_all[1000];	
+	PlaceId array_all[1000];
 	int count = 0;
 	ConnList curr_r = MapGetConnections(gv->map, from);
     // loop through the whole link list to get the cities wanted
@@ -701,26 +686,26 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
         curr_r = curr_r->next;
     }
     // if player is a hunter, then get the places that are reachable by rail
-    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD 
-	|| player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {    
+    if (player == PLAYER_LORD_GODALMING || player == PLAYER_DR_SEWARD
+	|| player == PLAYER_VAN_HELSING || player == PLAYER_MINA_HARKER) {
         ConnList curr = adjacent;
         int roadCounter = 0;
-        int array_local[1000];                       
+        int array_local[1000];
         // consider the moves through rail, split to four parts
-        if ((player + round) % 4 == 0) {        
+        if ((player + round) % 4 == 0) {
         // places reachable if can move one distance by rail
         } else if ((player + round) % 4 == 1) {
-            if (player == PLAYER_DRACULA) {                
+            if (player == PLAYER_DRACULA) {
             } else {
                 roadCounter = Firstround(curr, array_local, roadCounter);
             }
         // places reachable if can move two distances by rail
-        } else if ((player + round) % 4 == 2) {            
-            if (player == PLAYER_DRACULA) {                
+        } else if ((player + round) % 4 == 2) {
+            if (player == PLAYER_DRACULA) {
             } else {
-                int counterArray[1000];                            
+                int counterArray[1000];
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                ConnList *Array1 = malloc(k * sizeof(ConnList));
                 int l = k - 1;
                 int z = k - 1;
                 // add the cities adjacent to the current place to an array
@@ -728,22 +713,22 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                     Array1[z] = MapGetConnections(gv->map, counterArray[z]);
                     z--;
                 }
-                // get the cities adjacent to the cities in the array we get 
+                // get the cities adjacent to the cities in the array we get
                 // above
                 while (l >= 0) {
                     roadCounter = Firstround(Array1[l], array_local, roadCounter);
                     l--;
                 }
             roadCounter = Firstround(curr, array_local, roadCounter);
-            }                     
+            }
         // places reachable if can move three distances by rail
-        } else if ((player + round) % 4 == 2) {            
-        } else { 
+        } else if ((player + round) % 4 == 2) {
+        } else {
             if (player == PLAYER_DRACULA) {
-                
+
             } else {
                 // create an array contain cities around the current place
-                int superArray[1000];                                
+                int superArray[1000];
                 int o = Firstround(curr, superArray, 0);
                 ConnList *listArray1 = malloc((o) * sizeof(ConnList));
                 int p = o - 1;
@@ -752,8 +737,8 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 while (y >= 0) {
                     listArray1[y] = MapGetConnections(gv->map, superArray[y]);
                     y--;
-                }                
-                int secondaryArray[1000];                                
+                }
+                int secondaryArray[1000];
                 int q = 0;
                 while (p >= 0) {
                     q = Firstround(listArray1[p], secondaryArray, q);
@@ -765,18 +750,18 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 int counter2 = q - 1;
                 int counter3 = q - 1;
                 while (counter3 >= 0) {
-                    listArray2[counter3] = MapGetConnections(gv->map, 
+                    listArray2[counter3] = MapGetConnections(gv->map,
 					secondaryArray[counter3]);
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = Firstround(listArray2[counter2], 
+                    roadCounter = Firstround(listArray2[counter2],
 					array_local, roadCounter);
                     counter2--;
                 }
-                int counterArray[1000];                            
+                int counterArray[1000];
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                ConnList *Array1 = malloc(k * sizeof(ConnList));
                 int l = k - 1;
                 int z = k - 1;
                 // get all the cities adjacent to the cities in the array
@@ -790,9 +775,9 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                     l--;
                 }
                 roadCounter = Firstround(curr, array_local, roadCounter);
-            }            
+            }
         }
-        // use bubble sort to sort the array that contains cities reachable by 
+        // use bubble sort to sort the array that contains cities reachable by
         // rail
         bubble_sort (array_local, roadCounter);
         int num_array = removeDuplicates(array_local, roadCounter);
@@ -804,12 +789,12 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 count++;
             }
             num_counter--;
-        } 
+        }
     }
     // sort and remove the same cities in the array
     bubble_sort (array_all, count);
 	count = removeDuplicates (array_all, count);
-    PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));	
+    PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));
 	numReturn[count] = from;
 	*numReturnedLocs = count + 1;
 	// add the cities after processed to the array wanted
@@ -826,15 +811,14 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                               PlaceId from, bool road, bool rail,
                               bool boat, int *numReturnedLocs)
 {
-	// TODO: REPLACE THIS WITH YOUR OWN IMPLEMENTATION
 	ConnList adjacent = MapGetConnections(gv->map, from);
-	PlaceId array_all[1000];	
+	PlaceId array_all[1000];
 	int count = 0;
 	// first get the all the cities reachable by road
 	if (road) {
 	    ConnList curr_r = MapGetConnections(gv->map, from);
 	    while (curr_r != NULL) {
-	        if (player == PLAYER_DRACULA 
+	        if (player == PLAYER_DRACULA
 			&& curr_r->p == ST_JOSEPH_AND_ST_MARY) {
 	            curr_r = curr_r->next;
 	            continue;
@@ -850,21 +834,21 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (rail) {
         ConnList curr = adjacent;
         int roadCounter = 0;
-        int array_local[1000];                       
+        int array_local[1000];
         // consider the moves through rail, split to four parts
-        if ((player + round) % 4 == 0) {                    
+        if ((player + round) % 4 == 0) {
         // places reachable if can move one distance by rail
         } else if ((player + round) % 4 == 1) {
-            if (player == PLAYER_DRACULA) {                
+            if (player == PLAYER_DRACULA) {
             } else {
                 roadCounter = Firstround(curr, array_local, roadCounter);
             }
-        } else if ((player + round) % 4 == 2) {            
-            if (player == PLAYER_DRACULA) {                
+        } else if ((player + round) % 4 == 2) {
+            if (player == PLAYER_DRACULA) {
             } else {
-                int counterArray[1000];                            
+                int counterArray[1000];
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                ConnList *Array1 = malloc(k * sizeof(ConnList));
                 int l = k - 1;
                 int z = k - 1;
                 // add the cities adjacent to the current place to an array
@@ -872,20 +856,20 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     Array1[z] = MapGetConnections(gv->map, counterArray[z]);
                     z--;
                 }
-                // get the cities adjacent to the cities in the array we get 
+                // get the cities adjacent to the cities in the array we get
                 // above
                 while (l >= 0) {
-                    roadCounter = Firstround(Array1[l], 
+                    roadCounter = Firstround(Array1[l],
 					array_local, roadCounter);
                     l--;
                 }
             roadCounter = Firstround(curr, array_local, roadCounter);
-            }                     
-        } else { 
+            }
+        } else {
             if (player == PLAYER_DRACULA) {
-                
+
             } else {
-                int superArray[1000];                                
+                int superArray[1000];
                 int o = Firstround(curr, superArray, 0);
                 ConnList *listArray1 = malloc((o) * sizeof(ConnList));
                 int p = o - 1;
@@ -894,8 +878,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 while (y >= 0) {
                     listArray1[y] = MapGetConnections(gv->map, superArray[y]);
                     y--;
-                }                
-                int secondaryArray[1000];                                
+                }
+                int secondaryArray[1000];
                 int q = 0;
                 // create an array of linklist to contain the cities adjacent to
                 // the cities around the current place
@@ -912,13 +896,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = 
+                    roadCounter =
 					Firstround(listArray2[counter2], array_local, roadCounter);
                     counter2--;
                 }
-                int counterArray[1000];                            
+                int counterArray[1000];
                 int k = Firstround(curr, counterArray, 0);
-                ConnList *Array1 = malloc(k * sizeof(ConnList));            
+                ConnList *Array1 = malloc(k * sizeof(ConnList));
                 int l = k - 1;
                 int z = k - 1;
                 // get all the cities adjacent to the cities in the array
@@ -928,12 +912,12 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     z--;
                 }
                 while (l >= 0) {
-                    roadCounter = 
+                    roadCounter =
 					Firstround(Array1[l], array_local, roadCounter);
                     l--;
                 }
                 roadCounter = Firstround(curr, array_local, roadCounter);
-            }            
+            }
         }
         // sort and remove the same cities in the array
         bubble_sort (array_local, roadCounter);
@@ -947,10 +931,10 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
             }
             num_counter--;
         }
-    }        
+    }
 	// get the all the cities reachable by boat
-	if (boat) {	    
-	    ConnList curr_boat = MapGetConnections(gv->map, from);        
+	if (boat) {
+	    ConnList curr_boat = MapGetConnections(gv->map, from);
         while (curr_boat != NULL) {
             if (curr_boat->type == BOAT) {
                 array_all[count] = curr_boat->p;
@@ -962,15 +946,14 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	// sort and remove the same cities in the array
 	bubble_sort (array_all, count);
 	count = removeDuplicates (array_all, count);
-	PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));	
+	PlaceId *numReturn = malloc((count + 1)*sizeof(PlaceId));
 	numReturn[count] = from;
 	*numReturnedLocs = count + 1;
 	// add the cities after processed to the array wanted
 	for (int final = 0; final <= count - 1; final++) {
 	    numReturn[final] = array_all[final];
 	}
-	
-	
+
+
 	return numReturn;
 }
-
