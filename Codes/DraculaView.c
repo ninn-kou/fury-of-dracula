@@ -18,20 +18,13 @@
 #include "Game.h"
 #include "GameView.h"
 #include "Map.h"
-// add your own #includes here
-
-// TODO: ADD YOUR OWN STRUCTS HERE
 
 struct draculaView {
 	// TODO: ADD FIELDS HERE
 	GameView gv;
     Map map;
 };
-//---------------------------------------------------------------------------
-//
-// GameView function call
-//
-//---------------------------------------------------------------------------
+
 
 #define MAXIMUM_CITY 128	
 
@@ -96,6 +89,9 @@ PlaceId *DvGetTrapLocations(DraculaView dv, int *numTraps)
 
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
+///////////////////////////////////
+//        my own fuction         //
+///////////////////////////////////
 // delete an element from an array
 void del_element(int *arr,int n, int delete) //n????????
 {
@@ -121,7 +117,11 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
         while (counter_back < numMoves) {
             // if we find that there is a doubleback move in the last five moves
             // then set the back bool to true
-            if (moves[counter_back] == DOUBLE_BACK_1 || moves[counter_back] == DOUBLE_BACK_2 || moves[counter_back] == DOUBLE_BACK_3 || moves[counter_back] == DOUBLE_BACK_4 || moves[counter_back] == DOUBLE_BACK_5) {
+            if (moves[counter_back] == DOUBLE_BACK_1 
+			|| moves[counter_back] == DOUBLE_BACK_2 
+			|| moves[counter_back] == DOUBLE_BACK_3 
+			|| moves[counter_back] == DOUBLE_BACK_4 
+			|| moves[counter_back] == DOUBLE_BACK_5) {
 	            back = true;	            
 	        }
 	        counter_back++;
@@ -143,7 +143,11 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
         while (counter >= counter_five) {          
             // if we find that there is a doubleback move in the last five moves
             // then set the back bool to true
-            if (moves[counter] == DOUBLE_BACK_1 || moves[counter] == DOUBLE_BACK_2 || moves[counter] == DOUBLE_BACK_3 || moves[counter] == DOUBLE_BACK_4 || moves[counter] == DOUBLE_BACK_5) {                
+            if (moves[counter] == DOUBLE_BACK_1 
+			|| moves[counter] == DOUBLE_BACK_2 
+			|| moves[counter] == DOUBLE_BACK_3 
+			|| moves[counter] == DOUBLE_BACK_4 
+			|| moves[counter] == DOUBLE_BACK_5) {                
                 back = true;               
             }
             counter--;
@@ -170,6 +174,9 @@ int judger(DraculaView dv, int numMoves, PlaceId *moves) {
         return 0;
     }
 }
+///////////////////////////////////
+//     my own fuction closed     //
+///////////////////////////////////
 PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 {	
 	// create an array to contain all the cities we want
@@ -183,7 +190,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	    // first get all the adjacent cities of the current location and add 
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
+	    PlaceId *array1 = GvGetReachable(dv->gv, 
+		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -192,7 +200,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
             count++;
         }
         int numMoves = 0; bool canFree = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree);
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree);
         int judge = judger(dv, numMoves, moves);	    
 	    // if we have made doubleback move, then add HIDE to the last position
 	    // of the array
@@ -283,7 +292,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	    // first get all the adjacent cities of the current location and add 
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	    
-	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
+	    PlaceId *array1 = GvGetReachable(dv->gv, 
+		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -292,7 +302,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
             count++;
         }
         int numMoves = 0; bool canFree = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree);       
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree);       
         int judge = judger(dv, numMoves, moves);	    	    
 	    // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
@@ -378,7 +389,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	// back for the round between 1 and 5
 	if (GvGetRound(dv->gv) < 5 && GvGetRound(dv->gv) > 0) {
 	    int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge, &canFree);
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge, &canFree);
 	    int p = 0;
 	    int count_judge = count - 1;
 	    while (p < numMoves_judge) {
@@ -397,7 +409,8 @@ PlaceId *DvGetValidMoves(DraculaView dv, int *numReturnedMoves)
 	// back fo the rounds larger than 5
 	if (GvGetRound(dv->gv) >= 5) {
 	    int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge1, &canFree);
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge1, &canFree);
 	    int a = numMoves_judge1 - 1;
 	    int b = numMoves_judge1 - 5;
 	    int count_judge = count - 1;
@@ -443,7 +456,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	    // first get all the adjacent cities of the current location and add 
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);
-	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);
+	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, 
+		GvGetRound(dv->gv), from, &accept);
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -454,7 +468,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
         // remove the cities in the trail because the fact that dracula can't move
 	    // back for the round between 1 and 5
         int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge, &canFree);
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge, &canFree);
 	    int p = 0;
 	    int count_judge = count - 1;
 	    while (p < numMoves_judge) {
@@ -469,7 +484,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	    p++;
 	    }
         int numMoves = 0; bool canFree1 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree1);       
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree1);       
         int judge = judger(dv, numMoves, moves);	    
 	    // if we have made doubleback move, then add city that dracula can hide 
 	    // to the last position of the array to the last position	    
@@ -556,7 +572,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	    // first get all the adjacent cities of the current location and add 
 	    // them to the array
 	    PlaceId from = GvGetPlayerLocation(dv->gv, PLAYER_DRACULA);	    
-	    PlaceId *array1 = GvGetReachable(dv->gv, PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
+	    PlaceId *array1 = GvGetReachable(dv->gv, 
+		PLAYER_DRACULA, GvGetRound(dv->gv), from, &accept);        
         int i = 0;
         int temp = accept - 1;
         while (i <= temp) {
@@ -567,7 +584,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
         // remove the cities in the trail because the fact that dracula can't move
 	    // back fo the rounds larger than 5
         int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge1, &canFree);
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge1, &canFree);
 	    int a = numMoves_judge1 - 1;
 	    int b = numMoves_judge1 - 5;
 	    int count_judge = count - 1;
@@ -585,7 +603,8 @@ PlaceId *DvWhereCanIGo(DraculaView dv, int *numReturnedLocs)
 	    }
 	    // tell and add the HIDE and DOUBLEBACK move just like above
         int numMoves = 0; bool canFree2 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree2);       
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree2);       
         int judge = judger(dv, numMoves, moves);	    	    
 	    // if we have made hide move, then add the cities dracula can DOUBLEBACK
 	    // to the last position of the array
@@ -692,11 +711,14 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // tell which transport type we want, and use corresponding 
         // GvGetReachableByType to get the cities the player can go
         if (road && boat) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, true, false, true, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, true, false, true, &accept);
         } else if (road) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, true, false, false, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, true, false, false, &accept);
         } else if (boat) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, false, false, true, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, false, false, true, &accept);
         }
         
         
@@ -710,7 +732,8 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // remove the cities in the trail because the fact that dracula can't move
 	    // back for the round between 1 and 5
         int numMoves_judge = 0; bool canFree = false;
-        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge, &canFree);
+        PlaceId *moves_judge = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge, &canFree);
         int p = 0;
         int count_judge = count - 1;
         while (p < numMoves_judge) {
@@ -727,7 +750,8 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         
         
         int numMoves = 0; bool canFree1 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree1);       
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree1);       
         int judge = judger(dv, numMoves, moves);	    
         // if we have made doubleback move, then add city that dracula can hide 
 	    // to the last position of the array to the last position
@@ -819,11 +843,14 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // tell which transport type we want, and use corresponding 
         // GvGetReachableByType to get the cities the player can go
         if (road && boat) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, true, false, true, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, true, false, true, &accept);
         } else if (road) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, true, false, false, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, true, false, false, &accept);
         } else if (boat) {
-            array1 = GvGetReachableByType(dv->gv, PLAYER_DRACULA, round, from, false, false, true, &accept);
+            array1 = GvGetReachableByType(dv->gv, 
+			PLAYER_DRACULA, round, from, false, false, true, &accept);
         }   
         int i = 0;
         int temp = accept - 1;
@@ -835,7 +862,8 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
         // remove the cities in the trail because the fact that dracula can't move
 	    // back fo the rounds larger than 5
         int numMoves_judge1 = 0; bool canFree = false;
-        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, PLAYER_DRACULA, &numMoves_judge1, &canFree);
+        PlaceId *moves_judge1 = GvGetLocationHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves_judge1, &canFree);
         int a = numMoves_judge1 - 1;
         int b = numMoves_judge1 - 5;
         int count_judge = count - 1;
@@ -852,7 +880,8 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
             a--;
         }        
         int numMoves = 0; bool canFree2 = false;
-        PlaceId *moves = GvGetMoveHistory(dv->gv, PLAYER_DRACULA, &numMoves, &canFree2);       
+        PlaceId *moves = GvGetMoveHistory(dv->gv, 
+		PLAYER_DRACULA, &numMoves, &canFree2);       
         int judge = judger(dv, numMoves, moves);	    	    
         // tell and add the HIDE and DOUBLEBACK move just like above
         if (judge == 2) {	        

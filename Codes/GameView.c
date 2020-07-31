@@ -65,6 +65,9 @@ struct gameView {
 	Young_vampire vampire;  // point out the info of vampire
 	Map map;
 };
+////////////////////////////////////////////
+//    My own Fuction for Part1            //
+////////////////////////////////////////////
 
 void Is_need_Recovery(GameView gv) {
 	// if hunter die, recover him, and move to hospital later...
@@ -149,6 +152,9 @@ int moving(PlaceId array[TRAIL_SIZE], PlaceId new, int a) {
 	a++;
 	return a;
 }
+////////////////////////////////////////////
+//    My own Fuction for Part1 closed     //
+////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////
 // Constructor/Destructor
@@ -614,7 +620,9 @@ int *numReturnedLocs, bool *canFree) {
 
 ////////////////////////////////////////////////////////////////////////
 // Making a Move
-// Making a Move
+////////////////////////////////////////////
+//       My own Fuction for Part4         //
+////////////////////////////////////////////
 // bubble sort function to make the input array in ascending order
 void bubble_sort(int a[],int n) {
     for (int i = 0; i < n - 1; i++) {
@@ -665,6 +673,9 @@ int removeDuplicates(int* nums, int numsSize)
     }
     return j; 
 }
+////////////////////////////////////////////
+//    My own Fuction for Part4 closed     //
+////////////////////////////////////////////
 
 PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                         PlaceId from, int *numReturnedLocs)
@@ -754,11 +765,13 @@ PlaceId *GvGetReachable(GameView gv, Player player, Round round,
                 int counter2 = q - 1;
                 int counter3 = q - 1;
                 while (counter3 >= 0) {
-                    listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
+                    listArray2[counter3] = MapGetConnections(gv->map, 
+					secondaryArray[counter3]);
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = Firstround(listArray2[counter2], array_local, roadCounter);
+                    roadCounter = Firstround(listArray2[counter2], 
+					array_local, roadCounter);
                     counter2--;
                 }
                 int counterArray[1000];                            
@@ -821,7 +834,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	if (road) {
 	    ConnList curr_r = MapGetConnections(gv->map, from);
 	    while (curr_r != NULL) {
-	        if (player == PLAYER_DRACULA && curr_r->p == ST_JOSEPH_AND_ST_MARY) {
+	        if (player == PLAYER_DRACULA 
+			&& curr_r->p == ST_JOSEPH_AND_ST_MARY) {
 	            curr_r = curr_r->next;
 	            continue;
 	        }
@@ -861,7 +875,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 // get the cities adjacent to the cities in the array we get 
                 // above
                 while (l >= 0) {
-                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
+                    roadCounter = Firstround(Array1[l], 
+					array_local, roadCounter);
                     l--;
                 }
             roadCounter = Firstround(curr, array_local, roadCounter);
@@ -892,11 +907,13 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                 int counter2 = q - 1;
                 int counter3 = q - 1;
                 while (counter3 >= 0) {
-                    listArray2[counter3] = MapGetConnections(gv->map, secondaryArray[counter3]);
+                    listArray2[counter3] = MapGetConnections
+					(gv->map, secondaryArray[counter3]);
                     counter3--;
                 }
                 while (counter2 >= 0) {
-                    roadCounter = Firstround(listArray2[counter2], array_local, roadCounter);
+                    roadCounter = 
+					Firstround(listArray2[counter2], array_local, roadCounter);
                     counter2--;
                 }
                 int counterArray[1000];                            
@@ -911,7 +928,8 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
                     z--;
                 }
                 while (l >= 0) {
-                    roadCounter = Firstround(Array1[l], array_local, roadCounter);
+                    roadCounter = 
+					Firstround(Array1[l], array_local, roadCounter);
                     l--;
                 }
                 roadCounter = Firstround(curr, array_local, roadCounter);
@@ -955,7 +973,4 @@ PlaceId *GvGetReachableByType(GameView gv, Player player, Round round,
 	
 	return numReturn;
 }
-////////////////////////////////////////////////////////////////////////
-// Your own interface functions
 
-// TODO
