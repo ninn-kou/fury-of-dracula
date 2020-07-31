@@ -932,21 +932,29 @@ PlaceId *DvWhereCanIGoByType(DraculaView dv, bool road, bool boat,
 PlaceId *DvWhereCanTheyGo(DraculaView dv, Player player,
                           int *numReturnedLocs)
 {
+    // set numReturnedLocs to zero
     *numReturnedLocs = 0;
+    // use DV function to find this player's current location
     PlaceId from = DvGetPlayerLocation(dv, player);
+    // check if hunters do not in any city
     if (from == NOWHERE) {
 	return NULL;
     }
+    // use DV function to find the turn number
     Round round = DvGetRound(dv);
     // if not Godalming
     if (player != PLAYER_DRACULA) {
-	round++;
+	// because need to check the next turn move, turn needs to ++;
+        round++;
     } else {
+	// if the player is dracula
 	return DvWhereCanIGo(dv, numReturnedLocs);
 	}
     int temp = 0;
+    // use GV function to find city that can go and put them into an array
     PlaceId *locs = GvGetReachable(dv->gv, player, round, from, &temp);
     *numReturnedLocs = temp;
+    // return array
     return locs;
 }
 
@@ -954,23 +962,31 @@ PlaceId *DvWhereCanTheyGoByType(DraculaView dv, Player player,
                                 bool road, bool rail, bool boat,
                                 int *numReturnedLocs)
 {
+    // set numReturnedLocs to zero
     *numReturnedLocs = 0;
+    // use DV function to find this player's current location
     PlaceId from = DvGetPlayerLocation(dv, player);
+    // check if hunters do not in any city
     if (from == NOWHERE) {
 	return NULL;
     }
+    // use DV function to find the turn number
     Round round = DvGetRound(dv);
     // if not Godalming
     if (player != PLAYER_DRACULA) {
+	// because need to check the next turn move, turn needs to ++;
 	round++;
     } else {
+	// if the player is dracula
 	return DvWhereCanIGoByType(dv,  road, boat, numReturnedLocs);
 	}
     int temp = 0;
+    // use GV function to find city that can go and put them into an array
     PlaceId *locs = GvGetReachableByType(dv->gv, player, round,
                               from, road, rail,
                               boat, &temp);
     *numReturnedLocs = temp;
+    // return array
     return locs;
 }
 
