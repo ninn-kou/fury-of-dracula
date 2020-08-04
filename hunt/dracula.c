@@ -203,7 +203,9 @@ Player Playerjudger(int *array, int length, int q, int w, int e, int r) {
 }
 void decideDraculaMove(DraculaView dv)
 {
-	
+	if (DvGetRound(dv) == 0) {
+		registerBestPlay("CD", "Mwahahahaha");
+	}
 	char *best_city;
 	// TODO: Replace this with something better!
 	int count = -1;
@@ -234,8 +236,7 @@ void decideDraculaMove(DraculaView dv)
 	int array1_count = 0;
 	int i = count - 1;
 	int length = 0;	
-	// our teammate's name is Eason
-	
+
 	while (i >= 0) {
 		length = DvGetShortestPathTo(dv, Close_1, adjacent[i]);
 	    if (curr_hunter_0 < length) {
@@ -253,7 +254,6 @@ void decideDraculaMove(DraculaView dv)
 	int array2[1000] = {-1};
 	int array2_count = 0;
 	i = array1_count - 1;
-	// our teammate's name is Charles
 	
 	while (i >= 0) {
 		length = DvGetShortestPathTo(dv, Close_2, array1[i]);
@@ -271,7 +271,6 @@ void decideDraculaMove(DraculaView dv)
 	int array3[1000] = {-1};
 	int array3_count = 0;
 	i = array2_count - 1;
-	// our teammate's name is Steve
 	
 	while (i >= 0) {
 		length = DvGetShortestPathTo(dv, Close_3, array2[i]);
@@ -291,13 +290,14 @@ void decideDraculaMove(DraculaView dv)
 	int array4_count = 0;
 	i = array3_count - 1;
 	// our teammate's name is Ren
-	
-	length = DvGetShortestPathTo(dv, Close_4, array3[i]);
-	if (curr_hunter_3 < length) {
-			array4[array4_count] = array3[i];
-			array4_count++;
+	while (i >= 0) {
+		length = DvGetShortestPathTo(dv, Close_4, array3[i]);
+		if (curr_hunter_3 < length) {
+				array4[array4_count] = array3[i];
+				array4_count++;
 		}
 		i--;
+	}
 	
 	if (array4_count == 0) {
 		best_city = placeIdToAbbrev(array3[0]);
