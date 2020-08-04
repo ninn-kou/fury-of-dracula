@@ -11,13 +11,14 @@
 
 #include "dracula.h"
 #include "DraculaView.h"
-#include "DraculaView.c"
 #include "Game.h"
 #include "Places.h"
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
-void bubble_sort(int a[],int n);
+#include <assert.h>
+
+/*void bubble_sort(int a[],int n);
 void move_forward(int *array, int size);
 Player Playerjudger(int *array, int length, int q, int w, int e, int r);
 typedef struct QueueRep *Queue; 
@@ -78,8 +79,8 @@ int QueueIsEmpty (Queue Q) {
 int DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest) {
 	int pathLength = 0;
 	PlaceId src = DvGetPlayerLocation(dv, hunter);
-	assert (dv->map != NULL);
-	int num_place = MapNumPlaces(dv->map);
+	//assert (dv->map != NULL);
+	int num_place = NUM_REAL_PLACES;
 
 	// Create the visited array, to record the place visited.
 	int *visited = malloc(num_place * sizeof(PlaceId));
@@ -103,7 +104,7 @@ int DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest) {
 			found = 1;
 		} else{
 			// Using round to record the round_number for each city turn.
-			int round = GvGetRound(dv->gv);
+			int round = DvGetRound(dv);
 			// Check how many round for this city.
 			// Check how many roads from present city to src.
 			for(PlaceId i = cur; i != src; i = visited[i]) {
@@ -305,5 +306,10 @@ void decideDraculaMove(DraculaView dv)
 		best_city = placeIdToAbbrev(array4[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
 	}
-	
+	*/
+void decideDraculaMove(DraculaView dv)
+{
+	int numLocs = -1;
+    PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
+    registerBestPlay(placeIdToAbbrev(locs[0]), "Mwahahahaha");
 }
