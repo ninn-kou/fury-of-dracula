@@ -18,7 +18,7 @@
 #include "Places.h"
 #include <assert.h>
 
-/*void bubble_sort(int a[],int n);
+void bubble_sort(int a[],int n);
 void move_forward(int *array, int size);
 Player Playerjudger(int *array, int length, int q, int w, int e, int r);
 typedef struct QueueRep *Queue; 
@@ -306,10 +306,6 @@ void decideDraculaMove(DraculaView dv)
 		best_city = placeIdToAbbrev(array4[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
 	}
-	*/
-void decideDraculaMove(DraculaView dv)
-{
-	int numLocs = -1;
-    PlaceId *locs = DvWhereCanIGo(dv, &numLocs);
-    registerBestPlay(placeIdToAbbrev(locs[0]), "Mwahahahaha");
+	
+
 }
