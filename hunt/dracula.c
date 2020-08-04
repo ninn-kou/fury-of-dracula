@@ -213,18 +213,18 @@ void decideDraculaMove(DraculaView dv)
 	PlaceId curr = DvGetPlayerLocation(dv, PLAYER_DRACULA);
 	int curr_hunter[4];	
 	curr_hunter[0] = DvGetShortestPathTo(dv, PLAYER_LORD_GODALMING, curr);	
-	curr_hunter[0] = DvGetShortestPathTo(dv, PLAYER_DR_SEWARD, curr);	
-	curr_hunter[0] = DvGetShortestPathTo(dv, PLAYER_VAN_HELSING, curr);	
-	curr_hunter[0] = DvGetShortestPathTo(dv, PLAYER_MINA_HARKER, curr);
+	curr_hunter[1] = DvGetShortestPathTo(dv, PLAYER_DR_SEWARD, curr);	
+	curr_hunter[2] = DvGetShortestPathTo(dv, PLAYER_VAN_HELSING, curr);	
+	curr_hunter[3] = DvGetShortestPathTo(dv, PLAYER_MINA_HARKER, curr);
     // find hunter from close to far
-	int size = 4;
-	bubble_sort(curr_hunter, size);
 	// save curr_hunter before move forward
 	int curr_hunter_0 = curr_hunter[0];
 	int curr_hunter_1 = curr_hunter[1];
 	int curr_hunter_2 = curr_hunter[2];
 	int curr_hunter_3 = curr_hunter[3];
-	Player Close_1 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	int size = 4;
+	bubble_sort(curr_hunter, size);
+	Player Close_1 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
 	Player Close_2 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
 	move_forward(curr_hunter, size);
@@ -232,6 +232,7 @@ void decideDraculaMove(DraculaView dv)
 	move_forward(curr_hunter, size);
 	Player Close_4 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
 	move_forward(curr_hunter, size);
+	
 	int array1[1000] = {-1};
 	int array1_count = 0;
 	int i = count - 1;
@@ -239,7 +240,7 @@ void decideDraculaMove(DraculaView dv)
 
 	while (i >= 0) {
 		length = DvGetShortestPathTo(dv, Close_1, adjacent[i]);
-	    if (curr_hunter_0 < length) {
+	    if (curr_hunter[0] < length) {
 	        array1[array1_count] = adjacent[i];
 	        array1_count++;
 	    }
@@ -249,7 +250,15 @@ void decideDraculaMove(DraculaView dv)
 	if (array1_count == 0) {
 		best_city = placeIdToAbbrev(adjacent[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+	////////////////////////////
+	} else {
+		best_city = placeIdToAbbrev(array1[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
 	}
+
+
+
+	
 	// check the second close 
 	int array2[1000] = {-1};
 	int array2_count = 0;
@@ -307,5 +316,4 @@ void decideDraculaMove(DraculaView dv)
 		registerBestPlay(best_city, "Mwahahahaha");
 	}
 	
-
 }
