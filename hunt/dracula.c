@@ -11,8 +11,34 @@
 
 #include "dracula.h"
 #include "DraculaView.h"
+#include "DraculaView.c"
+#include "HunterView.h"
+#include "HunterView.c"
 #include "Game.h"
 #include "Places.h"
+void bubble_sort(int a[],int n);
+PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
+                             int *pathLength);
+void move_forward(int *array, int size);
+Player Playerjudger(int *array, int length, int q, int w, int e, int r);
+
+
+void bubble_sort(int a[],int n) {
+    for (int i = 0; i < n - 1; i++) {
+        bool isSorted = true;
+        for (int j = 0; j < n - 1 - i; j++) {
+            if (a[j] > a[j + 1]) {
+                isSorted = false;
+                int temp = a[j];
+                a[j] = a[j + 1];
+                a[j + 1] = temp;
+            }  
+        }
+        if (isSorted) {
+            break;
+        }
+    }
+}
 
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
@@ -67,21 +93,21 @@ void decideDraculaMove(DraculaView dv)
 	char *best_city;
 	// TODO: Replace this with something better!
 	int count = -1;
-	PlaceId *adjacent = DvWhereCanIGo(DraculaView dv, &count);
-	PlaceId hunter0 = DvGetPlayerLocation(DraculaView dv, PLAYER_LORD_GODALMING);
-	PlaceId hunter1 = DvGetPlayerLocation(DraculaView dv, PLAYER_DR_SEWARD);
-	PlaceId hunter2 = DvGetPlayerLocation(DraculaView dv, PLAYER_VAN_HELSING);
-	PlaceId hunter3 = DvGetPlayerLocation(DraculaView dv, PLAYER_MINA_HARKER);
-	PlaceId curr = DvGetPlayerLocation(DraculaView dv, PLAYER_DRACULA);
+	PlaceId *adjacent = DvWhereCanIGo(dv, &count);
+	PlaceId hunter0 = DvGetPlayerLocation(dv, PLAYER_LORD_GODALMING);
+	PlaceId hunter1 = DvGetPlayerLocation(dv, PLAYER_DR_SEWARD);
+	PlaceId hunter2 = DvGetPlayerLocation(dv, PLAYER_VAN_HELSING);
+	PlaceId hunter3 = DvGetPlayerLocation(dv, PLAYER_MINA_HARKER);
+	PlaceId curr = DvGetPlayerLocation(dv, PLAYER_DRACULA);
 	int *curr_hunter;
 	PlaceId *path0;
 	PlaceId *path1;
 	PlaceId *path2;
 	PlaceId *path3;	
-	path0 = HvGetShortestPathTo(HunterView hv, PLAYER_LORD_GODALMING, curr, &curr_hunter[0]);	
-	path1 = HvGetShortestPathTo(HunterView hv, PLAYER_DR_SEWARD, curr, &curr_hunter[1]);	
-	path2 = HvGetShortestPathTo(HunterView hv, PLAYER_VAN_HELSING, curr, &curr_hunter[2]);	
-	path3 = HvGetShortestPathTo(HunterView hv, PLAYER_MINA_HARKER, curr, &curr_hunter[3]);
+	path0 = HvGetShortestPathTo(hv, PLAYER_LORD_GODALMING, curr, &curr_hunter[0]);	
+	path1 = HvGetShortestPathTo(hv, PLAYER_DR_SEWARD, curr, &curr_hunter[1]);	
+	path2 = HvGetShortestPathTo(hv, PLAYER_VAN_HELSING, curr, &curr_hunter[2]);	
+	path3 = HvGetShortestPathTo(hv, PLAYER_MINA_HARKER, curr, &curr_hunter[3]);
     // find hunter from close to far
 	int length = 4;
 	bubble_sort(curr_hunter, length);
@@ -105,7 +131,7 @@ void decideDraculaMove(DraculaView dv)
 	// our teammate's name is Eason
 	PlaceId *Eason;
 	while (i >= 0) {
-		Eason = HvGetShortestPathTo(HunterView hv, Close_1, adjacent[i], &length);
+		Eason = HvGetShortestPathTo(hv, Close_1, adjacent[i], &length);
 	    if (curr_hunter_0 < length) {
 	        array1[array1_count] = adjacent[i];
 	        array1_count++;
@@ -123,7 +149,7 @@ void decideDraculaMove(DraculaView dv)
 	// our teammate's name is Charles
 	PlaceId *Charles;
 	while (i >= 0) {
-		Charles = HvGetShortestPathTo(HunterView hv, Close_2, array1[i], &length);
+		Charles = HvGetShortestPathTo(hv, Close_2, array1[i], &length);
 		if (curr_hunter_1 < length) {
 			array2[array2_count] = array1[i];
 			array2_count++;
@@ -141,7 +167,7 @@ void decideDraculaMove(DraculaView dv)
 	// our teammate's name is Steve
 	PlaceId *Steve;
 	while (i >= 0) {
-		Steve = HvGetShortestPathTo(HunterView hv, Close_3, array2[i], &length);
+		Steve = HvGetShortestPathTo(hv, Close_3, array2[i], &length);
 		if (curr_hunter_2 < length) {
 			array3[array3_count] = array2[i];
 			array3_count++;
@@ -159,7 +185,7 @@ void decideDraculaMove(DraculaView dv)
 	i = array3_count - 1;
 	// our teammate's name is Ren
 	PlaceId *Ren;
-	Ren = HvGetShortestPathTo(HunterView hv, Close_4, array3[i], &length);
+	Ren = HvGetShortestPathTo(hv, Close_4, array3[i], &length);
 	if (curr_hunter_3 < length) {
 			array4[array4_count] = array3[i];
 			array4_count++;
