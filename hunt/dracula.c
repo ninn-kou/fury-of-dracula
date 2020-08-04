@@ -73,7 +73,7 @@ PlaceId QueueLeave (Queue Q) {
 }
 
 // Check for no items.
-int QueueIsEmpty (Queue Q) {
+int QueueIsEmpty_1 (Queue Q) {
 	return (Q->head == NULL);
 }
 int DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest) {
@@ -97,7 +97,7 @@ int DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest) {
     QueueJoin(q, src);
 
 	// Make sure we have not found the dest.
-	while(!found && !QueueIsEmpty(q)) {
+	while(!found && !QueueIsEmpty_1(q)) {
 		PlaceId cur = QueueLeave(q);
 		// If we find, take found be true, and stop while.
 		if(cur == dest) {
@@ -113,11 +113,11 @@ int DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest) {
 
 			// If current player is not the play_Godalming;
 			// We need adding the round as every player's move is in the next round.
-			if(GvGetPlayer(dv->gv) != PLAYER_LORD_GODALMING) round++;
+			if(hunter != PLAYER_LORD_GODALMING) round++;
 
 			int temp = 0;
 			// Using visited array, and connect each placeID and its parents ID.
-			PlaceId *locs = GvGetReachable(dv->gv, hunter, round, cur, &temp);
+			PlaceId *locs = DvWhereCanTheyGo(dv, hunter, &temp);
 			for (int i = 0; i < temp; i++) {
 				// Make sure each side meet the condition.
                 if (visited[locs[i]] == -1) {
