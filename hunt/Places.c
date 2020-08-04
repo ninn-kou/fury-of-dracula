@@ -395,7 +395,7 @@ const char *placeIdToName(PlaceId pid)
 	}
 }
 
-const char *placeIdToAbbrev(PlaceId pid)
+char *placeIdToAbbrev(PlaceId pid)
 {
 	if (placeIsReal(pid)) {
 		return PLACES[pid].abbrev;
