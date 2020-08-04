@@ -12,6 +12,8 @@
 #include "dracula.h"
 #include "DraculaView.h"
 #include "Game.h"
+#include "Places.h"
+
 PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
                              int *pathLength)
 {
@@ -41,9 +43,15 @@ PlaceId *HvGetShortestPathTo(HunterView hv, Player hunter, PlaceId dest,
 	*pathLength = dist;
 	return path;
 }
-
+void move_forward(int *array, int size){
+	int i = 0;
+	while (i < size - 1) {
+		array[i] = array[i+1];
+		i++;
+	}
+	array[i] = -1;
+}
 Player Playerjudger(int *array, int length, int q, int w, int e, int r) {
-    bubble_sort(array, length);
     if (array[0] = q) {
         return PLAYER_LORD_GODALMING;
     } else if (array[0] == w) {
@@ -56,6 +64,7 @@ Player Playerjudger(int *array, int length, int q, int w, int e, int r) {
 }
 void decideDraculaMove(DraculaView dv)
 {
+	char *best_city;
 	// TODO: Replace this with something better!
 	int count = -1;
 	PlaceId *adjacent = DvWhereCanIGo(DraculaView dv, &count);
@@ -73,16 +82,95 @@ void decideDraculaMove(DraculaView dv)
 	path1 = HvGetShortestPathTo(HunterView hv, PLAYER_DR_SEWARD, curr, &curr_hunter[1]);	
 	path2 = HvGetShortestPathTo(HunterView hv, PLAYER_VAN_HELSING, curr, &curr_hunter[2]);	
 	path3 = HvGetShortestPathTo(HunterView hv, PLAYER_MINA_HARKER, curr, &curr_hunter[3]);
+    // find hunter from close to far
+	int length = 4;
+	bubble_sort(curr_hunter, length);
+	// save curr_hunter before move forward
+	int curr_hunter_0 = curr_hunter[0];
+	int curr_hunter_1 = curr_hunter[1];
+	int curr_hunter_2 = curr_hunter[2];
+	int curr_hunter_3 = curr_hunter[3];
+	Player Close_1 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	move_forward(curr_hunter, length);
+	Player Close_2 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	move_forward(curr_hunter, length);
+	Player Close_3 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	move_forward(curr_hunter, length);
+	Player Close_4 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	move_forward(curr_hunter, length);
 	int *array1;
-	int array1_count;
+	int array1_count = 0;
 	int i = count - 1;
 	int length = 0;	
+	// our teammate's name is Eason
+	PlaceId *Eason;
 	while (i >= 0) {
-	    if (curr_hunter[0] < HvGetShortestPathTo(HunterView hv, Playerjudger(int *curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]), adjacent[i], &length)) {
+		Eason = HvGetShortestPathTo(HunterView hv, Close_1, adjacent[i], &length);
+	    if (curr_hunter_0 < length) {
 	        array1[array1_count] = adjacent[i];
 	        array1_count++;
 	    }
-	i--;
+		i--;
     }
-    
+	if (array1_count == 0) {
+		best_city = placeIdToAbbrev(adjacent[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
+	}
+	// check the second close 
+	int *array2;
+	int array2_count = 0;
+	i = array1_count - 1;
+	// our teammate's name is Charles
+	PlaceId *Charles;
+	while (i >= 0) {
+		Charles = HvGetShortestPathTo(HunterView hv, Close_2, array1[i], &length);
+		if (curr_hunter_1 < length) {
+			array2[array2_count] = array1[i];
+			array2_count++;
+		}
+		i--;
+	}
+	if (array2_count == 0) {
+		best_city = placeIdToAbbrev(array1[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
+	}
+    // check the third close
+	int *array3;
+	int array3_count = 0;
+	i = array2_count - 1;
+	// our teammate's name is Steve
+	PlaceId *Steve;
+	while (i >= 0) {
+		Steve = HvGetShortestPathTo(HunterView hv, Close_3, array2[i], &length);
+		if (curr_hunter_2 < length) {
+			array3[array3_count] = array2[i];
+			array3_count++;
+		}
+		i--;
+	}
+	if (array3_count == 0) {
+		best_city = placeIdToAbbrev(array2[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
+	}
+
+	// check the forth close
+	int *array4;
+	int array4_count = 0;
+	i = array3_count - 1;
+	// our teammate's name is Ren
+	PlaceId *Ren;
+	Ren = HvGetShortestPathTo(HunterView hv, Close_4, array3[i], &length);
+	if (curr_hunter_3 < length) {
+			array4[array4_count] = array3[i];
+			array4_count++;
+		}
+		i--;
+	}
+	if (array4_count == 0) {
+		best_city = placeIdToAbbrev(array3[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
+	} else {
+		best_city = placeIdToAbbrev(array4[0]);
+		registerBestPlay(best_city, "Mwahahahaha");
+	}
 }
