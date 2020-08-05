@@ -12,13 +12,17 @@
 #include "hunter.h"
 #include "HunterView.h"
 #include "Places.h"
-
+//////////////////////////////////////////////////////////////////////////////
+///
+///                      MY OWEN FUCTION
+///
+//////////////////////////////////////////////////////////////////////////////
 PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	Round temp = -1;
+	// if we have  arrive the dracula trail loc
+	// tring to find the next place;
 	if (HvGetPlayerLocation(hv, name) == HvGetLastKnownDraculaLocation(hv, &temp)) {
-		//if(() == 1) {
-		//	return dest;
-		// }
+
 		int pathLength = -1;
 		PlaceId *path = HvWhereCanIGoByType(hv, true, false, true, &pathLength);
 
@@ -35,12 +39,14 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 		}
 
 	}
-
+	// if we have not find the trail of dracula
+	// doing research.
 	if (HvGetPlayerLocation(hv, name) == dest) {
 		return dest;
 	}
 
-
+	// else, if none above here
+	// just find the next city next to dest.
 	int pathLength = -1;
 	PlaceId *path = HvGetShortestPathTo(hv, name,
 										dest, &pathLength);
@@ -54,7 +60,7 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 
 void decideHunterMove(HunterView hv)
 {
-
+	// initial all the information we need.
 	Round round = HvGetRound(hv);
 	Player whose_turn = HvGetPlayer(hv);
 	PlaceId me_loc = HvGetPlayerLocation(hv, whose_turn);
@@ -64,7 +70,7 @@ void decideHunterMove(HunterView hv)
 	Round temp;
 	PlaceId drac_loc = HvGetLastKnownDraculaLocation(hv, &temp);
 
-
+	// we
 	if(whose_turn == PLAYER_LORD_GODALMING) {
 		if(round == 0 && me_loc == NOWHERE) {
 			registerBestPlay(placeIdToAbbrev(STRASBOURG), "I am comming.");
@@ -86,10 +92,10 @@ void decideHunterMove(HunterView hv)
 		}
 		if(drac_loc != NOWHERE) {
 
-				decide_loc = drac_loc;
-				next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
-				registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
-				return;
+			decide_loc = drac_loc;
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
+			registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
+			return;
 		}
 
 	}
