@@ -21,6 +21,8 @@
 void bubble_sort(int a[],int n);
 void move_forward(int *array, int size);
 Player Playerjudger(int *array, int length, int q, int w, int e, int r);
+PlaceId *DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest,
+                             int *pathLength);
 PlaceId *hunterBfs(DraculaView dv, Player hunter, PlaceId src, Round r);
 static Round playerNextRound(DraculaView dv, Player player);
 
@@ -137,6 +139,7 @@ void decideDraculaMove(DraculaView dv)
 {
 	if (DvGetRound(dv) == 0) {
 		registerBestPlay("CD", "Mwahahahaha");
+		return;
 	}
 	char *best_city;
 	// TODO: Replace this with something better!
@@ -183,10 +186,12 @@ void decideDraculaMove(DraculaView dv)
 	if (array1_count == 0) {
 		best_city = placeIdToAbbrev(adjacent[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	////////////////////////////
 	} else {
 		best_city = placeIdToAbbrev(array1[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	}
 
 
@@ -208,6 +213,7 @@ void decideDraculaMove(DraculaView dv)
 	if (array2_count == 0) {
 		best_city = placeIdToAbbrev(array1[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	}
     // check the third close
 	int array3[1000] = {-1};
@@ -225,6 +231,7 @@ void decideDraculaMove(DraculaView dv)
 	if (array3_count == 0) {
 		best_city = placeIdToAbbrev(array2[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	}
 
 	// check the forth close
@@ -244,9 +251,11 @@ void decideDraculaMove(DraculaView dv)
 	if (array4_count == 0) {
 		best_city = placeIdToAbbrev(array3[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	} else {
 		best_city = placeIdToAbbrev(array4[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
+		return;
 	}
 	
 }
