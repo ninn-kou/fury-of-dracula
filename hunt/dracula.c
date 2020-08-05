@@ -162,11 +162,11 @@ void decideDraculaMove(DraculaView dv)
 	bubble_sort(curr_hunter, size);
 	Player Close_1 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
-	Player Close_2 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	Player Close_2 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
-	Player Close_3 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	Player Close_3 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
-	Player Close_4 = Playerjudger(curr_hunter, 4, curr_hunter[0], curr_hunter[1], curr_hunter[2], curr_hunter[3]);
+	Player Close_4 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
 	
 	int array1[1000] = {-1};
