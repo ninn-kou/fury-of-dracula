@@ -14,6 +14,27 @@
 #include "Places.h"
 
 PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
+	Round temp = -1;
+	if (HvGetPlayerLocation(hv, name) == HvGetLastKnownDraculaLocation(hv, &temp)) {
+		//if(() == 1) {
+		//	return dest;
+		// }
+		int pathLength = -1;
+		PlaceId *path = HvWhereCanIGoByType(hv, true, false, true, &pathLength);
+
+		for(int i = pathLength - 1; i >= 0; i--) {
+			if(path[i] != HvGetPlayerLocation(hv, 0)
+			&& path[i] != HvGetPlayerLocation(hv, 1)
+			&& path[i] != HvGetPlayerLocation(hv, 2)
+			&& path[i] != HvGetPlayerLocation(hv, 3)){
+				PlaceId next = path[i];
+				free(path);
+				return next;
+			}
+
+		}
+
+	}
 
 	if (HvGetPlayerLocation(hv, name) == dest) {
 		return dest;
@@ -29,12 +50,8 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	free(path);
 	return next;
 }
-/*
-PlaceId testing_durcula_next(HunterView hv, PlaceId dest, Player name){
 
 
-}
-*/
 void decideHunterMove(HunterView hv)
 {
 
@@ -56,7 +73,7 @@ void decideHunterMove(HunterView hv)
 		if (drac_loc == NOWHERE
 		&& round < 6) {
 			decide_loc = BRUSSELS;
-			next_loc = findnextCityToAiming (hv, BRUSSELS, whose_turn);
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
@@ -68,12 +85,11 @@ void decideHunterMove(HunterView hv)
 			return;
 		}
 		if(drac_loc != NOWHERE) {
-			if (me_loc != drac_loc) {
+
 				decide_loc = drac_loc;
 				next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 				registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
 				return;
-			}
 		}
 
 	}
@@ -87,7 +103,7 @@ void decideHunterMove(HunterView hv)
 		if (drac_loc == NOWHERE
 		&& round < 6) {
 			decide_loc = STRASBOURG;
-			next_loc = findnextCityToAiming (hv, BRUSSELS, whose_turn);
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
@@ -115,7 +131,7 @@ void decideHunterMove(HunterView hv)
 		if (drac_loc == NOWHERE
 		&& round < 6) {
 			decide_loc = FRANKFURT;
-			next_loc = findnextCityToAiming (hv, BRUSSELS, whose_turn);
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
@@ -144,7 +160,7 @@ void decideHunterMove(HunterView hv)
 		if (drac_loc == NOWHERE
 		&& round < 6) {
 			decide_loc = NUREMBURG;
-			next_loc = findnextCityToAiming (hv, BRUSSELS, whose_turn);
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
