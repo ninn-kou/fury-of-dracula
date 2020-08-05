@@ -22,7 +22,7 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	// if we have  arrive the dracula trail loc
 	// tring to find the next place;
 	if (HvGetPlayerLocation(hv, name) == HvGetLastKnownDraculaLocation(hv, &temp)) {
-
+		//return dest;
 		int pathLength = -1;
 		PlaceId *path = HvWhereCanIGoByType(hv, true, false, true, &pathLength);
 
@@ -37,6 +37,9 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 			}
 
 		}
+		PlaceId next = path[0];
+		free(path);
+		return next;
 
 	}
 	// if we have not find the trail of dracula

@@ -13,11 +13,90 @@
 #include "DraculaView.h"
 #include "Game.h"
 #include "Places.h"
+/*
 #include "GameView.h"
 #include "Map.h"
 #include "Places.h"
 #include <assert.h>
-#include "Queue.h"
+#include "Queue.h"\
+*/
+int check_valid (DraculaView dv,PlaceId mach, Player hunter) {
+	int numReturnedLocs = -1;
+	PlaceId *path = DvWhereCanTheyGo(dv, hunter, &numReturnedLocs);
+	for (int i = (numReturnedLocs - 1); i >= 0; i --) {
+		
+		if(path[i] == mach) {
+			free(path);
+
+			return 0;
+		}
+	}
+	free(path);
+	return 1;
+}
+void decideDraculaMove(DraculaView dv) {
+	
+	Round round = DvGetRound(dv);
+	PlaceId me_loc = DvGetPlayerLocation(dv, 4);
+
+	/*
+	PlaceId loc01 = DvGetPlayerLocation(dv, 0);
+	PlaceId loc02 = DvGetPlayerLocation(dv, 1);
+	PlaceId loc03 = DvGetPlayerLocation(dv, 2);
+	PlaceId loc04 = DvGetPlayerLocation(dv, 3);
+
+
+
+	PlaceId decide_loc;
+	PlaceId next_loc;
+	Round temp;
+	*/
+	if(round == 0 && me_loc == NOWHERE) {
+		registerBestPlay("RO", "I am comming.");
+		return;
+	}
+	int num_adjacent = 0;
+
+	PlaceId *adjacent = DvWhereCanIGo(dv, &num_adjacent);
+	int number = 0;
+	int save = -1;
+	int savei = 0;
+	int i = num_adjacent - 1;
+	
+	while( i >= 0) {
+		if (adjacent[i] == me_loc){
+			continue;
+		}
+		if(check_valid (dv, adjacent[i], 0)
+		&& check_valid (dv, adjacent[i], 1)
+		&& check_valid (dv, adjacent[i], 2)
+		&& check_valid (dv, adjacent[i], 3)){
+		
+		registerBestPlay(placeIdToAbbrev(adjacent[i]), "I am comming.");
+
+		return; 
+		} else {
+		number = check_valid (dv, adjacent[i], 0)
+		+ check_valid (dv, adjacent[i], 1)
+		+ check_valid (dv, adjacent[i], 2)
+		+ check_valid (dv, adjacent[i], 3);
+			if(number > save) {
+				save = number;
+				savei = i;
+			}
+		}
+		i--;
+	}
+	registerBestPlay(placeIdToAbbrev(adjacent[savei]), "I am comming.");
+	return;
+
+}
+
+
+
+
+
+/*
 void bubble_sort(int a[],int n);
 void move_forward(int *array, int size);
 Player Playerjudger(int *array, int length, int q, int w, int e, int r);
@@ -195,7 +274,6 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 
-
 	
 	// check the second close 
 	int array2[1000] = {-1};
@@ -257,5 +335,6 @@ void decideDraculaMove(DraculaView dv)
 		registerBestPlay(best_city, "Mwahahahaha");
 		return;
 	}
-	
 }
+
+*/
