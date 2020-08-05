@@ -88,11 +88,62 @@ void decideHunterMove(HunterView hv)
 
 	PlaceId decide_loc;
 	PlaceId next_loc;
-	Round temp;
-	PlaceId drac_loc = HvGetLastKnownDraculaLocation(hv, &temp);
+	Round last_know_round;
+	PlaceId drac_loc = HvGetLastKnownDraculaLocation(hv, &last_know_round);
 
-	// we
+
+
+	int HP = HvGetHealth(hv, whose_turn);
+
+	// low hp, rest repush hp
+	if(HP <= 3) {
+		registerBestPlay(placeIdToAbbrev(me_loc), "I AM going to rest.");
+		return;
+	}
+	if (drac_loc == NOWHERE
+	&& round >= 6) {
+
+		registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
+		return;
+	}
+	Round round_diff = round - last_know_round;
+	// if the trail has been long time no update, just update it
+	if(round_diff >= 10 && round >= 9 ) {
+		registerBestPlay(placeIdToAbbrev(me_loc), "I am going to check where u r  <_>");
+		return;
+	}
+
+
+	/*
+	PlaceId vam_loc = HvGetVampireLocation(hv);
+	if(vam_loc != NOWHERE && ((round+1) % 12) <= 6){
+		int shortpath = MAX_REAL_PLACE;
+		for (int i = 0; i < 4; i++){
+			int pathLength = -1;
+			PlaceId *path =
+			HvGetShortestPathTo(hv, i, vam_loc, &pathLength);
+			if(shortpath > pathLength) {
+				shortpath = pathLength;
+			}
+
+			free(path);
+		}
+		int pathLength = -1;
+		PlaceId *path = HvGetShortestPathTo(hv, whose_turn, vam_loc, &pathLength);
+
+		free(path);
+		if (pathLength == shortpath && ((pathLength + round +1) % 12) <= 6) {
+			decide_loc = vam_loc;
+			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
+			registerBestPlay(placeIdToAbbrev(next_loc), "I am going to find vampire.");
+			return;
+		}
+	}
+	*/
+
+
 	if(whose_turn == PLAYER_LORD_GODALMING) {
+
 		if(round == 0 && me_loc == NOWHERE) {
 			registerBestPlay(placeIdToAbbrev(STRASBOURG), "I am comming.");
 			return;
@@ -103,14 +154,8 @@ void decideHunterMove(HunterView hv)
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
-
 		}
-		if (drac_loc == NOWHERE
-		&& round >= 6) {
 
-			registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
-			return;
-		}
 		if(drac_loc != NOWHERE) {
 
 			decide_loc = drac_loc;
@@ -119,9 +164,11 @@ void decideHunterMove(HunterView hv)
 			return;
 		}
 
+
 	}
 
 	if(whose_turn == PLAYER_DR_SEWARD) {
+
 		if(round == 0 && me_loc == NOWHERE) {
 			registerBestPlay(placeIdToAbbrev(GRANADA), "I am comming.");
 			return;
@@ -135,12 +182,7 @@ void decideHunterMove(HunterView hv)
 			return;
 
 		}
-		if (drac_loc == NOWHERE
-		&& round >= 6) {
 
-			registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
-			return;
-		}
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
@@ -163,12 +205,7 @@ void decideHunterMove(HunterView hv)
 			return;
 
 		}
-		if (drac_loc == NOWHERE
-		&& round >= 6) {
 
-			registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
-			return;
-		}
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
@@ -192,12 +229,7 @@ void decideHunterMove(HunterView hv)
 			return;
 
 		}
-		if (drac_loc == NOWHERE
-		&& round >= 6) {
 
-			registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
-			return;
-		}
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
