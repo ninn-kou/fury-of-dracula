@@ -57,24 +57,23 @@ void decideDraculaMove(DraculaView dv) {
 	}
 	int num_adjacent = 0;
 
-	PlaceId *adjacent = DvWhereCanIGo(dv, &num_adjacent);
+	PlaceId *adjacent = DvGetValidMoves(dv, &num_adjacent);
 	int number = 0;
 	int save = -1;
 	int savei = 0;
 	int i = num_adjacent - 1;
+	PlaceId next = NOWHERE;
 	
 	while( i >= 0) {
-		if (adjacent[i] == me_loc){
-			continue;
-		}
+		
 		if(check_valid (dv, adjacent[i], 0)
 		&& check_valid (dv, adjacent[i], 1)
 		&& check_valid (dv, adjacent[i], 2)
 		&& check_valid (dv, adjacent[i], 3)){
-		
-		registerBestPlay(placeIdToAbbrev(adjacent[i]), "I am comming.");
+		next = adjacent[i];
+		break;
 
-		return; 
+		
 		} else {
 		number = check_valid (dv, adjacent[i], 0)
 		+ check_valid (dv, adjacent[i], 1)
@@ -87,7 +86,11 @@ void decideDraculaMove(DraculaView dv) {
 		}
 		i--;
 	}
-	registerBestPlay(placeIdToAbbrev(adjacent[savei]), "I am comming.");
+	if (next != NOWHERE) {
+		next = adjacent[savei];
+	}
+	free(adjacent);
+	registerBestPlay(placeIdToAbbrev(next), "I am comming.");
 	return;
 
 }
