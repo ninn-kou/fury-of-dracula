@@ -90,7 +90,7 @@ void decideDraculaMove(DraculaView dv) {
 		next = adjacent[savei];
 	}
 	free(adjacent);
-	registerBestPlay(placeIdToAbbrev(next), "I am comming.");
+	registerBestPlay(placeIdToAbbrev(next), "AHHHHAHHHHAHHHHA.");
 	return;
 
 }
