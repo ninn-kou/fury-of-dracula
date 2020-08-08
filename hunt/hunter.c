@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////
 // COMP2521 20T2 ... the Fury of Dracula
 // hunter.c: your "Fury of Dracula" hunter AI.
@@ -24,7 +25,7 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	if (HvGetPlayerLocation(hv, name) == HvGetLastKnownDraculaLocation(hv, &temp)) {
 		//return dest;
 		int pathLength = -1;
-		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false , &pathLength);
+		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false, &pathLength);
 
 		for(int i = pathLength - 1; i >= 0; i--) {
 			if(path[i] != HvGetPlayerLocation(hv, 0)
@@ -47,7 +48,7 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	if (HvGetPlayerLocation(hv, name) == dest) {
 		//return dest;
 		int pathLength = -1;
-		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false , &pathLength);
+		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false, &pathLength);
 
 		for(int i = pathLength - 1; i >= 0; i--) {
 			if(path[i] != HvGetPlayerLocation(hv, 0)
@@ -101,14 +102,14 @@ void decideHunterMove(HunterView hv)
 		return;
 	}
 	if (drac_loc == NOWHERE
-	&& round >= 5) {
+	&& round >= 6) {
 
 		registerBestPlay(placeIdToAbbrev(me_loc), "I AM LOOKING FOREARD YOU!");
 		return;
 	}
 	Round round_diff = round - last_know_round;
 	// if the trail has been long time no update, just update it
-	if(round_diff >= 9 && round >= 8) {
+	if(round_diff >= 10 && round >= 9 ) {
 		registerBestPlay(placeIdToAbbrev(me_loc), "I am going to check where u r  <_>");
 		return;
 	}
@@ -125,12 +126,10 @@ void decideHunterMove(HunterView hv)
 			if(shortpath > pathLength) {
 				shortpath = pathLength;
 			}
-
 			free(path);
 		}
 		int pathLength = -1;
 		PlaceId *path = HvGetShortestPathTo(hv, whose_turn, vam_loc, &pathLength);
-
 		free(path);
 		if (pathLength == shortpath && ((pathLength + round +1) % 12) <= 6) {
 			decide_loc = vam_loc;
@@ -143,32 +142,14 @@ void decideHunterMove(HunterView hv)
 
 
 	if(whose_turn == PLAYER_LORD_GODALMING) {
-		/*
 
-		if(round == 1 && drac_loc == NOWHERE) {
-			registerBestPlay("MN", "I am comming.");
-			return;
-		}
-		if(round == 2 && drac_loc == NOWHERE) {
-			registerBestPlay("LO", "I am comming.");
-			return;
-		}
-		if(round == 3 && drac_loc == NOWHERE) {
-			registerBestPlay("SW", "I am comming.");
-			return;
-		}
-		if(round == 4 && drac_loc == NOWHERE) {
-			registerBestPlay("LV", "I am comming.");
-			return;
-		}
-		*/
 		if(round == 0 && me_loc == NOWHERE) {
-			registerBestPlay(placeIdToAbbrev(BARI), "I am comming.");
+			registerBestPlay(placeIdToAbbrev(STRASBOURG), "I am comming.");
 			return;
 		}
 		if (drac_loc == NOWHERE
 		&& round < 6) {
-			decide_loc = COLOGNE;
+			decide_loc = BRUSSELS;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
@@ -192,38 +173,15 @@ void decideHunterMove(HunterView hv)
 			return;
 
 		}
-
 		if (drac_loc == NOWHERE
 		&& round < 6) {
-			decide_loc = GENOA;
+			decide_loc = STRASBOURG;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
 		}
 
-		/*
-		if(round == 0 && me_loc == NOWHERE) {
-			registerBestPlay("MA", "I am comming.");
-			return;
-		}
-		if(round == 1 && drac_loc == NOWHERE) {
-			registerBestPlay("BO", "I am comming.");
-			return;
-		}
-		if(round == 2 && drac_loc == NOWHERE) {
-			registerBestPlay("NA", "I am comming.");
-			return;
-		}
-		if(round == 3 && drac_loc == NOWHERE) {
-			registerBestPlay("LE", "I am comming.");
-			return;
-		}
-		if(round == 4 && drac_loc == NOWHERE) {
-			registerBestPlay("PA", "I am comming.");
-			return;
-		}
-		*/
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
@@ -233,43 +191,20 @@ void decideHunterMove(HunterView hv)
 		}
 
 	}if(whose_turn == PLAYER_VAN_HELSING) {
-		
 		if(round == 0 && me_loc == NOWHERE) {
-			registerBestPlay(placeIdToAbbrev(GALWAY), "I am comming.");
+			registerBestPlay(placeIdToAbbrev(MANCHESTER), "I am comming.");
 			return;
 
 		}
 		if (drac_loc == NOWHERE
 		&& round < 6) {
-			decide_loc = PARIS;
+			decide_loc = FRANKFURT;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
 		}
-		
-		/*
-		if(round == 0 && me_loc == NOWHERE) {
-			registerBestPlay("RO", "I am comming.");
-			return;
-		}
-		if(round == 1 && drac_loc == NOWHERE) {
-			registerBestPlay("MI", "I am comming.");
-			return;
-		}
-		if(round == 2 && drac_loc == NOWHERE) {
-			registerBestPlay("ZU", "I am comming.");
-			return;
-		}
-		if(round == 3 && drac_loc == NOWHERE) {
-			registerBestPlay("ST", "I am comming.");
-			return;
-		}
-		if(round == 4 && drac_loc == NOWHERE) {
-			registerBestPlay("LI", "I am comming.");
-			return;
-		}
-		*/
+
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
@@ -280,7 +215,6 @@ void decideHunterMove(HunterView hv)
 
 
 	}if(whose_turn == PLAYER_MINA_HARKER) {
-		
 		if(round == 0 && me_loc == NOWHERE) {
 			registerBestPlay(placeIdToAbbrev(CONSTANTA), "I am comming.");
 			return;
@@ -288,35 +222,13 @@ void decideHunterMove(HunterView hv)
 		}
 		if (drac_loc == NOWHERE
 		&& round < 6) {
-			decide_loc = PARIS;
+			decide_loc = NUREMBURG;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am waitting you.");
 			return;
 
 		}
-		
-	/*
-		if(round == 0 && me_loc == NOWHERE) {
-			registerBestPlay("GA", "I am comming.");
-			return;
-		}
-		if(round == 1 && drac_loc == NOWHERE) {
-			registerBestPlay("CD", "I am comming.");
-			return;
-		}
-		if(round == 2 && drac_loc == NOWHERE) {
-			registerBestPlay("KL", "I am comming.");
-			return;
-		}
-		if(round == 3 && drac_loc == NOWHERE) {
-			registerBestPlay("BE", "I am comming.");
-			return;
-		}
-		if(round == 4 && drac_loc == NOWHERE) {
-			registerBestPlay("BD", "I am comming.");
-			return;
-		}
-		*/
+
 		if(drac_loc != NOWHERE) {
 			decide_loc = drac_loc;
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
