@@ -52,9 +52,21 @@ void decideDraculaMove(DraculaView dv) {
 	Round temp;
 	*/
 	if(round == 0 && me_loc == NOWHERE) {
-		registerBestPlay("RO", "I am comming.");
+		registerBestPlay(placeIdToAbbrev(CAGLIARI), "AHHHHAHHHHAHHHHA.");
+
 		return;
 	}
+	if(round == 1) {
+		registerBestPlay(placeIdToAbbrev(MEDITERRANEAN_SEA), "AHHHHAHHHHAHHHHA.");
+
+		return;
+	}
+	if(round == 2) {
+		registerBestPlay(placeIdToAbbrev(ATLANTIC_OCEAN), "AHHHHAHHHHAHHHHA.");
+
+		return;
+	}
+
 	int num_adjacent = 0;
 
 	PlaceId *adjacent = DvGetValidMoves(dv, &num_adjacent);
