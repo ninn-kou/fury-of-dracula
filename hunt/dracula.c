@@ -13,13 +13,7 @@
 #include "DraculaView.h"
 #include "Game.h"
 #include "Places.h"
-/*
-#include "GameView.h"
-#include "Map.h"
-#include "Places.h"
-#include <assert.h>
-#include "Queue.h"\
-*/
+
 int check_valid (DraculaView dv,PlaceId mach, Player hunter) {
 	int numReturnedLocs = -1;
 	PlaceId *path = DvWhereCanTheyGo(dv, hunter, &numReturnedLocs);
@@ -101,6 +95,13 @@ void decideDraculaMove(DraculaView dv) {
 
 
 /*
+
+#include "GameView.h"
+#include "Map.h"
+#include "Places.h"
+#include <assert.h>
+#include "Queue.h"\
+
 void bubble_sort(int a[],int n);
 void move_forward(int *array, int size);
 Player Playerjudger(int *array, int length, int q, int w, int e, int r);
