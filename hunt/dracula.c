@@ -24,7 +24,7 @@ int check_valid (DraculaView dv,PlaceId mach, Player hunter) {
 	int numReturnedLocs = -1;
 	PlaceId *path = DvWhereCanTheyGo(dv, hunter, &numReturnedLocs);
 	for (int i = (numReturnedLocs - 1); i >= 0; i --) {
-		
+
 		if(path[i] == mach) {
 			free(path);
 
@@ -35,22 +35,9 @@ int check_valid (DraculaView dv,PlaceId mach, Player hunter) {
 	return 1;
 }
 void decideDraculaMove(DraculaView dv) {
-	
+
 	Round round = DvGetRound(dv);
 	PlaceId me_loc = DvGetPlayerLocation(dv, 4);
-
-	/*
-	PlaceId loc01 = DvGetPlayerLocation(dv, 0);
-	PlaceId loc02 = DvGetPlayerLocation(dv, 1);
-	PlaceId loc03 = DvGetPlayerLocation(dv, 2);
-	PlaceId loc04 = DvGetPlayerLocation(dv, 3);
-
-
-
-	PlaceId decide_loc;
-	PlaceId next_loc;
-	Round temp;
-	*/
 	if(round == 0 && me_loc == NOWHERE) {
 		registerBestPlay(placeIdToAbbrev(CAGLIARI), "AHHHHAHHHHAHHHHA.");
 
@@ -70,14 +57,16 @@ void decideDraculaMove(DraculaView dv) {
 	int num_adjacent = 0;
 
 	PlaceId *adjacent = DvGetValidMoves(dv, &num_adjacent);
+	//PlaceId *adjacent = DvWhereCanIGo(dv, &num_adjacent);
+
 	int number = 0;
 	int save = -1;
 	int savei = 0;
 	int i = num_adjacent - 1;
 	PlaceId next = NOWHERE;
-	
+
 	while( i >= 0) {
-		
+
 		if(check_valid (dv, adjacent[i], 0)
 		&& check_valid (dv, adjacent[i], 1)
 		&& check_valid (dv, adjacent[i], 2)
@@ -85,7 +74,7 @@ void decideDraculaMove(DraculaView dv) {
 		next = adjacent[i];
 		break;
 
-		
+
 		} else {
 		number = check_valid (dv, adjacent[i], 0)
 		+ check_valid (dv, adjacent[i], 1)
@@ -129,16 +118,16 @@ PlaceId *hunterBfs(DraculaView dv, Player hunter, PlaceId src, Round r) {
 	PlaceId *pred = malloc(NUM_REAL_PLACES * sizeof(PlaceId));
 	for (int i = 0; i < NUM_REAL_PLACES; i++) pred[i] = NOWHERE;
 	pred[src] = src;
-	
+
 	Queue q1 = QueueNew(); // current round locations
 	Queue q2 = QueueNew(); // next round locations
-	
+
 	QueueEnqueue(q1, src);
 	while (!(QueueIsEmpty(q1) && QueueIsEmpty(q2))) {
 		PlaceId curr = QueueDequeue(q1);
 		int numReachable = 0;
 		PlaceId *reachable = DvWhereCanTheyGo(dv, hunter,&numReachable);
-		
+
 		for (int i = 0; i < numReachable; i++) {
 			if (pred[reachable[i]] == -1) {
 				pred[reachable[i]] = curr;
@@ -146,7 +135,7 @@ PlaceId *hunterBfs(DraculaView dv, Player hunter, PlaceId src, Round r) {
 			}
 		}
 		free(reachable);
-		
+
 		// When we've exhausted the current round's locations, advance
 		// to the next round and swap the queues (so the next round's
 		// locations becomes the current round's locations)
@@ -155,7 +144,7 @@ PlaceId *hunterBfs(DraculaView dv, Player hunter, PlaceId src, Round r) {
 			r++;
 		}
 	}
-	
+
 	QueueDrop(q1);
 	QueueDrop(q2);
 	return pred;
@@ -166,7 +155,7 @@ PlaceId *DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest,
 	Round r = playerNextRound(dv, hunter);
 	PlaceId src = DvGetPlayerLocation(dv, hunter);
 	PlaceId *pred = hunterBfs(dv, hunter, src, r);
-	
+
 	// One pass to get the path length
 	int dist = 0;
 	PlaceId curr = dest;
@@ -174,7 +163,7 @@ PlaceId *DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest,
 		dist++;
 		curr = pred[curr];
 	}
-	
+
 	PlaceId *path = malloc(dist * sizeof(PlaceId));
 	// Another pass to copy the path in
 	int i = dist - 1;
@@ -184,7 +173,7 @@ PlaceId *DvGetShortestPathTo(DraculaView dv, Player hunter, PlaceId dest,
 		curr = pred[curr];
 		i--;
 	}
-	
+
 	free(pred);
 	*pathLength = dist;
 	return path;
@@ -200,7 +189,7 @@ void bubble_sort(int a[],int n) {
                 int temp = a[j];
                 a[j] = a[j + 1];
                 a[j + 1] = temp;
-            }  
+            }
         }
         if (isSorted) {
             break;
@@ -238,13 +227,13 @@ void decideDraculaMove(DraculaView dv)
 	char *best_city;
 	// TODO: Replace this with something better!
 	int count = -1;
-	PlaceId *adjacent = DvWhereCanIGo(dv, &count);	
+	PlaceId *adjacent = DvWhereCanIGo(dv, &count);
 	PlaceId curr = DvGetPlayerLocation(dv, PLAYER_DRACULA);
-	int curr_hunter[4];	
+	int curr_hunter[4];
 	PlaceId *path = malloc(NUM_REAL_PLACES * sizeof(PlaceId));;
-	path = DvGetShortestPathTo(dv, PLAYER_LORD_GODALMING, curr, &curr_hunter[0]);	
-	path = DvGetShortestPathTo(dv, PLAYER_DR_SEWARD, curr, &curr_hunter[1]);	
-	path = DvGetShortestPathTo(dv, PLAYER_VAN_HELSING, curr, &curr_hunter[2]);	
+	path = DvGetShortestPathTo(dv, PLAYER_LORD_GODALMING, curr, &curr_hunter[0]);
+	path = DvGetShortestPathTo(dv, PLAYER_DR_SEWARD, curr, &curr_hunter[1]);
+	path = DvGetShortestPathTo(dv, PLAYER_VAN_HELSING, curr, &curr_hunter[2]);
 	path = DvGetShortestPathTo(dv, PLAYER_MINA_HARKER, curr, &curr_hunter[3]);
     // find hunter from close to far
 	// save curr_hunter before move forward
@@ -262,12 +251,12 @@ void decideDraculaMove(DraculaView dv)
 	move_forward(curr_hunter, size);
 	Player Close_4 = Playerjudger(curr_hunter, 4, curr_hunter_0, curr_hunter_1, curr_hunter_2, curr_hunter_3);
 	move_forward(curr_hunter, size);
-	
+
 	int array1[1000] = {-1};
 	int array1_count = 0;
 	int i = count - 1;
-	int length = 0;	
-	
+	int length = 0;
+
 	while (i >= 0) {
 		path = DvGetShortestPathTo(dv, Close_1, adjacent[i], &length);
 	    if (curr_hunter[0] < length) {
@@ -276,7 +265,7 @@ void decideDraculaMove(DraculaView dv)
 	    }
 		i--;
     }
-    
+
 	if (array1_count == 0) {
 		best_city = placeIdToAbbrev(adjacent[0]);
 		registerBestPlay(best_city, "Mwahahahaha");
@@ -289,12 +278,12 @@ void decideDraculaMove(DraculaView dv)
 	}
 
 
-	
-	// check the second close 
+
+	// check the second close
 	int array2[1000] = {-1};
 	int array2_count = 0;
 	i = array1_count - 1;
-	
+
 	while (i >= 0) {
 		path = DvGetShortestPathTo(dv, Close_2, array1[i], &length);
 		if (curr_hunter_1 < length) {
@@ -312,7 +301,7 @@ void decideDraculaMove(DraculaView dv)
 	int array3[1000] = {-1};
 	int array3_count = 0;
 	i = array2_count - 1;
-	
+
 	while (i >= 0) {
 		path = DvGetShortestPathTo(dv, Close_3, array2[i], &length);
 		if (curr_hunter_2 < length) {

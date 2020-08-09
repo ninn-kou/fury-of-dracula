@@ -25,9 +25,13 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	if (HvGetPlayerLocation(hv, name) == HvGetLastKnownDraculaLocation(hv, &temp)) {
 		//return dest;
 		int pathLength = -1;
-		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false, &pathLength);
+		PlaceId *path = HvWhereCanIGoByType(hv, true, false, true, &pathLength);
+
 
 		for(int i = pathLength - 1; i >= 0; i--) {
+			if(path[i] == ST_JOSEPH_AND_ST_MARY) {
+				continue;
+			}
 			if(path[i] != HvGetPlayerLocation(hv, 0)
 			&& path[i] != HvGetPlayerLocation(hv, 1)
 			&& path[i] != HvGetPlayerLocation(hv, 2)
@@ -38,7 +42,11 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 			}
 
 		}
+
 		PlaceId next = path[0];
+		if(path[0] == ST_JOSEPH_AND_ST_MARY) {
+				next = path[1];
+		}
 		free(path);
 		return next;
 
@@ -48,9 +56,12 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 	if (HvGetPlayerLocation(hv, name) == dest) {
 		//return dest;
 		int pathLength = -1;
-		PlaceId *path = HvWhereCanIGoByType(hv, true, false, false, &pathLength);
+		PlaceId *path = HvWhereCanIGoByType(hv, true, false, true, &pathLength);
 
 		for(int i = pathLength - 1; i >= 0; i--) {
+			if(path[i] == ST_JOSEPH_AND_ST_MARY) {
+				continue;
+			}
 			if(path[i] != HvGetPlayerLocation(hv, 0)
 			&& path[i] != HvGetPlayerLocation(hv, 1)
 			&& path[i] != HvGetPlayerLocation(hv, 2)
@@ -61,7 +72,11 @@ PlaceId findnextCityToAiming (HunterView hv, PlaceId dest, Player name) {
 			}
 
 		}
+
 		PlaceId next = path[0];
+		if(path[0] == ST_JOSEPH_AND_ST_MARY) {
+				next = path[1];
+		}
 		free(path);
 		return next;
 
@@ -87,10 +102,12 @@ void decideHunterMove(HunterView hv)
 	Player whose_turn = HvGetPlayer(hv);
 	PlaceId me_loc = HvGetPlayerLocation(hv, whose_turn);
 
-	PlaceId decide_loc;
+	PlaceId decide_loc = NOWHERE;
 	PlaceId next_loc;
 	Round last_know_round;
 	PlaceId drac_loc = HvGetLastKnownDraculaLocation(hv, &last_know_round);
+
+
 
 
 
@@ -109,9 +126,36 @@ void decideHunterMove(HunterView hv)
 	}
 	Round round_diff = round - last_know_round;
 	// if the trail has been long time no update, just update it
-	if(round_diff >= 10 && round >= 9 ) {
+	if(round_diff >= 9 && round >= 9) {
 		registerBestPlay(placeIdToAbbrev(me_loc), "I am going to check where u r  <_>");
 		return;
+	}
+	for(int h = 0; h <= 3; h++) {
+		if(round >= 1 &&drac_loc == HvGetPlayerLocation(hv, h)){
+			int pathLength = -1;
+			PlaceId *path =
+			HvWhereCanTheyGoByType(hv, h, true, false, true, &pathLength);
+			for(int i = pathLength - 1; i >= 0; i--) {
+				if(path[i] == ST_JOSEPH_AND_ST_MARY) {
+					continue;
+				}
+				if(path[i] != HvGetPlayerLocation(hv, 0)
+				&& path[i] != HvGetPlayerLocation(hv, 1)
+				&& path[i] != HvGetPlayerLocation(hv, 2)
+				&& path[i] != HvGetPlayerLocation(hv, 3)){
+					decide_loc = path[i];
+					break;
+				}
+
+			}
+			if(decide_loc == NOWHERE) {
+				decide_loc = path[0];
+			}
+			if(path[0] == ST_JOSEPH_AND_ST_MARY) {
+				decide_loc = path[1];
+			}
+		free(path);
+		}
 	}
 
 
@@ -156,8 +200,9 @@ void decideHunterMove(HunterView hv)
 		}
 
 		if(drac_loc != NOWHERE) {
-
-			decide_loc = drac_loc;
+			if(decide_loc == NOWHERE) {
+				decide_loc = drac_loc;
+			}
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
 			return;
@@ -183,7 +228,9 @@ void decideHunterMove(HunterView hv)
 		}
 
 		if(drac_loc != NOWHERE) {
-			decide_loc = drac_loc;
+			if(decide_loc == NOWHERE) {
+				decide_loc = drac_loc;
+			}
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
 			return;
@@ -206,7 +253,9 @@ void decideHunterMove(HunterView hv)
 		}
 
 		if(drac_loc != NOWHERE) {
-			decide_loc = drac_loc;
+			if(decide_loc == NOWHERE) {
+				decide_loc = drac_loc;
+			}
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
 			return;
@@ -230,7 +279,9 @@ void decideHunterMove(HunterView hv)
 		}
 
 		if(drac_loc != NOWHERE) {
-			decide_loc = drac_loc;
+			if(decide_loc == NOWHERE) {
+				decide_loc = drac_loc;
+			}
 			next_loc = findnextCityToAiming (hv, decide_loc, whose_turn);
 			registerBestPlay(placeIdToAbbrev(next_loc), "I am behind you");
 			return;
