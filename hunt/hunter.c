@@ -107,10 +107,6 @@ void decideHunterMove(HunterView hv)
 	Round last_know_round;
 	PlaceId drac_loc = HvGetLastKnownDraculaLocation(hv, &last_know_round);
 
-
-
-
-
 	int HP = HvGetHealth(hv, whose_turn);
 
 	// low hp, rest repush hp
@@ -288,8 +284,5 @@ void decideHunterMove(HunterView hv)
 
 		}
 	}
-
-
-
 
 }
