@@ -27,6 +27,7 @@ Group working for COMP2521, Term 2 2020, Assignment 2.
 - [Meeting 02, 15:31, 20/07/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/6436)
 - [Meeting 03, 17:31, 24/07/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/6637)
 - [Meeting 04, 23:30, 01/08/20](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/7107)
+- [Other Meetings](https://webcms3.cse.unsw.edu.au/COMP2521/20T2/wiki/49368/7417)
 
 
 ## 🆗 Assignment Part 1
@@ -49,6 +50,6 @@ Files allowed to change:
 
 And adding some ADT if we wish.
 
-## Assignment Part 2
+## 🆗 Assignment Part 2
 
 [Assignment 2 The Hunt](https://www.cse.unsw.edu.au/~cs2521/20T2/ass/ass2/hunt/)
