@@ -122,7 +122,7 @@ void decideHunterMove(HunterView hv)
 	}
 	Round round_diff = round - last_know_round;
 	// if the trail has been long time no update, just update it
-	if(round_diff >= 9 && round >= 9) {
+	if(round_diff >= 7 && round >= 9) {
 		registerBestPlay(placeIdToAbbrev(me_loc), "I am going to check where u r  <_>");
 		return;
 	}
