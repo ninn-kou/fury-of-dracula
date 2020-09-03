@@ -4,7 +4,7 @@ Group working for COMP2521, Term 2 2020, Assignment 2.
 
 [The Fury of Dracula Wiki Page](https://en.wikipedia.org/wiki/The_Fury_of_Dracula)<sup>Wiki</sup>
 
-**IMPORTANT: All commits history before RENAME 'Codes' to 'view' are in the commit `d1e58932255f7911efe24a6993ac7e389bf27880`.**
+**IMPORTANT: All commits history before RENAME 'Codes' to 'view' are in the commit `d1e589`.**
 
 ## Assignment Homepage
 
